@@ -19,3 +19,6 @@ pnpm-debug.log*
 # OS/Editor junk
 .DS_Store
 *.swp
+
+# Firebase Admin SDK
+BACKEND/config/*.json
