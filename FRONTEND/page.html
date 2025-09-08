@@ -1,11 +1,127 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Test Test</title>
-    </head>
-    <body>
-        <p1>Hello<br></p1>
-        <p2>Hi<br></p2>
-        <p3>Yo</p3>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MasteryPath - Master your learning path</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>MasteryPath</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active">Overview</a>
+                <a href="#" class="nav-link">Learn</a>
+                <a href="#" class="nav-link">Review (SRS)</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title">Master your learning path</h2>
+                <p class="hero-subtitle">Upload PDFs or notes, let AI build courses with lessons and quizzes, get instant feedback, and reinforce with spaced repetition.</p>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search lessons & questions...">
+                    <span class="search-shortcut">⌘/Ctrl + K</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <section class="content-grid">
+            <!-- Left Column - Actions -->
+            <div class="left-column">
+                <!-- Upload Section -->
+                <div class="card upload-card">
+                    <div class="card-header">
+                        <i class="fas fa-upload card-icon"></i>
+                        <h3>Upload</h3>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-subtitle">PDF • AI content →</p>
+                        <p class="card-description">Course</p>
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p>Drag & drop</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Section -->
+                <div class="card progress-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line card-icon"></i>
+                        <h3>Progress</h3>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-subtitle">Track mastery & SRS</p>
+                        <p class="card-description">Review when due</p>
+                        <div class="progress-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Due today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Progress Tracking -->
+            <div class="right-column">
+                <div class="progress-panel">
+                    <h3 class="progress-title">Your progress (mock)</h3>
+                    
+                    <!-- Course Coverage -->
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Course coverage</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Accuracy -->
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Quiz accuracy</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill accuracy" style="width: 60%"></div>
+                        </div>
+                    </div>
+
+                    <!-- SRS Cleared -->
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">SRS cleared</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill srs" style="width: 30%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>MasteryPath group 4</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
 </html>
