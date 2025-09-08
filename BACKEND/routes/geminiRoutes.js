@@ -4,6 +4,6 @@ import * as geminiController from "../controllers/geminiController.js";
 
 const router = express.Router();
 
-router.post("/generate", geminiController.generate);
+router.post("/call-gemini", geminiController.callGemini);
 
 export default router;

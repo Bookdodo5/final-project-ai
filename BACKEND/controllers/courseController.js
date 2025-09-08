@@ -1,3 +1,5 @@
+import db from "../config/firebase.js";
+
 /**
  * GET /courses
  * Purpose: List all courses for the given user.
@@ -9,7 +11,16 @@
  */
 /** @type {import("express").RequestHandler} */
 export const getCourses = async (req, res) => {
-    res.status(501).send("Unimplemented");
+    try {
+        const courses = await db.collection("courses").get()
+        const coursesData = courses.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+        res.status(200).json(coursesData)
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
 };
 
 /**
