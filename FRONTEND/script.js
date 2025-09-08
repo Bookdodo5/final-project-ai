@@ -371,7 +371,7 @@ function renderQuiz(quizData, container, resultsContainer) {
                     ],
                     low: [
                         "Great job! Even though you weren't confident, you got it right. Trust your instincts more.",
-                        "Correct! Your knowledge is better than you think. Build confidence in your abilities.",
+                        "You're on the right track, but your confidence is lower than expected. Reflect on your thought process.",
                         "Well done! You knew more than you realized. Work on trusting your understanding."
                     ]
                 },
@@ -384,7 +384,7 @@ function renderQuiz(quizData, container, resultsContainer) {
                     low: [
                         "This wasn't correct, and your low confidence suggests you sensed something was off. Good intuition!",
                         "Incorrect, but your hesitation shows good self-awareness. Let's build your understanding.",
-                        "Not right this time. Your uncertainty was justified - let's work through this concept together."
+                        "You've identified some key ideas, but the explanation needs much more elaboration."
                     ]
                 }
             };
@@ -446,8 +446,8 @@ function renderQuiz(quizData, container, resultsContainer) {
                     "Good start! Try to expand your answer with more supporting details and explanations."
                 ],
                 poor: [
-                    "Your answer touches on some relevant points but needs significant development.",
-                    "This response shows basic awareness but lacks the depth and detail needed.",
+                    "This answer lacks clarity and detail. Focus on providing more specific information.",
+                    "Your response is incomplete. Make sure to address all parts of the question.",
                     "You've identified some key ideas, but the explanation needs much more elaboration."
                 ]
             };
@@ -573,80 +573,73 @@ function renderQuiz(quizData, container, resultsContainer) {
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     console.log('App starting...');
+    
+    // Initialize course data
+    window.coursesData = [
+        {
+            title: "Accessible Auth Forms",
+            description: "Build responsive login, Registration, and Forgot Password forms. Use proper labels, aria for errors, and keyboard navigation.",
+            tags: ["Front-end", "Auth", "A11y"]
+        },
+        {
+            title: "PDF Upload UX",
+            description: "Drag-and-drop area with progress indicator; validate size/type; show file name and cancel option.",
+            tags: ["Front-end", "Upload", "UX"]
+        },
+        {
+            title: "JWT Basics",
+            description: "Issue short-lived access tokens and refresh tokens. Store securely and validate on each protected endpoint.",
+            tags: ["Back-end", "Auth", "JWT"]
+        },
+        {
+            title: "Job Queues",
+            description: "Offload heavy PDF parsing and AI generation to background workers to keep APIs responsive.",
+            tags: ["Back-end", "Queues", "Scaling"]
+        },
+        {
+            title: "RAG Chunking",
+            description: "Split document text into semantic chunks; retrieve relevant pieces to reduce hallucination before generating answers.",
+            tags: ["AI", "RAG", "Context"]
+        },
+        {
+            title: "AI Grading Schema",
+            description: "Design prompts that return JSON with grade, feedback, suggested improvements, and ideal answer for open-ended responses.",
+            tags: ["AI", "Grading", "JSON"]
+        }
+    ];
+    
+    // Initialize components
     initializeNavigation();
     initializeNewCourseButton();
     initializeOverviewUpload();
     
-    // Simple direct initialization
-    setTimeout(() => {
-        setupCourseCards();
-        setupBackButton(); 
-    }, 500);
+    // Show the Learn page by default
+    showLearnPage();
+    
+    // Set up the course grid
+    const courseGrid = document.querySelector('.course-grid');
+    if (courseGrid) {
+        window.coursesData.forEach(course => {
+            const courseCard = document.createElement('div');
+            courseCard.className = 'course-card';
+            courseCard.innerHTML = `
+                <h3 class="course-title">${course.title}</h3>
+                <p class="course-description">${course.description}</p>
+                <div class="course-tags">
+                    ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+            courseGrid.appendChild(courseCard);
+        });
+    }
+    
+    // Set up back button
+    setupBackButton();
+    
+    // Set up search functionality
+    setupSearchFunctionality();
 });
-
-function initializeOverviewUpload() {
-    const uploadArea = document.getElementById('uploadArea');
-    if (!uploadArea) return;
-
-    console.log('Setting up overview upload functionality');
-
-    // Click to upload
-    uploadArea.addEventListener('click', function() {
-        console.log('Upload area clicked');
-        triggerFileUpload();
-    });
-
-    // Drag and drop functionality
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.add('drag-over');
-    });
-
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
-    });
-
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
-        
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-            if (file.type === 'application/pdf') {
-                console.log('PDF dropped:', file.name);
-                uploadPDFAndGenerateCourse(file);
-            } else {
-                showNotification('Please upload a PDF file', 'error');
-            }
-        }
-    });
-}
-
-function triggerFileUpload() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.pdf';
-    fileInput.style.display = 'none';
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && file.type === 'application/pdf') {
-            console.log('PDF file selected from overview:', file.name);
-            uploadPDFAndGenerateCourse(file);
-        } else {
-            showNotification('Please select a PDF file', 'error');
-        }
-    });
-    
-    document.body.appendChild(fileInput);
-    fileInput.click();
-    document.body.removeChild(fileInput);
-}
 
 // Navigation functionality
 function initializeNavigation() {
@@ -716,7 +709,7 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course cards
+            // Reinitialize course functionality
             setTimeout(setupCourseCards, 100);
         });
         
@@ -747,7 +740,7 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course cards
+            // Reinitialize course functionality
             setTimeout(setupCourseCards, 100);
         };
         
@@ -911,39 +904,54 @@ function goToLearn() {
 }
 
 function showLearnPage() {
+    // Hide all sections first
+    hideAllSections();
+    
     const learnPage = document.getElementById('learnPage');
     if (learnPage) {
+        // Show the learn page
         learnPage.style.display = 'block';
         
-        // Reset learn page to normal state
+        // Update navigation
+        updateNavigation('Learn');
+        
+        // Make sure the course grid is visible
         const courseGrid = learnPage.querySelector('.course-grid');
-        const searchContainer = learnPage.querySelector('.learn-search-container');
-        const learnHeader = learnPage.querySelector('.learn-header');
-        const reviewContent = learnPage.querySelector('.review-content');
-        
-        // Show normal learn content
-        if (courseGrid) courseGrid.style.display = 'grid';
-        if (searchContainer) searchContainer.style.display = 'block';
-        
-        // Reset header
-        if (learnHeader) {
-            const title = learnHeader.querySelector('.learn-title');
-            const subtitle = learnHeader.querySelector('.learn-subtitle');
-            const newCourseBtn = learnHeader.querySelector('.new-course-btn');
+        if (courseGrid) {
+            courseGrid.style.display = 'grid';
             
-            if (title) title.textContent = 'Learn';
-            if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
-            if (newCourseBtn) newCourseBtn.style.display = 'flex';
+            // Clear existing cards to prevent duplicates
+            courseGrid.innerHTML = '';
+            
+            // Add all courses to the grid
+            if (window.coursesData && window.coursesData.length > 0) {
+                window.coursesData.forEach(course => {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card';
+                    courseCard.innerHTML = `
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-tags">
+                            ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                    courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+                    courseGrid.appendChild(courseCard);
+                });
+            } else {
+                // Show message if no courses
+                courseGrid.innerHTML = `
+                    <div class="no-courses">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No courses available</h3>
+                        <p>Create a new course to get started</p>
+                        <button class="new-course-btn">
+                            <i class="fas fa-plus"></i> New Course
+                        </button>
+                    </div>
+                `;
+            }
         }
-        
-        // Remove review content if it exists
-        if (reviewContent) reviewContent.remove();
-        
-        setTimeout(() => {
-            setupCourseCards();
-            setupSearchFunctionality();
-            renderDynamicCourses();
-        }, 100);
     }
 }
 
@@ -1198,69 +1206,46 @@ function renderDynamicCourses() {
 }
 
 function setupSearchFunctionality() {
-    const searchInput = document.querySelector('.learn-search-input');
+    const searchInput = document.querySelector('.search-input');
     if (!searchInput) return;
     
-    console.log('Setting up search functionality');
+    // Clear any existing event listeners
+    const newSearchInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newSearchInput, searchInput);
     
-    searchInput.addEventListener('input', function(e) {
+    newSearchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase().trim();
-        console.log('Searching for:', searchTerm);
-        
         const courseCards = document.querySelectorAll('.course-card');
+        let hasResults = false;
         
         courseCards.forEach(card => {
-            const title = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
-            const description = card.querySelector('.course-description')?.textContent.toLowerCase() || '';
-            const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+            const title = card.querySelector('.course-title')?.textContent?.toLowerCase() || '';
+            const description = card.querySelector('.course-description')?.textContent?.toLowerCase() || '';
+            const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase());
             
-            const searchText = `${title} ${description} ${tags}`;
+            const matchesSearch = title.includes(searchTerm) || 
+                                description.includes(searchTerm) || 
+                                tags.some(tag => tag.includes(searchTerm));
             
-            if (searchTerm === '' || searchText.includes(searchTerm)) {
-                card.style.display = 'block';
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1)';
-            } else {
-                card.style.display = 'none';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.95)';
-            }
+            card.style.display = matchesSearch ? 'block' : 'none';
+            if (matchesSearch) hasResults = true;
         });
         
-        // Show "no results" message if needed
-        const visibleCards = Array.from(courseCards).filter(card => card.style.display !== 'none');
-        showNoResultsMessage(visibleCards.length === 0 && searchTerm !== '');
-    });
-    
-    // Clear search functionality
-    searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            this.value = '';
-            this.dispatchEvent(new Event('input'));
+        // Show/hide no results message
+        const noResults = document.querySelector('.no-results');
+        if (noResults) {
+            noResults.style.display = hasResults || !searchTerm ? 'none' : 'block';
         }
     });
-}
-
-function showNoResultsMessage(show) {
-    let noResultsMsg = document.querySelector('.no-results-message');
     
-    if (show && !noResultsMsg) {
-        noResultsMsg = document.createElement('div');
-        noResultsMsg.className = 'no-results-message';
-        noResultsMsg.innerHTML = `
-            <div class="no-results-content">
-                <i class="fas fa-search"></i>
-                <h3>No courses found</h3>
-                <p>Try adjusting your search terms or browse all available courses.</p>
-            </div>
-        `;
-        
-        const courseGrid = document.querySelector('.course-grid');
-        if (courseGrid) {
-            courseGrid.appendChild(noResultsMsg);
-        }
-    } else if (!show && noResultsMsg) {
-        noResultsMsg.remove();
+    // Add clear button functionality if it exists
+    const clearButton = document.querySelector('.search-clear');
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            newSearchInput.value = '';
+            newSearchInput.dispatchEvent(new Event('input'));
+            newSearchInput.focus();
+        });
     }
 }
 
@@ -1418,4 +1403,20 @@ function hideLoadingModal() {
     if (modal) {
         modal.style.display = 'none';
     }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }
