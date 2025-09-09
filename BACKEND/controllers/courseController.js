@@ -77,7 +77,6 @@ async function saveModules(userId, courseId, modules) {
 
 async function generateCourseContent(topic, language, length) {
     try {
-        console.log("generating...", topic, language, length);
         const response = await generate(
             prompt(topic, language, length), 
             systemInstruction
