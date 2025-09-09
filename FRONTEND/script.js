@@ -1,425 +1,3 @@
-// Sample course data
-const sampleCourses = [
-    {
-        title: "Introduction to Web Development",
-        description: "Learn the basics of HTML, CSS, and JavaScript to build your first website.",
-        tags: ["Web", "Beginner", "HTML"]
-    },
-    {
-        title: "Python for Data Science",
-        description: "Master Python programming for data analysis and visualization.",
-        tags: ["Python", "Data Science", "Intermediate"]
-    },
-    {
-        title: "Mobile App Development with React Native",
-        description: "Build cross-platform mobile apps using React Native framework.",
-        tags: ["Mobile", "React", "JavaScript"]
-    }
-];
-
-// Initialize the application with Overview as default page
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('App starting...');
-    
-    // Initialize course data if not already set
-    if (!window.coursesData) {
-        window.coursesData = [...sampleCourses];
-    }
-    
-    // Initialize components
-    initializeNavigation();
-    initializeNewCourseButton();
-    initializeOverviewUpload();
-    
-    // Show Overview page by default
-    showOverviewPage();
-});
-
-// Update navigation to handle all tabs
-function initializeNavigation() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const section = this.textContent.trim();
-            
-            // Remove active class from all links
-            navLinks.forEach(l => l.classList.remove('active'));
-            // Add active class to clicked link
-            this.classList.add('active');
-            
-            // Show the selected section
-            if (section.includes('Overview')) {
-                showOverviewPage();
-            } else if (section.includes('Learn')) {
-                showLearnPage();
-            } else if (section.includes('Review')) {
-                showReviewPage();
-            }
-        });
-    });
-}
-
-// Update file upload functionality
-function initializeOverviewUpload() {
-    const uploadArea = document.getElementById('uploadArea');
-    if (!uploadArea) return;
-
-    console.log('Setting up file upload functionality');
-
-    // Click to upload
-    uploadArea.addEventListener('click', function() {
-        triggerFileUpload();
-    });
-
-    // Drag and drop functionality
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.add('drag-over');
-    });
-
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
-    });
-
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.classList.remove('drag-over');
-        
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            handleFileUpload(files[0]);
-        }
-    });
-}
-
-function triggerFileUpload() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.pdf,.txt,.doc,.docx';
-    fileInput.style.display = 'none';
-    
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileUpload(file);
-        }
-    });
-    
-    document.body.appendChild(fileInput);
-    fileInput.click();
-    document.body.removeChild(fileInput);
-}
-
-function handleFileUpload(file) {
-    console.log('File selected:', file.name);
-    
-    // Check file type
-    const validTypes = ['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!validTypes.includes(file.type)) {
-        showNotification('Please upload a valid file (PDF, TXT, DOC, DOCX)', 'error');
-        return;
-    }
-    
-    // Show loading state
-    showLoadingModal('Uploading file...');
-    
-    // In a real app, you would upload the file to a server here
-    // For now, we'll simulate a successful upload
-    setTimeout(() => {
-        hideLoadingModal();
-        showNotification('File uploaded successfully!', 'success');
-        
-        // If it's a course file, you might want to add it to the courses
-        if (file.type === 'application/pdf') {
-            const newCourse = {
-                title: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
-                description: `Uploaded on ${new Date().toLocaleDateString()}`,
-                tags: ['New', 'Uploaded']
-            };
-            
-            window.coursesData.unshift(newCourse);
-            
-            // If we're on the Learn page, refresh it
-            if (document.querySelector('.nav-link.active').textContent.includes('Learn')) {
-                showLearnPage();
-            }
-        }
-    }, 2000);
-}
-
-// Show Overview page
-function showOverviewPage() {
-    hideAllSections();
-    
-    const hero = document.querySelector('.hero');
-    const overviewPage = document.getElementById('overviewPage');
-    
-    if (hero) hero.style.display = 'block';
-    if (overviewPage) overviewPage.style.display = 'grid';
-    
-    // Update navigation
-    updateNavigation('Overview');
-}
-
-// Helper function to hide all sections
-function hideAllSections() {
-    const sections = [
-        document.querySelector('.hero'),
-        document.getElementById('learnPage'),
-        document.getElementById('courseDetailPage'),
-        document.getElementById('overviewPage'),
-        document.querySelector('.review-page')
-    ];
-    
-    sections.forEach(section => {
-        if (section) section.style.display = 'none';
-    });
-}
-
-// Show loading modal
-function showLoadingModal(message = 'Loading...') {
-    let modal = document.getElementById('loadingModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'loadingModal';
-        modal.className = 'loading-modal';
-        modal.innerHTML = `
-            <div class="loading-content">
-                <div class="spinner"></div>
-                <p>${message}</p>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    modal.style.display = 'flex';
-}
-
-// Hide loading modal
-function hideLoadingModal() {
-    const modal = document.getElementById('loadingModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Show notification
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-            <p>${message}</p>
-        </div>
-    `;
-    document.body.appendChild(notification);
-    
-    // Auto-remove after 3 seconds
-    setTimeout(() => {
-        notification.classList.add('fade-out');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-// Show Learn page with courses
-function showLearnPage() {
-    // Hide all sections first
-    hideAllSections();
-    
-    const learnPage = document.getElementById('learnPage');
-    if (!learnPage) return;
-    
-    // Show the learn page
-    learnPage.style.display = 'block';
-    
-    // Update navigation
-    updateNavigation('Learn');
-    
-    // Clear existing course grid
-    const courseGrid = learnPage.querySelector('.course-grid');
-    if (!courseGrid) return;
-    
-    courseGrid.innerHTML = '';
-    
-    // Add courses to the grid
-    if (window.coursesData && window.coursesData.length > 0) {
-        window.coursesData.forEach(course => {
-            const courseCard = document.createElement('div');
-            courseCard.className = 'course-card';
-            courseCard.innerHTML = `
-                <h3 class="course-title">${course.title}</h3>
-                <p class="course-description">${course.description}</p>
-                <div class="course-tags">
-                    ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                </div>
-            `;
-            
-            // Add click handler to open course
-            courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
-            
-            // Add hover effects
-            courseCard.style.cursor = 'pointer';
-            courseCard.style.transition = 'transform 0.2s';
-            courseCard.addEventListener('mouseenter', () => {
-                courseCard.style.transform = 'translateY(-5px)';
-            });
-            courseCard.addEventListener('mouseleave', () => {
-                courseCard.style.transform = 'translateY(0)';
-            });
-            
-            courseGrid.appendChild(courseCard);
-        });
-    } else {
-        // Show message if no courses
-        courseGrid.innerHTML = `
-            <div class="no-courses">
-                <i class="fas fa-book-open"></i>
-                <h3>No courses available</h3>
-                <p>Create a new course to get started</p>
-            </div>
-        `;
-    }
-    
-    // Set up search functionality
-    setupSearchFunctionality();
-}
-
-// Open course detail
-function openCourse(title, description, tags) {
-    // Hide all sections first
-    hideAllSections();
-    
-    const detailPage = document.getElementById('courseDetailPage');
-    if (!detailPage) return;
-    
-    // Show the detail page
-    detailPage.style.display = 'block';
-    
-    // Update course title
-    const titleElement = document.getElementById('courseDetailTitle');
-    if (titleElement) titleElement.textContent = title;
-    
-    // Update tags
-    const tagsContainer = document.getElementById('courseDetailTags');
-    if (tagsContainer) {
-        tagsContainer.innerHTML = '';
-        if (tags && tags.length > 0) {
-            tags.forEach(tag => {
-                const tagElement = document.createElement('span');
-                tagElement.className = 'tag';
-                tagElement.textContent = tag;
-                tagsContainer.appendChild(tagElement);
-            });
-        }
-    }
-    
-    // Set up back button
-    setupBackButton();
-}
-
-// Set up back button
-function setupBackButton() {
-    const backButton = document.getElementById('backToLearn');
-    if (!backButton) return;
-    
-    // Remove existing event listeners
-    const newButton = backButton.cloneNode(true);
-    backButton.parentNode.replaceChild(newButton, backButton);
-    
-    // Add click handler
-    newButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        showLearnPage();
-    });
-}
-
-// Helper function to hide all sections
-function hideAllSections() {
-    const sections = [
-        document.querySelector('.hero'),
-        document.getElementById('learnPage'),
-        document.getElementById('courseDetailPage'),
-        document.getElementById('overviewPage')
-    ];
-    
-    sections.forEach(section => {
-        if (section) section.style.display = 'none';
-    });
-}
-
-// Update navigation active state
-function updateNavigation(activeSection) {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.textContent.trim().includes(activeSection)) {
-            link.classList.add('active');
-        }
-    });
-}
-
-// Initialize search functionality
-function setupSearchFunctionality() {
-    const searchInput = document.querySelector('.learn-search-input');
-    if (!searchInput) return;
-    
-    searchInput.addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const courseCards = document.querySelectorAll('.course-card');
-        let hasResults = false;
-        
-        courseCards.forEach(card => {
-            const title = card.querySelector('.course-title')?.textContent?.toLowerCase() || '';
-            const description = card.querySelector('.course-description')?.textContent?.toLowerCase() || '';
-            const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase());
-            
-            const matchesSearch = title.includes(searchTerm) || 
-                                description.includes(searchTerm) || 
-                                tags.some(tag => tag.includes(searchTerm));
-            
-            card.style.display = matchesSearch ? 'block' : 'none';
-            if (matchesSearch) hasResults = true;
-        });
-    });
-}
-
-// Initialize new course button
-function initializeNewCourseButton() {
-    const newCourseBtn = document.querySelector('.new-course-btn');
-    if (!newCourseBtn) return;
-    
-    newCourseBtn.addEventListener('click', function() {
-        // This will be implemented to handle new course creation
-        console.log('New course button clicked');
-        // For now, let's add a sample course
-        const newCourse = {
-            title: `New Course ${window.coursesData.length + 1}`,
-            description: 'This is a newly created course',
-            tags: ['New', 'Sample']
-        };
-        
-        window.coursesData.unshift(newCourse);
-        showLearnPage();
-    });
-}
-
-// Initialize overview upload (simplified for now)
-function initializeOverviewUpload() {
-    const uploadArea = document.getElementById('uploadArea');
-    if (!uploadArea) return;
-    
-    uploadArea.addEventListener('click', function() {
-        console.log('Upload area clicked');
-    });
-}
-
 // Render quiz questions with immediate feedback
 function renderQuiz(quizData, container, resultsContainer) {
     let currentQuestionIndex = 0;
@@ -793,7 +371,7 @@ function renderQuiz(quizData, container, resultsContainer) {
                     ],
                     low: [
                         "Great job! Even though you weren't confident, you got it right. Trust your instincts more.",
-                        "Correct! Your knowledge is better than you think. Build confidence in your abilities.",
+                        "You're on the right track, but your confidence is lower than expected. Reflect on your thought process.",
                         "Well done! You knew more than you realized. Work on trusting your understanding."
                     ]
                 },
@@ -806,7 +384,7 @@ function renderQuiz(quizData, container, resultsContainer) {
                     low: [
                         "This wasn't correct, and your low confidence suggests you sensed something was off. Good intuition!",
                         "Incorrect, but your hesitation shows good self-awareness. Let's build your understanding.",
-                        "Not right this time. Your uncertainty was justified - let's work through this concept together."
+                        "You've identified some key ideas, but the explanation needs much more elaboration."
                     ]
                 }
             };
@@ -868,8 +446,8 @@ function renderQuiz(quizData, container, resultsContainer) {
                     "Good start! Try to expand your answer with more supporting details and explanations."
                 ],
                 poor: [
-                    "Your answer touches on some relevant points but needs significant development.",
-                    "This response shows basic awareness but lacks the depth and detail needed.",
+                    "This answer lacks clarity and detail. Focus on providing more specific information.",
+                    "Your response is incomplete. Make sure to address all parts of the question.",
                     "You've identified some key ideas, but the explanation needs much more elaboration."
                 ]
             };
@@ -992,6 +570,77 @@ function renderQuiz(quizData, container, resultsContainer) {
     showQuestion(0);
 }
 
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('App starting...');
+    
+    // Initialize course data
+    window.coursesData = [
+        {
+            title: "Accessible Auth Forms",
+            description: "Build responsive login, Registration, and Forgot Password forms. Use proper labels, aria for errors, and keyboard navigation.",
+            tags: ["Front-end", "Auth", "A11y"]
+        },
+        {
+            title: "PDF Upload UX",
+            description: "Drag-and-drop area with progress indicator; validate size/type; show file name and cancel option.",
+            tags: ["Front-end", "Upload", "UX"]
+        },
+        {
+            title: "JWT Basics",
+            description: "Issue short-lived access tokens and refresh tokens. Store securely and validate on each protected endpoint.",
+            tags: ["Back-end", "Auth", "JWT"]
+        },
+        {
+            title: "Job Queues",
+            description: "Offload heavy PDF parsing and AI generation to background workers to keep APIs responsive.",
+            tags: ["Back-end", "Queues", "Scaling"]
+        },
+        {
+            title: "RAG Chunking",
+            description: "Split document text into semantic chunks; retrieve relevant pieces to reduce hallucination before generating answers.",
+            tags: ["AI", "RAG", "Context"]
+        },
+        {
+            title: "AI Grading Schema",
+            description: "Design prompts that return JSON with grade, feedback, suggested improvements, and ideal answer for open-ended responses.",
+            tags: ["AI", "Grading", "JSON"]
+        }
+    ];
+    
+    // Initialize components
+    initializeNavigation();
+    initializeNewCourseButton();
+    initializeOverviewUpload();
+    
+    // Show the Learn page by default
+    showLearnPage();
+    
+    // Set up the course grid
+    const courseGrid = document.querySelector('.course-grid');
+    if (courseGrid) {
+        window.coursesData.forEach(course => {
+            const courseCard = document.createElement('div');
+            courseCard.className = 'course-card';
+            courseCard.innerHTML = `
+                <h3 class="course-title">${course.title}</h3>
+                <p class="course-description">${course.description}</p>
+                <div class="course-tags">
+                    ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+            courseGrid.appendChild(courseCard);
+        });
+    }
+    
+    // Set up back button
+    setupBackButton();
+    
+    // Set up search functionality
+    setupSearchFunctionality();
+});
+
 // Navigation functionality
 function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -1045,6 +694,46 @@ function setupBackButton() {
             // Show learn page
             document.getElementById('learnPage').style.display = 'block';
             
+            // Restore Learn content sections
+            const learnPageEl = document.getElementById('learnPage');
+            if (learnPageEl) {
+                const grid = learnPageEl.querySelector('.course-grid');
+                const search = learnPageEl.querySelector('.learn-search-container');
+                if (grid) {
+                    grid.style.display = 'grid';
+                    // Restore original course cards
+                    grid.innerHTML = '';
+                    // Recreate all course cards with proper click handlers
+                    window.coursesData.forEach(course => {
+                        const courseCard = document.createElement('div');
+                        courseCard.className = 'course-card';
+                        courseCard.innerHTML = `
+                            <h3 class="course-title">${course.title}</h3>
+                            <p class="course-description">${course.description}</p>
+                            <div class="course-tags">
+                                ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        `;
+                        courseCard.onclick = function() {
+                            console.log('Course card clicked:', course.title);
+                            openCourse(course.title, course.description, course.tags);
+                        };
+                        courseCard.style.cursor = 'pointer';
+                        courseCard.onmouseenter = function() {
+                            this.style.transform = 'translateY(-3px)';
+                        };
+                        courseCard.onmouseleave = function() {
+                            this.style.transform = 'translateY(0)';
+                        };
+                        grid.appendChild(courseCard);
+                    });
+                }
+                if (search) search.style.display = 'block';
+                // Scroll to the Learn header
+                const learnHeader = learnPageEl.querySelector('.learn-header');
+                if (learnHeader) learnHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             // Hide other pages
             const hero = document.querySelector('.hero');
             const overview = document.getElementById('overviewPage');
@@ -1060,8 +749,8 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course cards
-            setTimeout(setupCourseCards, 100);
+            // Remove the setTimeout delay that might cause issues
+            console.log('Back button: course cards recreated, should be clickable now');
         });
         
         // Also add onclick as backup
@@ -1076,6 +765,45 @@ function setupBackButton() {
             // Show learn page
             document.getElementById('learnPage').style.display = 'block';
             
+            // Restore Learn content sections
+            const learnPageEl2 = document.getElementById('learnPage');
+            if (learnPageEl2) {
+                const grid2 = learnPageEl2.querySelector('.course-grid');
+                const search2 = learnPageEl2.querySelector('.learn-search-container');
+                if (grid2) {
+                    grid2.style.display = 'grid';
+                    // Restore original course cards
+                    grid2.innerHTML = '';
+                    // Recreate all course cards with proper click handlers
+                    window.coursesData.forEach(course => {
+                        const courseCard = document.createElement('div');
+                        courseCard.className = 'course-card';
+                        courseCard.innerHTML = `
+                            <h3 class="course-title">${course.title}</h3>
+                            <p class="course-description">${course.description}</p>
+                            <div class="course-tags">
+                                ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        `;
+                        courseCard.onclick = function() {
+                            console.log('Course card clicked (backup):', course.title);
+                            openCourse(course.title, course.description, course.tags);
+                        };
+                        courseCard.style.cursor = 'pointer';
+                        courseCard.onmouseenter = function() {
+                            this.style.transform = 'translateY(-3px)';
+                        };
+                        courseCard.onmouseleave = function() {
+                            this.style.transform = 'translateY(0)';
+                        };
+                        grid2.appendChild(courseCard);
+                    });
+                }
+                if (search2) search2.style.display = 'block';
+                const learnHeader2 = learnPageEl2.querySelector('.learn-header');
+                if (learnHeader2) learnHeader2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             // Hide other pages
             const hero = document.querySelector('.hero');
             const overview = document.getElementById('overviewPage');
@@ -1091,8 +819,8 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course cards
-            setTimeout(setupCourseCards, 100);
+            // Remove the setTimeout delay that might cause issues
+            console.log('Back button (backup): course cards recreated, should be clickable now');
         };
         
         console.log('Back button setup complete');
@@ -1115,16 +843,8 @@ function hideAllSections() {
 }
 
 function showOverviewPage() {
-    // Show landing (hero) + overview grid as the original default look
-    const hero = document.querySelector('.hero');
-    if (hero) hero.style.display = 'grid'; // hero was originally visible
-    const overview = document.getElementById('overviewPage');
-    if (overview) overview.style.display = 'grid';
-    // Hide others
-    const learn = document.getElementById('learnPage');
-    if (learn) learn.style.display = 'none';
-    const detail = document.getElementById('courseDetailPage');
-    if (detail) detail.style.display = 'none';
+    const overviewPage = document.getElementById('overviewPage');
+    if (overviewPage) overviewPage.style.display = 'block';
 }
 
 function showReviewPage() {
@@ -1262,6 +982,69 @@ function goToLearn() {
     }, 100);
 }
 
+function showLearnPage() {
+    // Hide all sections first
+    hideAllSections();
+    
+    const learnPage = document.getElementById('learnPage');
+    if (learnPage) {
+        // Show the learn page
+        learnPage.style.display = 'block';
+        
+        // Update navigation
+        updateNavigation('Learn');
+        
+        // Make sure the course grid is visible
+        const courseGrid = learnPage.querySelector('.course-grid');
+        if (courseGrid) {
+            courseGrid.style.display = 'grid';
+            
+            // Clear existing cards to prevent duplicates
+            courseGrid.innerHTML = '';
+            
+            // Add all courses to the grid
+            if (window.coursesData && window.coursesData.length > 0) {
+                window.coursesData.forEach(course => {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card';
+                    courseCard.innerHTML = `
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-tags">
+                            ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                    courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+                    courseGrid.appendChild(courseCard);
+                });
+            } else {
+                // Show message if no courses
+                courseGrid.innerHTML = `
+                    <div class="no-courses">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No courses available</h3>
+                        <p>Create a new course to get started</p>
+                        <button class="new-course-btn">
+                            <i class="fas fa-plus"></i> New Course
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    }
+}
+
+function updateNavigation(activeSection) {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.textContent.trim() === activeSection || 
+            (activeSection === 'Review' && link.textContent.includes('Review'))) {
+            link.classList.add('active');
+        }
+    });
+}
+
 function setupCourseCards() {
     const courseCards = document.querySelectorAll('.course-card');
     console.log('Setting up', courseCards.length, 'course cards');
@@ -1296,14 +1079,93 @@ function setupCourseCards() {
 function openCourse(title, description, tags) {
     console.log('Opening course:', title);
     
-    // Hide all pages
+    // Show Learn page with header; hide hero and overview
     document.querySelector('.hero')?.setAttribute('style', 'display: none');
-    document.getElementById('learnPage')?.setAttribute('style', 'display: none');
     document.getElementById('overviewPage')?.setAttribute('style', 'display: none');
+    const learn = document.getElementById('learnPage');
+    if (learn) {
+        learn.style.display = 'block';
+        // Keep search visible, don't hide the grid yet
+    }
     
-    // Show course detail page
-    const detailPage = document.getElementById('courseDetailPage');
-    detailPage.style.display = 'block';
+    // Create course detail content directly in the grid
+    const learnPageSection = document.getElementById('learnPage');
+    const courseGridEl = learnPageSection?.querySelector('.course-grid');
+    
+    if (courseGridEl) {
+        console.log('Found grid, creating course detail content...');
+        // Clear the grid and create course detail content
+        courseGridEl.innerHTML = `
+            <div class="course-detail-page" style="display: block;">
+                <div class="course-detail-content">
+                    <div class="course-detail-header">
+                        <button class="back-btn" id="backToLearn">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Learn
+                        </button>
+                        <div class="course-detail-title-section">
+                            <h2 class="course-detail-title">${title}</h2>
+                            <div class="course-detail-tags">
+                                ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Content Section -->
+                    <div class="course-content-section">
+                        <div class="content-header">
+                            <h3>Course Content</h3>
+                            <span class="content-status">Generated by AI</span>
+                        </div>
+                        <div class="course-content">
+                            ${getCourseContent(title, description)}
+                        </div>
+                    </div>
+
+                    <!-- Quiz Section -->
+                    <div class="quiz-section">
+                        <div class="quiz-header">
+                            <h3>Quiz</h3>
+                            <span class="quiz-status">Test your knowledge</span>
+                        </div>
+                        <div class="quiz-container" id="quizContainer">
+                            <div class="loading-quiz">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading quiz questions...</p>
+                            </div>
+                        </div>
+                        <div class="quiz-results" id="quizResults" style="display: none;">
+                            <h4>Quiz Results</h4>
+                            <div class="score-display">
+                                <span class="score" id="quizScore">0/0</span>
+                                <span class="percentage" id="quizPercentage">0%</span>
+                            </div>
+                            <button class="retake-quiz-btn" id="retakeQuiz">Retake Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        courseGridEl.style.display = 'block';
+        console.log('Course detail content created in grid');
+        
+        // Scroll to the course grid area (red box)
+        courseGridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Set up quiz after content is created
+        const quizContainer = document.getElementById('quizContainer');
+        const quizResults = document.getElementById('quizResults');
+        if (quizContainer && quizResults) {
+            const quiz = getCourseQuiz(title);
+            renderQuiz(quiz, quizContainer, quizResults);
+        }
+        
+        // Setup back button for the new content
+        setupBackButton();
+    } else {
+        console.log('Could not find course grid');
+    }
     
     // Set title
     const titleElement = document.getElementById('courseDetailTitle');
@@ -1502,69 +1364,46 @@ function renderDynamicCourses() {
 }
 
 function setupSearchFunctionality() {
-    const searchInput = document.querySelector('.learn-search-input');
+    const searchInput = document.querySelector('.search-input');
     if (!searchInput) return;
     
-    console.log('Setting up search functionality');
+    // Clear any existing event listeners
+    const newSearchInput = searchInput.cloneNode(true);
+    searchInput.parentNode.replaceChild(newSearchInput, searchInput);
     
-    searchInput.addEventListener('input', function(e) {
+    newSearchInput.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase().trim();
-        console.log('Searching for:', searchTerm);
-        
         const courseCards = document.querySelectorAll('.course-card');
+        let hasResults = false;
         
         courseCards.forEach(card => {
-            const title = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
-            const description = card.querySelector('.course-description')?.textContent.toLowerCase() || '';
-            const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+            const title = card.querySelector('.course-title')?.textContent?.toLowerCase() || '';
+            const description = card.querySelector('.course-description')?.textContent?.toLowerCase() || '';
+            const tags = Array.from(card.querySelectorAll('.tag')).map(tag => tag.textContent.toLowerCase());
             
-            const searchText = `${title} ${description} ${tags}`;
+            const matchesSearch = title.includes(searchTerm) || 
+                                description.includes(searchTerm) || 
+                                tags.some(tag => tag.includes(searchTerm));
             
-            if (searchTerm === '' || searchText.includes(searchTerm)) {
-                card.style.display = 'block';
-                card.style.opacity = '1';
-                card.style.transform = 'scale(1)';
-            } else {
-                card.style.display = 'none';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.95)';
-            }
+            card.style.display = matchesSearch ? 'block' : 'none';
+            if (matchesSearch) hasResults = true;
         });
         
-        // Show "no results" message if needed
-        const visibleCards = Array.from(courseCards).filter(card => card.style.display !== 'none');
-        showNoResultsMessage(visibleCards.length === 0 && searchTerm !== '');
-    });
-    
-    // Clear search functionality
-    searchInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            this.value = '';
-            this.dispatchEvent(new Event('input'));
+        // Show/hide no results message
+        const noResults = document.querySelector('.no-results');
+        if (noResults) {
+            noResults.style.display = hasResults || !searchTerm ? 'none' : 'block';
         }
     });
-}
-
-function showNoResultsMessage(show) {
-    let noResultsMsg = document.querySelector('.no-results-message');
     
-    if (show && !noResultsMsg) {
-        noResultsMsg = document.createElement('div');
-        noResultsMsg.className = 'no-results-message';
-        noResultsMsg.innerHTML = `
-            <div class="no-results-content">
-                <i class="fas fa-search"></i>
-                <h3>No courses found</h3>
-                <p>Try adjusting your search terms or browse all available courses.</p>
-            </div>
-        `;
-        
-        const courseGrid = document.querySelector('.course-grid');
-        if (courseGrid) {
-            courseGrid.appendChild(noResultsMsg);
-        }
-    } else if (!show && noResultsMsg) {
-        noResultsMsg.remove();
+    // Add clear button functionality if it exists
+    const clearButton = document.querySelector('.search-clear');
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            newSearchInput.value = '';
+            newSearchInput.dispatchEvent(new Event('input'));
+            newSearchInput.focus();
+        });
     }
 }
 
@@ -1706,11 +1545,13 @@ function showLoadingModal(message) {
         modal.className = 'loading-modal';
         modal.innerHTML = `
             <div class="loading-content">
-                <div class="spinner"></div>
-                <p>${message}</p>
+                <div class="loading-spinner"></div>
+                <p class="loading-message">${message}</p>
             </div>
         `;
         document.body.appendChild(modal);
+    } else {
+        modal.querySelector('.loading-message').textContent = message;
     }
     modal.style.display = 'flex';
 }
@@ -1724,7 +1565,7 @@ function hideLoadingModal() {
 
 function showNotification(message, type) {
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
+    notification.className = 'notification';
     notification.innerHTML = `
         <div class="notification-content">
             <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
@@ -1733,11 +1574,7 @@ function showNotification(message, type) {
     `;
     document.body.appendChild(notification);
     
-    // Auto-remove after 3 seconds
     setTimeout(() => {
-        notification.classList.add('fade-out');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
+        notification.remove();
     }, 3000);
 }
