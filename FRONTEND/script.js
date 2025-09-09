@@ -699,7 +699,35 @@ function setupBackButton() {
             if (learnPageEl) {
                 const grid = learnPageEl.querySelector('.course-grid');
                 const search = learnPageEl.querySelector('.learn-search-container');
-                if (grid) grid.style.display = 'grid';
+                if (grid) {
+                    grid.style.display = 'grid';
+                    // Restore original course cards
+                    grid.innerHTML = '';
+                    // Recreate all course cards with proper click handlers
+                    window.coursesData.forEach(course => {
+                        const courseCard = document.createElement('div');
+                        courseCard.className = 'course-card';
+                        courseCard.innerHTML = `
+                            <h3 class="course-title">${course.title}</h3>
+                            <p class="course-description">${course.description}</p>
+                            <div class="course-tags">
+                                ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        `;
+                        courseCard.onclick = function() {
+                            console.log('Course card clicked:', course.title);
+                            openCourse(course.title, course.description, course.tags);
+                        };
+                        courseCard.style.cursor = 'pointer';
+                        courseCard.onmouseenter = function() {
+                            this.style.transform = 'translateY(-3px)';
+                        };
+                        courseCard.onmouseleave = function() {
+                            this.style.transform = 'translateY(0)';
+                        };
+                        grid.appendChild(courseCard);
+                    });
+                }
                 if (search) search.style.display = 'block';
                 // Scroll to the Learn header
                 const learnHeader = learnPageEl.querySelector('.learn-header');
@@ -721,8 +749,8 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course functionality
-            setTimeout(setupCourseCards, 100);
+            // Remove the setTimeout delay that might cause issues
+            console.log('Back button: course cards recreated, should be clickable now');
         });
         
         // Also add onclick as backup
@@ -742,7 +770,35 @@ function setupBackButton() {
             if (learnPageEl2) {
                 const grid2 = learnPageEl2.querySelector('.course-grid');
                 const search2 = learnPageEl2.querySelector('.learn-search-container');
-                if (grid2) grid2.style.display = 'grid';
+                if (grid2) {
+                    grid2.style.display = 'grid';
+                    // Restore original course cards
+                    grid2.innerHTML = '';
+                    // Recreate all course cards with proper click handlers
+                    window.coursesData.forEach(course => {
+                        const courseCard = document.createElement('div');
+                        courseCard.className = 'course-card';
+                        courseCard.innerHTML = `
+                            <h3 class="course-title">${course.title}</h3>
+                            <p class="course-description">${course.description}</p>
+                            <div class="course-tags">
+                                ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        `;
+                        courseCard.onclick = function() {
+                            console.log('Course card clicked (backup):', course.title);
+                            openCourse(course.title, course.description, course.tags);
+                        };
+                        courseCard.style.cursor = 'pointer';
+                        courseCard.onmouseenter = function() {
+                            this.style.transform = 'translateY(-3px)';
+                        };
+                        courseCard.onmouseleave = function() {
+                            this.style.transform = 'translateY(0)';
+                        };
+                        grid2.appendChild(courseCard);
+                    });
+                }
                 if (search2) search2.style.display = 'block';
                 const learnHeader2 = learnPageEl2.querySelector('.learn-header');
                 if (learnHeader2) learnHeader2.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -763,8 +819,8 @@ function setupBackButton() {
                 }
             });
             
-            // Reinitialize course functionality
-            setTimeout(setupCourseCards, 100);
+            // Remove the setTimeout delay that might cause issues
+            console.log('Back button (backup): course cards recreated, should be clickable now');
         };
         
         console.log('Back button setup complete');
@@ -1029,32 +1085,86 @@ function openCourse(title, description, tags) {
     const learn = document.getElementById('learnPage');
     if (learn) {
         learn.style.display = 'block';
-        const grid = learn.querySelector('.course-grid');
-        if (grid) grid.style.display = 'none';
-        // Keep search visible
+        // Keep search visible, don't hide the grid yet
     }
     
-    // Show course detail page under Learn header, inside the Learn section
-    const detailPage = document.getElementById('courseDetailPage');
+    // Create course detail content directly in the grid
     const learnPageSection = document.getElementById('learnPage');
-    if (learnPageSection && detailPage) {
-        // Place detail right after the search box and before the grid area
-        const searchEl = learnPageSection.querySelector('.learn-search-container');
-        const courseGridEl = learnPageSection.querySelector('.course-grid');
-        if (searchEl && detailPage.parentElement !== learnPageSection) {
-            // Insert after search (using nextSibling insertion)
-            if (searchEl.nextSibling) {
-                learnPageSection.insertBefore(detailPage, searchEl.nextSibling);
-            } else {
-                learnPageSection.appendChild(detailPage);
-            }
-        } else if (!searchEl && courseGridEl && detailPage.parentElement !== learnPageSection) {
-            learnPageSection.insertBefore(detailPage, courseGridEl);
+    const courseGridEl = learnPageSection?.querySelector('.course-grid');
+    
+    if (courseGridEl) {
+        console.log('Found grid, creating course detail content...');
+        // Clear the grid and create course detail content
+        courseGridEl.innerHTML = `
+            <div class="course-detail-page" style="display: block;">
+                <div class="course-detail-content">
+                    <div class="course-detail-header">
+                        <button class="back-btn" id="backToLearn">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Learn
+                        </button>
+                        <div class="course-detail-title-section">
+                            <h2 class="course-detail-title">${title}</h2>
+                            <div class="course-detail-tags">
+                                ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course Content Section -->
+                    <div class="course-content-section">
+                        <div class="content-header">
+                            <h3>Course Content</h3>
+                            <span class="content-status">Generated by AI</span>
+                        </div>
+                        <div class="course-content">
+                            ${getCourseContent(title, description)}
+                        </div>
+                    </div>
+
+                    <!-- Quiz Section -->
+                    <div class="quiz-section">
+                        <div class="quiz-header">
+                            <h3>Quiz</h3>
+                            <span class="quiz-status">Test your knowledge</span>
+                        </div>
+                        <div class="quiz-container" id="quizContainer">
+                            <div class="loading-quiz">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading quiz questions...</p>
+                            </div>
+                        </div>
+                        <div class="quiz-results" id="quizResults" style="display: none;">
+                            <h4>Quiz Results</h4>
+                            <div class="score-display">
+                                <span class="score" id="quizScore">0/0</span>
+                                <span class="percentage" id="quizPercentage">0%</span>
+                            </div>
+                            <button class="retake-quiz-btn" id="retakeQuiz">Retake Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        courseGridEl.style.display = 'block';
+        console.log('Course detail content created in grid');
+        
+        // Scroll to the course grid area (red box)
+        courseGridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Set up quiz after content is created
+        const quizContainer = document.getElementById('quizContainer');
+        const quizResults = document.getElementById('quizResults');
+        if (quizContainer && quizResults) {
+            const quiz = getCourseQuiz(title);
+            renderQuiz(quiz, quizContainer, quizResults);
         }
-        detailPage.style.display = 'block';
-        // Ensure we are scrolled to the Learn header area
-        const learnHeader = learnPageSection.querySelector('.learn-header');
-        (learnHeader || detailPage).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Setup back button for the new content
+        setupBackButton();
+    } else {
+        console.log('Could not find course grid');
     }
     
     // Set title

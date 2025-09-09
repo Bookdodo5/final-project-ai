@@ -463,11 +463,318 @@ body {
 /* Course Grid */
 .course-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
-    padding: 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
+    margin-top: 2rem;
+}
+
+.course-grid .course-detail-page {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Quiz Section Styles */
+.quiz-section {
+    max-width: 1000px;
+    margin: 3rem auto 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+/* Rating Buttons Styling */
+.rating-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    margin: 0.25rem;
+    border: 2px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rating-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rating-btn[data-rating="1"] {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.rating-btn[data-rating="1"]:hover,
+.rating-btn[data-rating="1"].selected {
+    background: #e74c3c;
+    color: white;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.rating-btn[data-rating="2"] {
+    border-color: #f39c12;
+    color: #f39c12;
+}
+
+.rating-btn[data-rating="2"]:hover,
+.rating-btn[data-rating="2"].selected {
+    background: #f39c12;
+    color: white;
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+}
+
+.rating-btn[data-rating="3"] {
+    border-color: #27ae60;
+    color: #27ae60;
+}
+
+.rating-btn[data-rating="3"]:hover,
+.rating-btn[data-rating="3"].selected {
+    background: #27ae60;
+    color: white;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.rating-btn[data-rating="4"] {
+    border-color: #2ecc71;
+    color: #2ecc71;
+}
+
+.rating-btn[data-rating="4"]:hover,
+.rating-btn[data-rating="4"].selected {
+    background: #2ecc71;
+    color: white;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+/* Finish Quiz Button */
+.finish-quiz-btn, 
+button[onclick*="finishQuiz"],
+.quiz-finish {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--c1), #16a085);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(27, 184, 141, 0.2);
+}
+
+.finish-quiz-btn:hover,
+button[onclick*="finishQuiz"]:hover,
+.quiz-finish:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(27, 184, 141, 0.4);
+    background: linear-gradient(135deg, #16a085, var(--c1));
+}
+
+.finish-quiz-btn:disabled,
+button[onclick*="finishQuiz"]:disabled,
+.quiz-finish:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Submit Answer Button */
+.submit-answer-btn,
+button[onclick*="submitCurrentAnswer"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+}
+
+.submit-answer-btn:hover,
+button[onclick*="submitCurrentAnswer"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+    background: linear-gradient(135deg, #2980b9, #3498db);
+}
+
+.submit-answer-btn:disabled,
+button[onclick*="submitCurrentAnswer"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    background: #95a5a6;
+}
+
+.submit-answer-btn.ready {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.submit-answer-btn.ready:hover {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.5);
+}
+
+.submit-answer-btn.submitted {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    cursor: default;
+}
+
+.submit-answer-btn.error {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* Quiz Navigation Buttons */
+.quiz-next, .quiz-prev, .quiz-finish,
+button[onclick*="showNextQuestion"],
+button[onclick*="showPreviousQuestion"],
+button[onclick*="finishQuiz"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    margin: 0.5rem 0.25rem;
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 10px rgba(155, 89, 182, 0.2);
+}
+
+.quiz-next:hover, .quiz-prev:hover,
+button[onclick*="showNextQuestion"]:hover,
+button[onclick*="showPreviousQuestion"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+}
+
+.quiz-next:disabled, .quiz-prev:disabled,
+button[onclick*="showNextQuestion"]:disabled,
+button[onclick*="showPreviousQuestion"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Show Sample Answer Button */
+.show-sample-btn,
+button[onclick*="showSample"],
+button[onclick*="Sample"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    margin: 0.5rem 0.25rem;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 10px rgba(243, 156, 18, 0.2);
+}
+
+.show-sample-btn:hover,
+button[onclick*="showSample"]:hover,
+button[onclick*="Sample"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+}
+
+/* Retake Quiz and Continue Learning Buttons */
+.retake-btn, .continue-btn,
+button[onclick*="retakeQuiz"],
+button[onclick*="backToCourse"],
+.retake-quiz-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.75rem;
+    margin: 0.5rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.retake-btn,
+button[onclick*="retakeQuiz"],
+.retake-quiz-btn {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+    color: white;
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);
+}
+
+.retake-btn:hover,
+button[onclick*="retakeQuiz"]:hover,
+.retake-quiz-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+    background: linear-gradient(135deg, #d35400, #e67e22);
+}
+
+.continue-btn,
+button[onclick*="backToCourse"] {
+    background: linear-gradient(135deg, var(--c1), #16a085);
+    color: white;
+    box-shadow: 0 4px 15px rgba(27, 184, 141, 0.2);
+}
+
+.continue-btn:hover,
+button[onclick*="backToCourse"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(27, 184, 141, 0.4);
+    background: linear-gradient(135deg, #16a085, var(--c1));
 }
 
 .course-card {
@@ -1196,21 +1503,24 @@ body {
 
 /* Course Detail Page Styles */
 .course-detail-page {
-    /* Show as a normal section under the sticky header to avoid overlap */
+    /* When inside course grid, behave as a normal block element */
     position: static;
     width: 100%;
     background: var(--bg);
     padding: 0;
     display: none;
+    /* Ensure it doesn't break out of its container */
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .course-detail-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    /* Add top padding to clear the sticky site header and Learn header */
-    padding: 2rem 2rem 3rem 2rem;
+    max-width: 100%;
+    margin: 0;
+    /* Adjust padding for grid container */
+    padding: 1rem;
     position: relative;
-    min-height: calc(100vh - 120px);
+    min-height: auto;
 }
 
 .course-detail-header {

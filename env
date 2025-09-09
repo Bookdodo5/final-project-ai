@@ -1,0 +1,3 @@
+# Copy to .env and fill your API key
+GEMINI_API_KEY=AIzaSyBo1lopB0kKPMYl_26gBBZYzFRmhXN_PPM
+PORT=3000
