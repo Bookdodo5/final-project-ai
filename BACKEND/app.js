@@ -2,8 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import CourseRoutes from "./routes/courseRoutes.js";
-import QuizRoutes from "./routes/quizRoutes.js";
-import SRSRoutes from "./routes/srsRoutes.js";
+import QuestionRoutes from "./routes/questionRoutes.js";
 import GeminiRoutes from "./routes/geminiRoutes.js";
 import UserRoutes from "./routes/userRoutes.js";
 
@@ -19,8 +18,7 @@ app.use(cors());
 // use routes
 app.use("/users", UserRoutes);
 app.use("/users/:userId/courses", CourseRoutes);
-app.use("/users/:userId/quizzes", QuizRoutes);
-app.use("/users/:userId/srs", SRSRoutes);
+app.use("/users/:userId/questions", QuestionRoutes);
 app.use("/gemini", GeminiRoutes);
 
 // Handle 404 - Not Found
