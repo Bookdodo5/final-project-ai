@@ -694,6 +694,18 @@ function setupBackButton() {
             // Show learn page
             document.getElementById('learnPage').style.display = 'block';
             
+            // Restore Learn content sections
+            const learnPageEl = document.getElementById('learnPage');
+            if (learnPageEl) {
+                const grid = learnPageEl.querySelector('.course-grid');
+                const search = learnPageEl.querySelector('.learn-search-container');
+                if (grid) grid.style.display = 'grid';
+                if (search) search.style.display = 'block';
+                // Scroll to the Learn header
+                const learnHeader = learnPageEl.querySelector('.learn-header');
+                if (learnHeader) learnHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             // Hide other pages
             const hero = document.querySelector('.hero');
             const overview = document.getElementById('overviewPage');
@@ -725,6 +737,17 @@ function setupBackButton() {
             // Show learn page
             document.getElementById('learnPage').style.display = 'block';
             
+            // Restore Learn content sections
+            const learnPageEl2 = document.getElementById('learnPage');
+            if (learnPageEl2) {
+                const grid2 = learnPageEl2.querySelector('.course-grid');
+                const search2 = learnPageEl2.querySelector('.learn-search-container');
+                if (grid2) grid2.style.display = 'grid';
+                if (search2) search2.style.display = 'block';
+                const learnHeader2 = learnPageEl2.querySelector('.learn-header');
+                if (learnHeader2) learnHeader2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             // Hide other pages
             const hero = document.querySelector('.hero');
             const overview = document.getElementById('overviewPage');
@@ -1000,14 +1023,39 @@ function setupCourseCards() {
 function openCourse(title, description, tags) {
     console.log('Opening course:', title);
     
-    // Hide all pages
+    // Show Learn page with header; hide hero and overview
     document.querySelector('.hero')?.setAttribute('style', 'display: none');
-    document.getElementById('learnPage')?.setAttribute('style', 'display: none');
     document.getElementById('overviewPage')?.setAttribute('style', 'display: none');
+    const learn = document.getElementById('learnPage');
+    if (learn) {
+        learn.style.display = 'block';
+        const grid = learn.querySelector('.course-grid');
+        if (grid) grid.style.display = 'none';
+        // Keep search visible
+    }
     
-    // Show course detail page
+    // Show course detail page under Learn header, inside the Learn section
     const detailPage = document.getElementById('courseDetailPage');
-    detailPage.style.display = 'block';
+    const learnPageSection = document.getElementById('learnPage');
+    if (learnPageSection && detailPage) {
+        // Place detail right after the search box and before the grid area
+        const searchEl = learnPageSection.querySelector('.learn-search-container');
+        const courseGridEl = learnPageSection.querySelector('.course-grid');
+        if (searchEl && detailPage.parentElement !== learnPageSection) {
+            // Insert after search (using nextSibling insertion)
+            if (searchEl.nextSibling) {
+                learnPageSection.insertBefore(detailPage, searchEl.nextSibling);
+            } else {
+                learnPageSection.appendChild(detailPage);
+            }
+        } else if (!searchEl && courseGridEl && detailPage.parentElement !== learnPageSection) {
+            learnPageSection.insertBefore(detailPage, courseGridEl);
+        }
+        detailPage.style.display = 'block';
+        // Ensure we are scrolled to the Learn header area
+        const learnHeader = learnPageSection.querySelector('.learn-header');
+        (learnHeader || detailPage).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     
     // Set title
     const titleElement = document.getElementById('courseDetailTitle');
