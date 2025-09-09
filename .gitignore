@@ -22,3 +22,5 @@ pnpm-debug.log*
 
 # Firebase Admin SDK
 BACKEND/config/*.json
+
+!=FRONTEND
