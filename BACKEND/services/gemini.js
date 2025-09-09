@@ -33,12 +33,31 @@ function safeJsonParse(jsonString) {
     }
 }
 
-export async function generate(prompt, systemInstruction) {
+/**
+ * Generate content using Gemini AI
+ * @param {string} prompt - The user's prompt
+ * @param {string} systemInstruction - System instructions for the AI
+ * @param {Object} [options] - Configuration options
+ * @param {number} [options.temperature=0.7] - Controls randomness (0-1)
+ * @param {number} [options.topP=0.9] - Controls diversity (0-1)
+ * @param {string} [options.model="gemini-2.5-flash-lite"] - Model to use
+ */
+export async function generate(prompt, systemInstruction, options = {}) {
     try {
+        const {
+            temperature = 0.7,
+            topP = 0.9,
+            model = "gemini-2.5-flash-lite"
+        } = options;
+        
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash-lite",
+            model,
             contents: prompt,
-            systemInstruction: systemInstruction,
+            systemInstruction,
+            generationConfig: {
+                temperature: Math.min(Math.max(temperature, 0), 2),
+                topP: Math.min(Math.max(topP, 0), 1),
+            },
         });
         
         let responseText = response.text;        

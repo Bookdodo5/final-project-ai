@@ -79,7 +79,12 @@ async function generateCourseContent(topic, language, length) {
     try {
         const response = await generate(
             prompt(topic, language, length), 
-            systemInstruction
+            systemInstruction,
+            {
+                temperature: 0.7,
+                topP: 0.9,
+                model: "gemini-2.5-flash"
+            }
         );
 
         return response;

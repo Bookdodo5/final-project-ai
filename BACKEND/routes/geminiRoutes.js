@@ -4,6 +4,6 @@ import asyncWrapper from "../middleware/asyncWrapper.js";
 
 const router = express.Router();
 
-router.post("/generate-course", asyncWrapper(geminiController.generateCourse));
+router.post("/call", asyncWrapper(geminiController.callGemini));
 
 export default router;
