@@ -574,37 +574,183 @@ function renderQuiz(quizData, container, resultsContainer) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('App starting...');
     
-    // Initialize course data
+    // Initialize course data with modules
     window.coursesData = [
         {
+            id: "course-1",
             title: "Accessible Auth Forms",
             description: "Build responsive login, Registration, and Forgot Password forms. Use proper labels, aria for errors, and keyboard navigation.",
-            tags: ["Front-end", "Auth", "A11y"]
+            tags: ["Front-end", "Auth", "A11y"],
+            modules: [
+                {
+                    id: "module-1-1",
+                    title: "Form Structure & Semantics",
+                    description: "Learn proper HTML structure and semantic elements for accessible forms.",
+                    lessons: ["HTML5 form elements", "Semantic markup", "Form validation"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'Which HTML5 input type is best for email addresses?',
+                            options: ['text', 'email', 'string', 'mail'],
+                            correctAnswer: 1
+                        },
+                        {
+                            type: 'open_ended',
+                            question: 'Explain the importance of using proper labels in forms for accessibility.',
+                            expectedKeywords: ['screen readers', 'accessibility', 'labels', 'assistive technology']
+                        }
+                    ]
+                },
+                {
+                    id: "module-1-2",
+                    title: "ARIA & Screen Readers",
+                    description: "Implement ARIA attributes and ensure compatibility with screen readers.",
+                    lessons: ["ARIA labels", "Screen reader testing", "Error announcements"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'Which ARIA attribute is used to describe form errors?',
+                            options: ['aria-label', 'aria-describedby', 'aria-error', 'aria-invalid'],
+                            correctAnswer: 3
+                        }
+                    ]
+                }
+            ]
         },
         {
+            id: "course-2",
             title: "PDF Upload UX",
             description: "Drag-and-drop area with progress indicator; validate size/type; show file name and cancel option.",
-            tags: ["Front-end", "Upload", "UX"]
+            tags: ["Front-end", "Upload", "UX"],
+            modules: [
+                {
+                    id: "module-2-1",
+                    title: "Drag & Drop Implementation",
+                    description: "Create intuitive drag-and-drop interfaces for file uploads.",
+                    lessons: ["HTML5 drag API", "Visual feedback", "File validation"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'Which event is triggered when a file is dropped on a drop zone?',
+                            options: ['dragenter', 'dragover', 'drop', 'dragleave'],
+                            correctAnswer: 2
+                        }
+                    ]
+                },
+                {
+                    id: "module-2-2",
+                    title: "Progress Indicators",
+                    description: "Implement upload progress tracking and user feedback.",
+                    lessons: ["Progress bars", "Upload status", "Error handling"],
+                    quizData: [
+                        {
+                            type: 'open_ended',
+                            question: 'Describe best practices for showing upload progress to users.',
+                            expectedKeywords: ['progress bar', 'percentage', 'feedback', 'cancellation']
+                        }
+                    ]
+                }
+            ]
         },
         {
+            id: "course-3",
             title: "JWT Basics",
             description: "Issue short-lived access tokens and refresh tokens. Store securely and validate on each protected endpoint.",
-            tags: ["Back-end", "Auth", "JWT"]
+            tags: ["Back-end", "Auth", "JWT"],
+            modules: [
+                {
+                    id: "module-3-1",
+                    title: "JWT Structure & Creation",
+                    description: "Understand JWT components and how to create secure tokens.",
+                    lessons: ["Header, Payload, Signature", "Token creation", "Signing algorithms"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'How many parts does a JWT token have?',
+                            options: ['2', '3', '4', '5'],
+                            correctAnswer: 1
+                        }
+                    ]
+                },
+                {
+                    id: "module-3-2",
+                    title: "Token Security & Storage",
+                    description: "Learn secure storage and validation practices for JWT tokens.",
+                    lessons: ["Secure storage", "Token validation", "Refresh strategies"],
+                    quizData: [
+                        {
+                            type: 'open_ended',
+                            question: 'What are the security considerations when storing JWT tokens in the browser?',
+                            expectedKeywords: ['XSS', 'localStorage', 'httpOnly', 'cookies', 'security']
+                        }
+                    ]
+                }
+            ]
         },
         {
+            id: "course-4",
             title: "Job Queues",
             description: "Offload heavy PDF parsing and AI generation to background workers to keep APIs responsive.",
-            tags: ["Back-end", "Queues", "Scaling"]
+            tags: ["Back-end", "Queues", "Scaling"],
+            modules: [
+                {
+                    id: "module-4-1",
+                    title: "Queue Architecture",
+                    description: "Design and implement job queue systems for background processing.",
+                    lessons: ["Queue patterns", "Worker processes", "Job scheduling"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'What is the main benefit of using job queues?',
+                            options: ['Faster processing', 'Non-blocking operations', 'Better security', 'Smaller memory usage'],
+                            correctAnswer: 1
+                        }
+                    ]
+                }
+            ]
         },
         {
+            id: "course-5",
             title: "RAG Chunking",
             description: "Split document text into semantic chunks; retrieve relevant pieces to reduce hallucination before generating answers.",
-            tags: ["AI", "RAG", "Context"]
+            tags: ["AI", "RAG", "Context"],
+            modules: [
+                {
+                    id: "module-5-1",
+                    title: "Text Chunking Strategies",
+                    description: "Learn different approaches to splitting documents into meaningful chunks.",
+                    lessons: ["Semantic chunking", "Overlap strategies", "Chunk size optimization"],
+                    quizData: [
+                        {
+                            type: 'open_ended',
+                            question: 'Explain the trade-offs between different text chunking strategies in RAG systems.',
+                            expectedKeywords: ['semantic', 'overlap', 'context', 'retrieval', 'accuracy']
+                        }
+                    ]
+                }
+            ]
         },
         {
+            id: "course-6",
             title: "AI Grading Schema",
             description: "Design prompts that return JSON with grade, feedback, suggested improvements, and ideal answer for open-ended responses.",
-            tags: ["AI", "Grading", "JSON"]
+            tags: ["AI", "Grading", "JSON"],
+            modules: [
+                {
+                    id: "module-6-1",
+                    title: "Prompt Engineering for Grading",
+                    description: "Create effective prompts for AI-powered assessment systems.",
+                    lessons: ["Structured prompts", "JSON schemas", "Grading criteria"],
+                    quizData: [
+                        {
+                            type: 'multiple_choice',
+                            question: 'What format is best for structured AI responses?',
+                            options: ['Plain text', 'JSON', 'XML', 'CSV'],
+                            correctAnswer: 1
+                        }
+                    ]
+                }
+            ]
         }
     ];
     
