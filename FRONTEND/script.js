@@ -1221,43 +1221,41 @@ function openCourse(title, description, tags) {
         // Clear the grid and create course detail content
         courseGridEl.innerHTML = `
             <div class="course-detail-page" style="display: block;">
-                <div class="course-detail-content">
-                    <div class="course-detail-header">
-                        <button class="back-btn" id="backToLearn">
-                            <i class="fas fa-arrow-left"></i>
-                            Back to Learn
-                        </button>
-                        <div class="course-detail-title-section">
-                            <h2 class="course-detail-title">${title}</h2>
-                            <div class="course-detail-tags">
-                                ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                            </div>
+                <div class="course-detail-header">
+                    <button class="back-btn" id="backToLearn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Learn
+                    </button>
+                    <div class="course-detail-title-section">
+                        <h2 class="course-detail-title">${title}</h2>
+                        <div class="course-detail-tags">
+                            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
                     </div>
+                </div>
 
-                    <!-- Course Overview Section -->
-                    <div class="course-overview-section">
-                        <div class="course-description">${description}</div>
-                        <div class="learning-objectives">
-                            <h4><i class="fas fa-target"></i> Learning Objectives</h4>
-                            <ul>
-                                <li>Understand fundamental principles</li>
-                                <li>Learn industry best practices</li>
-                                <li>Gain hands-on experience</li>
-                                <li>Master real-world applications</li>
-                            </ul>
-                        </div>
+                <!-- Course Overview Section -->
+                <div class="course-overview-section">
+                    <div class="course-description">${description}</div>
+                    <div class="learning-objectives">
+                        <h4><i class="fas fa-target"></i> Learning Objectives</h4>
+                        <ul>
+                            <li>Understand fundamental principles</li>
+                            <li>Learn industry best practices</li>
+                            <li>Gain hands-on experience</li>
+                            <li>Master real-world applications</li>
+                        </ul>
                     </div>
+                </div>
 
-                    <!-- Modules Section -->
-                    <div class="modules-section">
-                        <div class="modules-header">
-                            <h3><i class="fas fa-layer-group"></i> Course Modules</h3>
-                            <span class="modules-count">${courseData?.modules?.length || 3} modules</span>
-                        </div>
-                        <div class="modules-grid" id="modulesGrid">
-                            ${generateModulesHTML(courseData)}
-                        </div>
+                <!-- Modules Section -->
+                <div class="modules-section">
+                    <div class="modules-header">
+                        <h3><i class="fas fa-layer-group"></i> Course Modules</h3>
+                        <span class="modules-count">${courseData?.modules?.length || 3} modules</span>
+                    </div>
+                    <div class="modules-grid" id="modulesGrid">
+                        ${generateModulesHTML(courseData)}
                     </div>
                 </div>
             </div>
@@ -1456,7 +1454,7 @@ function openModule(moduleId, courseTitle, courseData) {
                     type: 'multiple_choice',
                     question: 'What is the main focus of this module?',
                     options: ['Basic concepts', 'Advanced implementation', 'Theory only', 'Simple examples'],
-                    correctAnswer: 0
+                    correctAnswer: 1
                 }
             ]
         };
@@ -1826,201 +1824,280 @@ function initializeNewCourseButton() {
 
     newCourseButton.addEventListener('click', function() {
         console.log('New Course button clicked');
-        
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.pdf';
-        fileInput.style.display = 'none';
-        
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.type === 'application/pdf') {
-                console.log('PDF file selected:', file.name);
-                uploadPDFAndGenerateCourse(file);
-            } else {
-                showNotification('Please select a PDF file', 'error');
-            }
-        });
-        
-        document.body.appendChild(fileInput);
-        fileInput.click();
-        document.body.removeChild(fileInput);
+        showNewCourseModal();
     });
 }
 
-async function uploadPDFAndGenerateCourse(file) {
+// Show modal with course creation options
+function showNewCourseModal() {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('newCourseModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.id = 'newCourseModal';
+    modal.className = 'course-modal';
+    modal.innerHTML = `
+        <div class="modal-overlay" onclick="closeNewCourseModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Create New Course</h3>
+                <button class="modal-close" onclick="closeNewCourseModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Choose how you'd like to create your new course:</p>
+                
+                <div class="course-options">
+                    <div class="course-option" onclick="showTopicInput()">
+                        <div class="option-icon">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Type a Topic</h4>
+                            <p>Enter a topic and let AI generate a comprehensive course for you</p>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="course-option" onclick="selectFileUpload()">
+                        <div class="option-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="option-content">
+                            <h4>Upload PDF File</h4>
+                            <p>Upload a PDF document to generate a course from its content</p>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+}
+
+// Close the new course modal
+function closeNewCourseModal() {
+    const modal = document.getElementById('newCourseModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Show topic input form
+function showTopicInput() {
+    const modalBody = document.querySelector('#newCourseModal .modal-body');
+    if (!modalBody) return;
+
+    modalBody.innerHTML = `
+        <div class="topic-input-form">
+            <div class="form-header">
+                <button class="back-btn" onclick="showNewCourseModal()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <h4><i class="fas fa-keyboard"></i> Create Course from Topic</h4>
+            </div>
+            
+            <div class="form-content">
+                <div class="input-group">
+                    <label for="courseTopic">Course Topic</label>
+                    <input type="text" id="courseTopic" placeholder="e.g., Machine Learning Basics, Web Development, Data Structures..." maxlength="100">
+                    <small>Enter a topic you'd like to learn about</small>
+                </div>
+                
+                <div class="input-group">
+                    <label for="courseLevel">Difficulty Level</label>
+                    <select id="courseLevel">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="closeNewCourseModal()">Cancel</button>
+                    <button class="btn-primary" onclick="generateCourseFromTopic()">
+                        <i class="fas fa-magic"></i> Generate Course
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Generate course from topic
+async function generateCourseFromTopic() {
+    const topicInput = document.getElementById('courseTopic');
+    const levelSelect = document.getElementById('courseLevel');
+    
+    if (!topicInput || !levelSelect) return;
+    
+    const topic = topicInput.value.trim();
+    const level = levelSelect.value;
+    
+    if (!topic) {
+        showNotification('Please enter a course topic', 'error');
+        return;
+    }
+    
     try {
-        showLoadingModal('Uploading PDF and generating course content...');
-        console.log('Starting PDF upload for:', file.name);
+        closeNewCourseModal();
+        showLoadingModal('Generating course content from your topic...');
+        console.log('Generating course for topic:', topic, 'Level:', level);
         
-        // Simulate API call - replace with actual backend integration
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Simulate AI course generation - replace with actual backend integration
+        await new Promise(resolve => setTimeout(resolve, 4000));
         
-        // Create course with proper structure matching existing courses
-        const courseTitle = file.name.replace('.pdf', '').replace(/[_-]/g, ' ');
+        // Create course with proper structure
+        const courseTitle = topic.charAt(0).toUpperCase() + topic.slice(1);
         const newCourse = {
             id: `course-${Date.now()}`,
             title: courseTitle,
-            description: `AI-generated course content from uploaded PDF: ${file.name}. This comprehensive course covers essential concepts and practical implementations derived from your document.`,
-            tags: ['AI-Generated', 'PDF', 'Upload'],
+            description: `A comprehensive ${level} course covering ${topic.toLowerCase()}. Learn fundamental concepts, practical applications, and best practices.`,
+            tags: [level.charAt(0).toUpperCase() + level.slice(1), "AI Generated", getTopicCategory(topic)],
             modules: [
                 {
                     id: `module-${Date.now()}-1`,
-                    title: "Document Overview & Foundations",
-                    description: "Introduction to core concepts and basic principles from your uploaded document.",
+                    title: "Foundations & Overview",
+                    description: `Introduction to ${topic.toLowerCase()} fundamentals and core concepts.`,
                     lessons: [
-                        "Document structure analysis",
-                        "Key concepts identification", 
-                        "Fundamental principles",
-                        "Basic terminology and definitions"
+                        "What is " + topic + "?",
+                        "Key terminology and concepts", 
+                        "Historical context and evolution",
+                        "Current applications and use cases"
                     ],
                     quizData: [
                         {
                             type: 'multiple_choice',
-                            question: 'What is the main topic covered in this document?',
+                            question: `What is the primary focus of ${topic.toLowerCase()}?`,
                             options: [
-                                'General knowledge',
-                                'Content from the uploaded PDF',
-                                'Random information',
-                                'Basic concepts'
+                                'Theoretical understanding only',
+                                'Practical application and implementation',
+                                'Memorization',
+                                'Following tutorials blindly'
                             ],
                             correctAnswer: 1
                         },
                         {
                             type: 'open_ended',
-                            question: 'Describe the key learning objectives you expect from this course based on the document.',
-                            expectedKeywords: ['learning', 'objectives', 'document', 'knowledge', 'understanding']
+                            question: `Explain why ${topic.toLowerCase()} is important in today's context.`,
+                            expectedKeywords: ['practical', 'application', 'modern', 'relevant', 'useful']
                         }
                     ]
                 },
                 {
                     id: `module-${Date.now()}-2`,
-                    title: "Practical Implementation",
-                    description: "Hands-on practice with real-world examples and applications from the document content.",
+                    title: "Core Concepts & Techniques",
+                    description: `Deep dive into essential ${topic.toLowerCase()} methods and approaches.`,
                     lessons: [
-                        "Practical applications",
-                        "Real-world examples",
-                        "Implementation strategies",
-                        "Best practices and techniques"
+                        "Essential techniques and methods",
+                        "Step-by-step implementation",
+                        "Common patterns and practices",
+                        "Tools and resources"
                     ],
                     quizData: [
                         {
                             type: 'multiple_choice',
-                            question: 'How should you apply the concepts from this document?',
+                            question: `Which approach is most effective for learning ${topic.toLowerCase()}?`,
                             options: [
-                                'Theoretical study only',
-                                'Practical implementation with examples',
-                                'Memorization',
-                                'Ignore the content'
+                                'Theory first, then practice',
+                                'Practice with guided theory',
+                                'Pure memorization',
+                                'Skipping fundamentals'
                             ],
                             correctAnswer: 1
-                        },
-                        {
-                            type: 'open_ended',
-                            question: 'Explain how you would implement the key concepts from this document in a real-world scenario.',
-                            expectedKeywords: ['implementation', 'real-world', 'practical', 'application', 'scenario']
                         }
                     ]
                 },
                 {
                     id: `module-${Date.now()}-3`,
-                    title: "Advanced Concepts & Mastery",
-                    description: "Deep dive into advanced topics and optimization strategies from the document.",
+                    title: "Advanced Applications",
+                    description: `Advanced ${topic.toLowerCase()} concepts and real-world applications.`,
                     lessons: [
-                        "Advanced techniques",
-                        "Optimization strategies",
-                        "Problem-solving approaches",
-                        "Expert-level applications",
-                        "Future considerations"
+                        "Advanced techniques and optimization",
+                        "Real-world case studies",
+                        "Best practices and pitfalls",
+                        "Future trends and developments"
                     ],
                     quizData: [
                         {
-                            type: 'multiple_choice',
-                            question: 'What represents mastery of this document\'s content?',
-                            options: [
-                                'Reading it once',
-                                'Understanding and applying advanced concepts',
-                                'Memorizing all text',
-                                'Skipping difficult parts'
-                            ],
-                            correctAnswer: 1
-                        },
-                        {
                             type: 'open_ended',
-                            question: 'How would you teach someone else the advanced concepts from this document?',
-                            expectedKeywords: ['teach', 'advanced', 'concepts', 'explain', 'understanding', 'knowledge']
+                            question: `Describe an advanced application of ${topic.toLowerCase()} and its benefits.`,
+                            expectedKeywords: ['advanced', 'application', 'benefits', 'implementation', 'optimization']
                         }
                     ]
                 }
             ]
         };
         
-        // Add to courses data (create if doesn't exist)
-        if (!window.coursesData) {
-            window.coursesData = [];
-        }
+        // Add to courses data
         window.coursesData.unshift(newCourse);
         
         hideLoadingModal();
-        showNotification('Course created successfully!', 'success');
+        showNotification(`Course "${courseTitle}" created successfully!`, 'success');
         
-        // Show learn page and render new course
+        // Refresh the course grid
         showLearnPage();
-        updateNavigation('Learn');
-        
-        // Open the new course after a short delay
-        setTimeout(() => {
-            openCourse(newCourse.title, newCourse.description, newCourse.tags);
-        }, 1000);
         
     } catch (error) {
-        console.error('Error generating course:', error);
         hideLoadingModal();
-        showNotification('Failed to generate course. Please try again.', 'error');
+        console.error('Error generating course:', error);
+        showNotification('Error generating course. Please try again.', 'error');
     }
 }
 
-// UI Helper functions
-function showLoadingModal(message) {
-    let modal = document.getElementById('loadingModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'loadingModal';
-        modal.className = 'loading-modal';
-        modal.innerHTML = `
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <p class="loading-message">${message}</p>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    } else {
-        modal.querySelector('.loading-message').textContent = message;
-    }
-    modal.style.display = 'flex';
-}
-
-function hideLoadingModal() {
-    const modal = document.getElementById('loadingModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-function showNotification(message, type) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
-            <p>${message}</p>
-        </div>
-    `;
-    document.body.appendChild(notification);
+// Get topic category for tagging
+function getTopicCategory(topic) {
+    const topicLower = topic.toLowerCase();
     
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
+    if (topicLower.includes('web') || topicLower.includes('html') || topicLower.includes('css') || topicLower.includes('javascript')) {
+        return 'Web Dev';
+    } else if (topicLower.includes('machine learning') || topicLower.includes('ai') || topicLower.includes('data')) {
+        return 'AI/ML';
+    } else if (topicLower.includes('programming') || topicLower.includes('code') || topicLower.includes('software')) {
+        return 'Programming';
+    } else if (topicLower.includes('design') || topicLower.includes('ui') || topicLower.includes('ux')) {
+        return 'Design';
+    } else if (topicLower.includes('business') || topicLower.includes('management') || topicLower.includes('marketing')) {
+        return 'Business';
+    } else {
+        return 'General';
+    }
+}
+
+// Handle file upload option
+function selectFileUpload() {
+    closeNewCourseModal();
+    
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf';
+    fileInput.style.display = 'none';
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type === 'application/pdf') {
+            console.log('PDF file selected:', file.name);
+            uploadPDFAndGenerateCourse(file);
+        } else {
+            showNotification('Please select a PDF file', 'error');
+        }
+    });
+    
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    document.body.removeChild(fileInput);
 }
 
 function showLearnPage() {
@@ -2097,13 +2174,16 @@ function showLearnPage() {
     }
 }
 
-function updateNavigation(activeSection) {
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.textContent.trim() === activeSection || 
-            (activeSection === 'Review' && link.textContent.includes('Review'))) {
-            link.classList.add('active');
-        }
-    });
+function showOverviewPage() {
+    // Hide all sections first
+    hideAllSections();
+    
+    const heroSection = document.querySelector('.hero');
+    const overviewPage = document.getElementById('overviewPage');
+    
+    if (heroSection) heroSection.style.display = 'block';
+    if (overviewPage) overviewPage.style.display = 'block';
+    
+    // Update navigation
+    updateNavigation('Overview');
 }
