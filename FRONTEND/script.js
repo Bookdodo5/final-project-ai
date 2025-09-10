@@ -988,8 +988,18 @@ function hideAllSections() {
 }
 
 function showOverviewPage() {
+    // Hide all sections first
+    hideAllSections();
+    
+    // Show both hero section and overview page
+    const heroSection = document.querySelector('.hero');
     const overviewPage = document.getElementById('overviewPage');
+    
+    if (heroSection) heroSection.style.display = 'block';
     if (overviewPage) overviewPage.style.display = 'block';
+    
+    // Update navigation
+    updateNavigation('Overview');
 }
 
 function showReviewPage() {
