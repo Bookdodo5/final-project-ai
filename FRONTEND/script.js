@@ -1136,6 +1136,28 @@ function showLearnPage() {
         // Show the learn page
         learnPage.style.display = 'block';
         
+        // Reset Learn page header to normal state (in case coming from Review page)
+        const learnHeader = learnPage.querySelector('.learn-header');
+        const reviewContent = learnPage.querySelector('.review-content');
+        
+        if (learnHeader) {
+            const title = learnHeader.querySelector('.learn-title');
+            const subtitle = learnHeader.querySelector('.learn-subtitle');
+            const newCourseBtn = learnHeader.querySelector('.new-course-btn');
+            
+            // Reset header text to Learn page defaults
+            if (title) title.textContent = 'Learn';
+            if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
+            if (newCourseBtn) newCourseBtn.style.display = 'flex';
+        }
+        
+        // Remove any existing review content
+        if (reviewContent) reviewContent.remove();
+        
+        // Make sure search container is visible
+        const searchContainer = learnPage.querySelector('.learn-search-container');
+        if (searchContainer) searchContainer.style.display = 'block';
+        
         // Update navigation
         updateNavigation('Learn');
         
@@ -1678,7 +1700,7 @@ function getCourseQuiz(title) {
                 correctAnswer: 1
             },
             {
-                question: "Explain how ARIA attributes improve form accessibility.",
+                question: "Explain the importance of using proper labels in forms for accessibility.",
                 type: "open_ended",
                 sampleAnswer: "ARIA attributes provide semantic information to assistive technologies like screen readers.",
                 expectedKeywords: ["aria", "accessibility", "screen reader", "semantic"]
@@ -1728,9 +1750,9 @@ function getCourseQuiz(title) {
     
     return quizzes[title] || [
         {
-            question: "What is the main focus of this course?",
-            type: "multiple_choice",
-            options: ["Basic concepts", "Advanced implementation", "Theory only", "Simple examples"],
+            type: 'multiple_choice',
+            question: 'What is the main focus of this course?',
+            options: ['Basic concepts', 'Advanced implementation', 'Theory only', 'Simple examples'],
             correctAnswer: 1
         }
     ];
