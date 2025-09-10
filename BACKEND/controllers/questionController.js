@@ -205,7 +205,7 @@ export const getDueQuestions = async (req, res) => {
     }));
 
     questions.sort((a, b) =>
-        (a.srsData?.nextReviewDate?.seconds || 0) - (b.srsData?.nextReviewDate?.seconds || 0)
+        (a.srsData?.nextReview?.seconds || 0) - (b.srsData?.nextReview?.seconds || 0)
     );
 
     res.status(200).json(questions);
@@ -261,8 +261,8 @@ function updateSrsData(currentSrsData, rating) {
     srsData.lastReview = new Date();
     
     const intervalInMs = srsData.interval * 24 * 60 * 60 * 1000;
-    const nextReviewDate = new Date(now.getTime() + intervalInMs);
-    srsData.nextReview = nextReviewDate;
+    const nextReview = new Date(now.getTime() + intervalInMs);
+    srsData.nextReview = nextReview;
 
     return srsData;
 }
