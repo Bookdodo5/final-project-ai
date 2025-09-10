@@ -1112,19 +1112,38 @@ function goToLearn() {
     if (courseGrid) courseGrid.style.display = 'grid';
     if (searchContainer) searchContainer.style.display = 'block';
     
-    // Reset header
-    if (learnHeader) {
-        const title = learnHeader.querySelector('.learn-title');
-        const subtitle = learnHeader.querySelector('.learn-subtitle');
-        const newCourseBtn = learnHeader.querySelector('.new-course-btn');
-        
-        if (title) title.textContent = 'Learn';
-        if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
-        if (newCourseBtn) newCourseBtn.style.display = 'flex';
-    }
+    const title = learnHeader.querySelector('.learn-title');
+    const subtitle = learnHeader.querySelector('.learn-subtitle');
+    const newCourseBtn = learnHeader.querySelector('.new-course-btn');
+    
+    if (title) title.textContent = 'Learn';
+    if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
+    if (newCourseBtn) newCourseBtn.style.display = 'flex';
     
     // Remove review content
     if (reviewContent) reviewContent.remove();
+    
+    // Clear and rebuild course grid to prevent duplicates
+    if (courseGrid) {
+        courseGrid.innerHTML = '';
+        
+        // Add all courses to the grid
+        if (window.coursesData && window.coursesData.length > 0) {
+            window.coursesData.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card';
+                courseCard.innerHTML = `
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-description">${course.description}</p>
+                    <div class="course-tags">
+                        ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                `;
+                courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+                courseGrid.appendChild(courseCard);
+            });
+        }
+    }
     
     // Update navigation
     updateNavigation('Learn');
@@ -1133,82 +1152,7 @@ function goToLearn() {
     setTimeout(() => {
         setupCourseCards();
         setupSearchFunctionality();
-        renderDynamicCourses();
     }, 100);
-}
-
-function showLearnPage() {
-    // Hide all sections first
-    hideAllSections();
-    
-    const learnPage = document.getElementById('learnPage');
-    if (learnPage) {
-        // Show the learn page
-        learnPage.style.display = 'block';
-        
-        // Reset Learn page header to normal state (in case coming from Review page)
-        const learnHeader = learnPage.querySelector('.learn-header');
-        const reviewContent = learnPage.querySelector('.review-content');
-        
-        if (learnHeader) {
-            const title = learnHeader.querySelector('.learn-title');
-            const subtitle = learnHeader.querySelector('.learn-subtitle');
-            const newCourseBtn = learnHeader.querySelector('.new-course-btn');
-            
-            // Reset header text to Learn page defaults
-            if (title) title.textContent = 'Learn';
-            if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
-            if (newCourseBtn) newCourseBtn.style.display = 'flex';
-        }
-        
-        // Remove any existing review content
-        if (reviewContent) reviewContent.remove();
-        
-        // Make sure search container is visible
-        const searchContainer = learnPage.querySelector('.learn-search-container');
-        if (searchContainer) searchContainer.style.display = 'block';
-        
-        // Update navigation
-        updateNavigation('Learn');
-        
-        // Make sure the course grid is visible
-        const courseGrid = learnPage.querySelector('.course-grid');
-        if (courseGrid) {
-            courseGrid.style.display = 'grid';
-            
-            // Clear existing cards to prevent duplicates
-            courseGrid.innerHTML = '';
-            
-            // Add all courses to the grid
-            if (window.coursesData && window.coursesData.length > 0) {
-                window.coursesData.forEach(course => {
-                    const courseCard = document.createElement('div');
-                    courseCard.className = 'course-card';
-                    courseCard.innerHTML = `
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
-                        <div class="course-tags">
-                            ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
-                    `;
-                    courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
-                    courseGrid.appendChild(courseCard);
-                });
-            } else {
-                // Show message if no courses
-                courseGrid.innerHTML = `
-                    <div class="no-courses">
-                        <i class="fas fa-book-open"></i>
-                        <h3>No courses available</h3>
-                        <p>Create a new course to get started</p>
-                        <button class="new-course-btn">
-                            <i class="fas fa-plus"></i> New Course
-                        </button>
-                    </div>
-                `;
-            }
-        }
-    }
 }
 
 function updateNavigation(activeSection) {
@@ -2077,4 +2021,89 @@ function showNotification(message, type) {
     setTimeout(() => {
         notification.remove();
     }, 3000);
+}
+
+function showLearnPage() {
+    // Hide all sections first
+    hideAllSections();
+    
+    const learnPage = document.getElementById('learnPage');
+    if (learnPage) {
+        // Show the learn page
+        learnPage.style.display = 'block';
+        
+        // Reset Learn page header to normal state (in case coming from Review page)
+        const learnHeader = learnPage.querySelector('.learn-header');
+        const reviewContent = learnPage.querySelector('.review-content');
+        
+        if (learnHeader) {
+            const title = learnHeader.querySelector('.learn-title');
+            const subtitle = learnHeader.querySelector('.learn-subtitle');
+            const newCourseBtn = learnHeader.querySelector('.new-course-btn');
+            
+            // Reset header text to Learn page defaults
+            if (title) title.textContent = 'Learn';
+            if (subtitle) subtitle.textContent = 'Mark lessons as done; filter with the search box above.';
+            if (newCourseBtn) newCourseBtn.style.display = 'flex';
+        }
+        
+        // Remove any existing review content
+        if (reviewContent) reviewContent.remove();
+        
+        // Make sure search container is visible
+        const searchContainer = learnPage.querySelector('.learn-search-container');
+        if (searchContainer) searchContainer.style.display = 'block';
+        
+        // Update navigation
+        updateNavigation('Learn');
+        
+        // Make sure the course grid is visible
+        const courseGrid = learnPage.querySelector('.course-grid');
+        if (courseGrid) {
+            courseGrid.style.display = 'grid';
+            
+            // Clear existing cards to prevent duplicates
+            courseGrid.innerHTML = '';
+            
+            // Add all courses to the grid
+            if (window.coursesData && window.coursesData.length > 0) {
+                window.coursesData.forEach(course => {
+                    const courseCard = document.createElement('div');
+                    courseCard.className = 'course-card';
+                    courseCard.innerHTML = `
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-tags">
+                            ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                    courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+                    courseGrid.appendChild(courseCard);
+                });
+            } else {
+                // Show message if no courses
+                courseGrid.innerHTML = `
+                    <div class="no-courses">
+                        <i class="fas fa-book-open"></i>
+                        <h3>No courses available</h3>
+                        <p>Create a new course to get started</p>
+                        <button class="new-course-btn">
+                            <i class="fas fa-plus"></i> New Course
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    }
+}
+
+function updateNavigation(activeSection) {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.textContent.trim() === activeSection || 
+            (activeSection === 'Review' && link.textContent.includes('Review'))) {
+            link.classList.add('active');
+        }
+    });
 }
