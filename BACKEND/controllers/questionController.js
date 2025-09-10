@@ -3,8 +3,9 @@ import { validate } from '../utils/validators.js';
 import {
     NotFoundError,
     BadRequestError,
-    InternalServerError
 } from '../error/error.js';
+import { generate } from "../services/gemini.js";
+import { systemInstruction, prompt } from "../PROMPT/answerCheck.js";
 
 /**
  * GET /questions/:questionId
@@ -38,7 +39,8 @@ import {
 /** @type {import("express").RequestHandler} */
 export const getQuestionById = async (req, res) => {
     const questionId = validate(req.params, 'questionId', 'string');
-    const questionRef = db.collection('questions').doc(questionId);
+    const userId = validate(req.params, 'userId', 'string');
+    const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
     const questionDoc = await questionRef.get();
 
     if (!questionDoc.exists) {
@@ -61,10 +63,11 @@ export const getQuestionById = async (req, res) => {
  */
 /** @type {import("express").RequestHandler} */
 export const getQuestionsByModuleId = async (req, res) => {
+    const userId = validate(req.params, 'userId', 'string');
     const courseId = validate(req.params, 'courseId', 'string');
     const moduleId = validate(req.params, 'moduleId', 'string');
 
-    let questionsRef = db.collection('questions')
+    let questionsRef = db.collection("users").doc(userId).collection('questions')
         .where('courseId', '==', courseId)
         .where('moduleId', '==', moduleId);
 
@@ -73,7 +76,7 @@ export const getQuestionsByModuleId = async (req, res) => {
         throw new NotFoundError('No questions found');
     }
 
-    const questions = querySnapshot.map(doc => ({
+    const questions = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
     }));
@@ -99,59 +102,43 @@ export const getQuestionsByModuleId = async (req, res) => {
  */
 /** @type {import("express").RequestHandler} */
 export const submitAnswer = async (req, res) => {
-    try {
-        const questionId = validate(req.params, 'questionId', 'string');
-        const { userId, answer } = req.body;
+    const userId = validate(req.params, 'userId', 'string');
+    const questionId = validate(req.params, 'questionId', 'string');
+    const answer = validate(req.body, 'answer', 'string');
 
-        validate({ userId }, 'userId', 'string');
-        validate({ answer }, 'answer', ['string', 'array']);
+    const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
+    const questionDoc = await questionRef.get();
 
-        const questionRef = db.collection('questions').doc(questionId);
-        const questionDoc = await questionRef.get();
-
-        if (!questionDoc.exists) {
-            throw new NotFoundError('Question not found');
-        }
-
-        const questionData = questionDoc.data();
-        const isCorrect = Array.isArray(questionData.correctAnswer)
-            ? JSON.stringify(questionData.correctAnswer.sort()) === JSON.stringify([].concat(answer).sort())
-            : questionData.correctAnswer === answer;
-
-        // Save user's answer to their history
-        await db.collection('userAnswers').add({
-            userId,
-            questionId,
-            answer,
-            isCorrect,
-            timestamp: db.FieldValue.serverTimestamp()
-        });
-
-        res.status(200).json({
-            isCorrect,
-            correctAnswer: questionData.correctAnswer,
-            feedback: isCorrect ? 'Correct!' : 'Incorrect, please review the material.'
-        });
-    } catch (error) {
-        console.error('Error submitting answer:', error);
-
-        if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-        } else if (error instanceof BadRequestError) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Failed to submit answer' });
-        }
+    if (!questionDoc.exists) {
+        throw new NotFoundError('Question not found');
     }
+
+    const questionData = questionDoc.data();
+
+    const response = await generate(
+        prompt(questionData.questionText, answer, questionData.correctAnswer),
+        systemInstruction,
+        {
+            temperature: 0.7,
+            topP: 0.9,
+            model: "gemini-2.5-flash-lite"
+        }
+    );
+
+    res.status(200).json({
+        isCorrect: response.isCorrect,
+        correctAnswer: questionData.correctAnswer,
+        feedback: response.feedback
+    });
 };
 
 /**
- * POST /questions/:questionId/rate
+ * PUT /questions/:questionId/rate
  * Purpose: Rate a question for SRS algorithm
  * Path Parameters:
  *  - questionId: string (required)
- * Request Body:
  *  - userId: string (required)
+ * Request Body:
  *  - srsRating: 'Again'|'Hard'|'Good'|'Easy' (required)
  * Responses:
  *  - 200: { 
@@ -168,115 +155,60 @@ export const submitAnswer = async (req, res) => {
  */
 /** @type {import("express").RequestHandler} */
 export const rateQuestion = async (req, res) => {
-    try {
-        const questionId = validate(req.params, 'questionId', 'string');
-        const { userId, srsRating } = req.body;
+    const userId = validate(req.params, 'userId', 'string');
+    const questionId = validate(req.params, 'questionId', 'string');
+    const srsRating = validate(req.body, 'srsRating', 'string');
 
-        validate({ userId }, 'userId', 'string');
-        validate({ srsRating }, 'srsRating', 'string');
-
-        if (!['Again', 'Hard', 'Good', 'Easy'].includes(srsRating)) {
-            throw new BadRequestError('Invalid SRS rating. Must be one of: Again, Hard, Good, Easy');
-        }
-
-        const questionRef = db.collection('questions').doc(questionId);
-        const questionDoc = await questionRef.get();
-
-        if (!questionDoc.exists) {
-            throw new NotFoundError('Question not found');
-        }
-
-        const questionData = questionDoc.data();
-        
-        // Update SRS data
-        const srsData = updateSrsData({
-            interval: questionData.srsData?.interval,
-            repetitions: questionData.srsData?.repetitions,
-            easeFactor: questionData.srsData?.easeFactor,
-            lastReview: questionData.srsData?.lastReview
-        }, srsRating);
-
-        // Update question with new SRS data
-        await questionRef.update({
-            'srsData.interval': srsData.interval,
-            'srsData.repetitions': srsData.repetitions,
-            'srsData.easeFactor': srsData.easeFactor,
-            'srsData.lastReview': srsData.lastReview,
-            'srsData.nextReview': srsData.nextReview,
-            'updatedAt': db.FieldValue.serverTimestamp()
-        });
-
-        res.status(200).json({
-            updatedSrsData: srsData
-        });
-    } catch (error) {
-        console.error('Error rating question:', error);
-
-        if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-        } else if (error instanceof BadRequestError) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Failed to rate question' });
-        }
+    if (!['Again', 'Hard', 'Good', 'Easy'].includes(srsRating)) {
+        throw new BadRequestError('Invalid SRS rating. Must be one of: Again, Hard, Good, Easy');
     }
+
+    const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
+    const questionDoc = await questionRef.get();
+
+    if (!questionDoc.exists) {
+        throw new NotFoundError('Question not found');
+    }
+
+    const questionData = questionDoc.data();
+
+    const srsData = updateSrsData(questionData.srsData, srsRating);
+    await questionRef.update({
+        'srsData': srsData,
+        'updatedAt': new Date()
+    });
+
+    res.status(200).json({
+        updatedSrsData: srsData
+    });
 };
 
 /**
  * GET /questions/due-questions
  * Purpose: Get all questions that are due for review (SRS)
- * Query Parameters:
- *  - userId: string (required)
- *  - courseId: string (optional)
- *  - moduleId: string (optional)
- *  - limit: number (optional)
  * Responses:
  *  - 200: Array of question objects that are due for review
  *  - 400: { error: string }
  */
 /** @type {import("express").RequestHandler} */
 export const getDueQuestions = async (req, res) => {
-    try {
-        const userId = validate(req.query, 'userId', 'string');
-        const { courseId, moduleId, limit } = req.query;
+    const userId = validate(req.params, 'userId', 'string');
 
-        let questionsRef = db.collection('questions')
-            .where('srsData.nextReviewDate', '<=', new Date());
+    let questionsRef = db.collection("users").doc(userId).collection('questions')
+        .where('srsData.nextReview', '<=', new Date())
+        .where('learned', '==', true);
 
-        if (courseId) {
-            questionsRef = questionsRef.where('courseId', '==', courseId);
-        }
+    const querySnapshot = await questionsRef.get();
+    const questions = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    }));
 
-        if (moduleId) {
-            questionsRef = questionsRef.where('moduleId', '==', moduleId);
-        }
+    questions.sort((a, b) =>
+        (a.srsData?.nextReviewDate?.seconds || 0) - (b.srsData?.nextReviewDate?.seconds || 0)
+    );
 
-        const querySnapshot = await questionsRef.get();
-
-        let questions = [];
-        querySnapshot.forEach(doc => {
-            questions.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Sort by next review date (oldest first)
-        questions.sort((a, b) =>
-            (a.srsData?.nextReviewDate?.seconds || 0) - (b.srsData?.nextReviewDate?.seconds || 0)
-        );
-
-        if (limit && !isNaN(limit)) {
-            questions = questions.slice(0, parseInt(limit));
-        }
-
-        res.status(200).json(questions);
-    } catch (error) {
-        console.error('Error getting due questions:', error);
-
-        if (error instanceof BadRequestError) {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Failed to get due questions' });
-        }
-    }
+    res.status(200).json(questions);
 };
 
 /**
@@ -295,14 +227,21 @@ function updateSrsData(currentSrsData, rating) {
 
     // Update based on rating
     switch (rating) {
+        case 'Known':
+            srsData.interval = 3650;
+            srsData.repetitions = 100;
+            srsData.easeFactor = 2.5;
+            srsData.isLearned = true;
+            break;
+            
         case 'Again':
-            srsData.interval = 1;
-            srsData.repetitions = 0;
+            srsData.interval = 0.00347; // 5 minutes in days
+            srsData.repetitions = Math.max(0, srsData.repetitions - 1);
             srsData.easeFactor = Math.max(1.3, srsData.easeFactor - 0.15);
             break;
 
         case 'Hard':
-            srsData.interval = Math.round(srsData.interval * 1.5);
+            srsData.interval = Math.round(srsData.interval);
             srsData.repetitions += 1;
             srsData.easeFactor = Math.max(1.3, srsData.easeFactor - 0.05);
             break;
@@ -310,7 +249,6 @@ function updateSrsData(currentSrsData, rating) {
         case 'Good':
             srsData.repetitions += 1;
             srsData.interval = Math.round(srsData.interval * srsData.easeFactor);
-            // easeFactor stays the same
             break;
 
         case 'Easy':
@@ -320,13 +258,42 @@ function updateSrsData(currentSrsData, rating) {
             break;
     }
 
-    // Update review dates
-    srsData.lastReview = db.FieldValue.serverTimestamp();
-
-    // Calculate next review date (add interval days)
-    const nextReviewDate = new Date(now);
-    nextReviewDate.setDate(now.getDate() + srsData.interval);
-    srsData.nextReview = db.Timestamp.fromDate(nextReviewDate);
+    srsData.lastReview = new Date();
+    
+    const intervalInMs = srsData.interval * 24 * 60 * 60 * 1000;
+    const nextReviewDate = new Date(now.getTime() + intervalInMs);
+    srsData.nextReview = nextReviewDate;
 
     return srsData;
 }
+
+/**
+ * PUT /questions/:questionId/learn
+ * Purpose: Mark a question as learned
+ * Path Parameters:
+ *  - questionId: string (required)
+ *  - userId: string (required)
+ * Responses:
+ *  - 200: { 
+ *      updatedQuestion: {
+ *        id: string,
+ *        ...doc.data()
+ *      }
+ *    }
+ *  - 400: { error: string }
+ *  - 404: { error: 'Question not found' }
+ */
+/** @type {import("express").RequestHandler} */
+export const markQuestionAsLearned = async (req, res) => {
+    const userId = validate(req.params, 'userId', 'string');
+    const questionId = validate(req.params, 'questionId', 'string');
+    const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
+    const questionDoc = await questionRef.get();
+
+    if (!questionDoc.exists) {
+        throw new NotFoundError('Question not found');
+    }
+    await questionRef.update({learned: true});
+
+    res.status(200).json({ message: 'Question marked as learned' });
+};

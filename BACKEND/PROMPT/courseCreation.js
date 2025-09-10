@@ -11,7 +11,17 @@ Generate the course structure in the following JSON format:
     {
       "moduleName": "Module 1 Title",
       "description": "Module description",
-      "contentText": "Detailed lesson content in markdown format"
+      "contentText": "Detailed lesson content in markdown format",
+      "moduleQuiz": [
+        {
+          "questionText": "Question text",
+          "type": "mcq|open-ended|true-false",
+          "options": ["Option 1", "Option 2", "Option 3"],
+          "correctAnswer": "Correct answer",
+          "questionOrder": 1,
+          "star": 1
+        }
+      ]
     }
   ]
 }
