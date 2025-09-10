@@ -100,12 +100,20 @@ body {
 
 /* Content Grid */
 .content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    padding: 5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3rem 0;
     margin: 0 auto;
     max-width: 1200px;
+}
+
+/* Analytics Container */
+.analytics-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
 }
 
 /* Card Styles */
@@ -184,7 +192,7 @@ body {
         rgba(27, 184, 141, 0.05) 0%, 
         rgba(206, 124, 102, 0.05) 50%, 
         rgba(27, 184, 141, 0.05) 100%);
-    padding: 4rem 2rem;
+    padding: 1.5rem 2rem;
     text-align: center;
     border-bottom: 1px solid var(--line);
     position: relative;
@@ -2718,4 +2726,115 @@ html {
     .back-btn {
         margin-bottom: 1rem;
     }
+}
+
+/* Centered Learning Analytics Styles */
+.analytics-container .progress-panel {
+    background-color: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.analytics-container .progress-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--c1);
+}
+
+.analytics-container .progress-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--text), var(--c1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.analytics-container .progress-section {
+    margin-bottom: 2rem;
+}
+
+.analytics-container .progress-section:last-child {
+    margin-bottom: 0;
+}
+
+.analytics-container .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.analytics-container .progress-label {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.analytics-container .progress-value {
+    color: var(--c1);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.analytics-container .progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.analytics-container .progress-fill {
+    height: 100%;
+    background-color: var(--c1);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.analytics-container .progress-fill.srs {
+    background-color: var(--c4);
+}
+
+.analytics-container .progress-fill.accuracy {
+    background-color: var(--c2);
+}
+
+/* Responsive adjustments for centered analytics */
+@media (max-width: 768px) {
+    .analytics-container {
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+    
+    .analytics-container .progress-panel {
+        padding: 2rem;
+    }
+    
+    .analytics-container .progress-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Compact Hero Section Override */
+.hero {
+    padding: 2rem 2rem !important;
+}
+
+.hero-title {
+    font-size: 3.5rem !important;
+    margin-bottom: 1.25rem !important;
+}
+
+.hero-subtitle {
+    font-size: 1.35rem !important;
+    margin-bottom: 2rem !important;
+    line-height: 1.5 !important;
 }
