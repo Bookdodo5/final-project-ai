@@ -57,10 +57,12 @@ export const getCourse = async (req, res) => {
 async function saveModules(userId, courseId, modules) {
     const batch = db.batch();
     const modulesRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules");
+    const questionsRef = db.collection("users").doc(userId).collection("questions");
     
     modules.forEach((module, index) => {
         const moduleId = generateId("module");
         const moduleRef = modulesRef.doc(moduleId);
+        
         batch.set(moduleRef, {
             moduleName: module.moduleName,
             description: module.description,
@@ -70,6 +72,21 @@ async function saveModules(userId, courseId, modules) {
             createdAt: new Date(),
             updatedAt: new Date()
         });
+
+        module.moduleQuiz.forEach((question, index) => {
+            const questionId = generateId("question");
+            const questionRef = questionsRef.doc(questionId);
+            batch.set(questionRef, {
+                questionText: question.questionText,
+                type: question.type,
+                options: question.options,
+                correctAnswer: question.correctAnswer,
+                questionOrder: index + 1,
+                star: question.star,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+        })
     });
     
     await batch.commit();
@@ -79,7 +96,7 @@ async function generateCourseContent(topic, language, length) {
     try {
         const response = await generate(
             prompt(topic, language, length), 
-            systemInstruction,
+            systemInstruction(topic),
             {
                 temperature: 0.7,
                 topP: 0.9,
@@ -196,7 +213,7 @@ export const regenerateCourse = async (req, res) => {
         }
     })();
     
-    res.status(200).json({ courseId, message: 'Course generated' });
+    res.status(200).json({ courseId, message: 'Course generating' });
 }
 
 /**
