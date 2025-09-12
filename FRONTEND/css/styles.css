@@ -27,6 +27,11 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     font-size: 16px;
+    /* Mobile optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
 }
 
 /* Reset and Base Styles */
@@ -59,4 +64,245 @@ body {
         radial-gradient(circle at 30% 20%, rgba(27, 184, 141, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 70% 80%, rgba(206, 124, 102, 0.1) 0%, transparent 50%);
     pointer-events: none;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+    /* Improve touch targets */
+    button, 
+    a, 
+    input, 
+    select, 
+    .course-option {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Better scrolling on mobile */
+    body {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    /* Prevent zoom on input focus */
+    input, 
+    select, 
+    textarea {
+        font-size: 16px;
+    }
+    
+    /* Improve modal positioning on mobile */
+    #newCourseModal {
+        padding: 1rem;
+        align-items: flex-start;
+        padding-top: 2rem;
+    }
+    
+    /* Better course grid spacing */
+    #courseGrid {
+        gap: 1rem;
+    }
+    
+    /* Improve hero section spacing */
+    .hero-section {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    /* Tighter spacing for very small screens */
+    .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Smaller font sizes for very small screens */
+    h1 {
+        font-size: 1.25rem;
+    }
+    
+    h2 {
+        font-size: 1.75rem;
+    }
+    
+    /* Better modal sizing */
+    #courseModalInitial,
+    #courseTopicInput {
+        margin: 0.5rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+    }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Reduce vertical padding in landscape */
+    .py-12 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    .py-20 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+    
+    /* Adjust hero section for landscape */
+    section {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Ensure crisp rendering on high DPI screens */
+    img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Focus improvements for accessibility */
+button:focus,
+input:focus,
+select:focus,
+a:focus {
+    outline: 2px solid var(--c1);
+    outline-offset: 2px;
+}
+
+/* Better button hover states on touch devices */
+@media (hover: none) {
+    button:hover,
+    .course-option:hover {
+        transform: none;
+    }
+    
+    button:active,
+    .course-option:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Mobile Menu Styles */
+#mobileMenuBtn {
+    transition: all 0.3s ease;
+}
+
+#mobileMenuBtn:active {
+    transform: scale(0.95);
+}
+
+#mobileMenuBtn span {
+    transform-origin: center;
+}
+
+#mobileMenu {
+    transition: opacity 0.3s ease;
+}
+
+#mobileMenu .bg-bg {
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+#mobileMenu:not(.hidden) .bg-bg {
+    transform: translateY(0);
+}
+
+/* Smooth animations for mobile menu items */
+#mobileMenu nav a {
+    transform: translateX(-20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#mobileMenu:not(.hidden) nav a {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+#mobileMenu nav a:nth-child(1) { transition-delay: 0.1s; }
+#mobileMenu nav a:nth-child(2) { transition-delay: 0.15s; }
+#mobileMenu nav a:nth-child(3) { transition-delay: 0.2s; }
+
+/* Improve course cards for mobile */
+@media (max-width: 768px) {
+    .course-card {
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+    
+    .course-card h3 {
+        font-size: 1.125rem;
+        line-height: 1.4;
+    }
+    
+    .course-card p {
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+}
+
+/* Loading states for mobile */
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--line);
+    border-top: 2px solid var(--c1);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Improve form elements on mobile */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        min-height: 48px;
+    }
+}
+
+/* Safe area insets for devices with notches */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    nav {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

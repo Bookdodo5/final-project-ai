@@ -3,7 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1c1d1f">
+    <meta name="apple-mobile-web-app-title" content="MasteryPath">
     <title>MasteryPath - Master your learning path</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
@@ -38,17 +43,18 @@
 
 <body class="flex flex-col min-h-screen bg-bg text-text font-sans antialiased">
     <nav
-        class="sticky top-0 z-50 bg-bg/80 border-b border-line/50 flex justify-between items-center px-6 py-4 backdrop-blur-lg shadow-sm duration-300">
-        <div onclick="router.navigateTo('home')" class="flex items-center gap-3 cursor-pointer">
-            <img class="size-10 md:size-12 brightness-[250%] hue-rotate-[140deg] duration-300"
+        class="sticky top-0 z-50 bg-bg/80 border-b border-line/50 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 backdrop-blur-lg shadow-sm duration-300">
+        <div onclick="router.navigateTo('home')" class="flex items-center gap-2 sm:gap-3 cursor-pointer">
+            <img class="size-8 sm:size-10 md:size-12 brightness-[250%] hue-rotate-[140deg] duration-300"
                 src="./assets/MasteryPath.png" alt="MasteryPath Logo" draggable="false">
             <h1
-                class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-c1 to-c5 bg-clip-text text-transparent tracking-tight">
+                class="text-lg sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-c1 to-c5 bg-clip-text text-transparent tracking-tight">
                 MasteryPath
             </h1>
         </div>
 
-        <div class="flex items-center space-x-1 md:space-x-4">
+        <!-- Desktop Navigation -->
+        <div class="hidden sm:flex items-center space-x-2 md:space-x-4">
             <a href="#" data-route="home"
                 class="relative px-4 py-2.5 text-sm md:text-base font-medium text-white/90 hover:text-white transition-all ease-out duration-200 group">
                 <span class="relative z-10">Overview</span>
@@ -68,7 +74,43 @@
                     class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-c1 to-c5 transition-all duration-300 group-hover:w-full"></span>
             </a>
         </div>
+
+        <!-- Mobile Hamburger Menu -->
+        <button id="mobileMenuBtn" class="sm:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none">
+            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+        </button>
     </nav>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobileMenu" class="sm:hidden fixed top-0 left-0 right-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm hidden">
+        <div class="bg-bg border-b border-line w-full">
+            <div class="flex justify-between items-center px-4 py-4 border-b border-line">
+                <h2 class="text-lg font-semibold text-text">Menu</h2>
+                <button id="closeMobileMenu" class="text-muted hover:text-text">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <nav class="px-4 py-6 space-y-4">
+                <a href="#" data-route="home" onclick="closeMobileMenuAndNavigate('home')"
+                    class="block py-3 px-4 text-base font-medium text-white/90 hover:text-white hover:bg-panel/50 rounded-lg transition-all duration-200">
+                    <i class="fas fa-home w-6 text-c1"></i>
+                    Overview
+                </a>
+                <a href="#learn" data-route="learn" onclick="closeMobileMenuAndNavigate('learn')"
+                    class="block py-3 px-4 text-base font-medium text-white/70 hover:text-white hover:bg-panel/50 rounded-lg transition-all duration-200">
+                    <i class="fas fa-book w-6 text-c1"></i>
+                    Learn
+                </a>
+                <a href="#review" data-route="review" onclick="closeMobileMenuAndNavigate('review')"
+                    class="block py-3 px-4 text-base font-medium text-white/70 hover:text-white hover:bg-panel/50 rounded-lg transition-all duration-200">
+                    <i class="fas fa-repeat w-6 text-c1"></i>
+                    Review (SRS)
+                </a>
+            </nav>
+        </div>
+    </div>
 
     <!-- Main Content Container -->
     <div id="app" class="flex-grow flex flex-col relative">
@@ -79,7 +121,7 @@
         </div>
 
         <!-- Home View -->
-        <div id="homeView" class="relative px-6 pb-12 flex-grow block">
+        <div id="homeView" class="relative px-4 sm:px-6 pb-8 sm:pb-12 flex-grow block">
 
             <!-- Gradient Background -->
             <div class="absolute inset-0 z-0 pointer-events-none">
@@ -87,49 +129,49 @@
             </div>
 
             <!-- Hero Section -->
-            <section class="py-28 text-center space-y-4">
-                <h2 class="text-6xl font-extrabold text-c1">Master Your Path to Knowledge</h2>
-                <p class="text-xl text-muted max-w-3xl mx-auto">
+            <section class="py-12 sm:py-20 md:py-28 text-center space-y-3 sm:space-y-4">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-c1 leading-tight">Master Your Path to Knowledge</h2>
+                <p class="text-base sm:text-lg md:text-xl text-muted max-w-3xl mx-auto px-4">
                     State the topic, and you get your personalized learning experiences.
-                    <br>AI-generated
+                    <br class="hidden sm:block">AI-generated
                     courses, adaptive quizzes, and spaced repetition.
                 </p>
             </section>
 
             <!-- Learning Analytics -->
             <div
-                class="relative z-20 bg-panel/60 backdrop-blur-sm rounded-xl px-8 py-8 max-w-5xl mx-auto shadow-lg shadow-black/30 border border-line space-y-2">
-                <h3 class="text-2xl font-bold text-white mb-6">Learning Analytics</h3>
+                class="relative z-20 bg-panel/60 backdrop-blur-sm rounded-xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 max-w-5xl mx-auto shadow-lg shadow-black/30 border border-line space-y-3 sm:space-y-4">
+                <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Learning Analytics</h3>
 
                 <!-- Course Completion -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-4 shadow-sm shadow-black/30 border-line border">
+                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
                     <div class="flex justify-between">
-                        <span class="text-gray-300">Course Completion</span>
-                        <span class="text-white font-medium" id="courseCompletionValue">0%</span>
+                        <span class="text-sm sm:text-base text-gray-300">Course Completion</span>
+                        <span class="text-sm sm:text-base text-white font-medium" id="courseCompletionValue">0%</span>
                     </div>
-                    <div class="w-full bg-line/50 h-2.5 rounded-full">
+                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
                         <div id="courseCompletionBar" class="h-full bg-c3 rounded-full" style="width: 50%"></div>
                     </div>
                 </div>
 
                 <!-- Quiz Accuracy -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-4 shadow-sm shadow-black/30 border-line border">
+                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
                     <div class="flex justify-between">
-                        <span class="text-gray-300">Quiz Accuracy</span>
-                        <span class="text-white font-medium" id="quizAccuracyValue">0%</span>
+                        <span class="text-sm sm:text-base text-gray-300">Quiz Accuracy</span>
+                        <span class="text-sm sm:text-base text-white font-medium" id="quizAccuracyValue">0%</span>
                     </div>
-                    <div class="w-full bg-line/50 h-2.5 rounded-full">
+                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
                         <div id="quizAccuracyBar" class="h-full bg-c2 rounded-full" style="width: 50%"></div>
                     </div>
                 </div>
 
                 <!-- Retention Rate -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-4 shadow-sm shadow-black/30 border-line border">
+                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
                     <div class="flex justify-between">
-                        <span class="text-gray-300">Retention Rate</span>
-                        <span class="text-white font-medium" id="retentionRateValue">0%</span>
+                        <span class="text-sm sm:text-base text-gray-300">Retention Rate</span>
+                        <span class="text-sm sm:text-base text-white font-medium" id="retentionRateValue">0%</span>
                     </div>
-                    <div class="w-full bg-line/50 h-2.5 rounded-full">
+                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
                         <div id="retentionRateBar" class="h-full bg-c4 rounded-full" style="width: 60%"></div>
                     </div>
                 </div>
@@ -137,52 +179,52 @@
         </div>
 
         <!-- Learn View -->
-        <div id="learnView" class="max-w-7xl w-full mx-auto px-6 pb-12 hidden">
+        <div id="learnView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             <!-- Learn Header -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center py-8 pt-16">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center py-6 sm:py-8 pt-12 sm:pt-16">
                 <div>
-                    <h2 class="text-3xl font-bold text-white">Learn</h2>
-                    <p class="text-muted">Learn the courses you created. Filter with the search box below.</p>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Learn</h2>
+                    <p class="text-sm sm:text-base text-muted">Learn the courses you created. Filter with the search box below.</p>
                 </div>
                 <button id="newCourseBtn"
-                    class="flex items-center space-x-2 bg-c3 hover:bg-c3/90 text-bg font-semibold px-6 py-3 rounded-lg transition-colors mt-4 md:mt-0">
+                    class="flex items-center space-x-2 bg-c3 hover:bg-c3/90 text-bg font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-colors mt-4 md:mt-0 text-sm sm:text-base">
                     <span>New Course</span>
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
 
             <!-- Search Bar -->
-            <div class="relative mb-8">
+            <div class="relative mb-6 sm:mb-8">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-muted"></i>
                 </div>
                 <input type="text" id="courseSearch"
-                    class="w-full bg-panel border border-line/50 rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors"
+                    class="w-full bg-panel border border-line/50 rounded-lg pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
                     placeholder="Search courses..." autocomplete="off" spellcheck="false">
             </div>
 
             <!-- Course Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="courseGrid">
 
             </div>
         </div>
 
         <!-- Course Detail View (initially hidden) -->
-        <div id="courseView" class="max-w-7xl w-full mx-auto px-6 pb-12 hidden">
+        <div id="courseView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             
         </div>
 
         <!-- Module View (initially hidden) -->
-        <div id="moduleView" class="max-w-7xl w-full mx-auto px-6 pb-12 hidden">
+        <div id="moduleView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
 
         </div>
 
         <!-- Review View -->
-        <div id="reviewView" class="max-w-7xl w-full mx-auto px-6 pb-12 hidden">
+        <div id="reviewView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             <!-- Review Header -->
-            <div class="flex flex-col items-start py-8 pt-16">
-                <h2 class="text-3xl font-bold text-white">Review (SRS)</h2>
-                <p class="text-muted">Review the questions you've seen before with spaced repetition.</p>
+            <div class="flex flex-col items-start py-6 sm:py-8 pt-12 sm:pt-16">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white">Review (SRS)</h2>
+                <p class="text-sm sm:text-base text-muted">Review the questions you've seen before with spaced repetition.</p>
             </div>
 
             <div id="questionContainer">
@@ -198,38 +240,38 @@
 
         <!-- Initial View -->
         <div id="courseModalInitial"
-            class="relative w-full max-w-2xl bg-bg border border-line rounded-2xl overflow-hidden z-10 p-6">
+            class="relative w-full max-w-2xl bg-bg border border-line rounded-2xl overflow-hidden z-10 p-4 sm:p-6 mx-4">
             <div class="flex items-center justify-between">
-                <h3 class="text-xl font-bold text-text flex items-center gap-3">
+                <h3 class="text-lg sm:text-xl font-bold text-text flex items-center gap-2 sm:gap-3">
                     <i class="fas fa-plus-circle text-c1"></i>
                     Create New Course
                 </h3>
                 <button class="text-muted hover:text-text" onclick="closeNewCourseModal()">
-                    <i class="fas fa-times text-xl"></i>
+                    <i class="fas fa-times text-lg sm:text-xl"></i>
                 </button>
             </div>
-            <p class="mt-2 text-muted pb-4 border-b border-line">Choose how you'd like to create your new course:</p>
+            <p class="mt-2 text-sm sm:text-base text-muted pb-4 border-b border-line">Choose how you'd like to create your new course:</p>
 
-            <div class="space-y-4 pt-6">
+            <div class="space-y-3 sm:space-y-4 pt-4 sm:pt-6">
                 <div id="typeTopicBtn"
-                    class="course-option p-5 border border-line rounded-xl hover:border-c1/50 transition-colors cursor-pointer flex items-center gap-4">
+                    class="course-option p-4 sm:p-5 border border-line rounded-xl hover:border-c1/50 transition-colors cursor-pointer flex items-center gap-3 sm:gap-4">
                     <i
-                        class="fas fa-keyboard text-c1 text-xl w-12 h-12 rounded-full bg-c1/10 flex items-center justify-center"></i>
+                        class="fas fa-keyboard text-c1 text-lg sm:text-xl w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-c1/10 flex items-center justify-center"></i>
                     <div class="flex-1">
-                        <h4 class="font-semibold text-text">Type a Topic</h4>
-                        <p class="text-sm text-muted">Enter a topic and let AI generate a comprehensive course for you
+                        <h4 class="font-semibold text-text text-sm sm:text-base">Type a Topic</h4>
+                        <p class="text-xs sm:text-sm text-muted">Enter a topic and let AI generate a comprehensive course for you
                         </p>
                     </div>
                     <i class="fas fa-chevron-right text-muted"></i>
                 </div>
 
                 <div id="uploadPdfBtn"
-                    class="course-option p-5 border border-line rounded-xl hover:border-c1/50 transition-colors cursor-pointer flex items-center gap-4">
+                    class="course-option p-4 sm:p-5 border border-line rounded-xl hover:border-c1/50 transition-colors cursor-pointer flex items-center gap-3 sm:gap-4">
                     <i
-                        class="fas fa-file-upload text-c1 text-xl w-12 h-12 rounded-full bg-c1/10 flex items-center justify-center"></i>
+                        class="fas fa-file-upload text-c1 text-lg sm:text-xl w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-c1/10 flex items-center justify-center"></i>
                     <div class="flex-1">
-                        <h4 class="font-semibold text-text">Upload PDF File</h4>
-                        <p class="text-sm text-muted">Upload a PDF document to generate a course from its content</p>
+                        <h4 class="font-semibold text-text text-sm sm:text-base">Upload PDF File</h4>
+                        <p class="text-xs sm:text-sm text-muted">Upload a PDF document to generate a course from its content</p>
                     </div>
                     <i class="fas fa-chevron-right text-muted"></i>
                 </div>
@@ -238,41 +280,41 @@
 
         <!-- Topic Input View -->
         <div id="courseTopicInput"
-            class="relative w-full max-w-2xl bg-bg border border-line rounded-2xl overflow-hidden z-10 hidden p-6 space-y-6">
+            class="relative w-full max-w-2xl bg-bg border border-line rounded-2xl overflow-hidden z-10 hidden p-4 sm:p-6 space-y-4 sm:space-y-6 mx-4">
             <div class="flex items-center gap-3">
                 <button id="backToInitialBtn" class="text-muted hover:text-text">
                     <i class="fas fa-arrow-left"></i>
                 </button>
-                <h3 class="text-xl font-bold text-text">Create Course from Topic</h3>
+                <h3 class="text-lg sm:text-xl font-bold text-text">Create Course from Topic</h3>
             </div>
 
             <div>
                 <label for="courseTopic" class="block text-sm font-medium text-muted mb-1">Course Topic</label>
                 <input type="text" id="courseTopic"
-                    class="w-full bg-panel border border-line/50 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors"
+                    class="w-full bg-panel border border-line/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
                     placeholder="e.g. Machine Learning Basics, Web Development, Data Structures..." maxlength="100">
             </div>
 
-            <div class="grid grid-cols-7 gap-4">
-                <div class="col-span-3">
+            <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 sm:gap-4">
+                <div class="sm:col-span-3">
                     <label for="courseLanguage" class="block text-sm font-medium text-muted mb-1">Language</label>
                     <input type="text" id="courseLanguage"
-                        class="w-full bg-panel border border-line/50 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors"
+                        class="w-full bg-panel border border-line/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
                         placeholder="e.g. English, Spanish, French..." value="English">
                 </div>
-                <div class="col-span-2">
+                <div class="sm:col-span-2">
                     <label for="courseLength" class="block text-sm font-medium text-muted mb-1">Course Length</label>
                     <select id="courseLength"
-                        class="w-full bg-panel border border-line/50 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors">
+                        class="w-full bg-panel border border-line/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base">
                         <option class="text-text" value="short">Short</option>
                         <option class="text-text" value="medium" selected>Medium</option>
                         <option class="text-text" value="long">Long</option>
                     </select>
                 </div>
-                <div class="col-span-2">
+                <div class="sm:col-span-2">
                     <label for="courseLevel" class="block text-sm font-medium text-muted mb-1">Difficulty Level</label>
                     <select id="courseLevel"
-                        class="w-full bg-panel border border-line/50 rounded-lg px-4 py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors">
+                        class="w-full bg-panel border border-line/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base">
                         <option class="text-text" value="introduction">Introduction</option>
                         <option class="text-text" value="foundation" selected>Foundation</option>
                         <option class="text-text" value="in-depth">In-depth</option>
@@ -283,14 +325,14 @@
             </div>
 
             <button id="generateCourseBtn"
-                class="px-6 py-3 text-sm font-medium text-bg bg-c3 hover:bg-c3/90 rounded-lg transition-colors flex items-center gap-2 ml-auto">
+                class="px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium text-bg bg-c3 hover:bg-c3/90 rounded-lg transition-colors flex items-center gap-2 ml-auto">
                 <i class="fas fa-magic"></i>
                 Generate Course
             </button>
         </div>
     </div>
 
-    <footer class="py-6 text-center text-muted text-sm border-t border-line bg-bg/50 backdrop-blur-sm mt-auto">
+    <footer class="py-4 sm:py-6 text-center text-muted text-xs sm:text-sm border-t border-line bg-bg/50 backdrop-blur-sm mt-auto">
         <p>&copy; 2025 MasteryPath - Group 4 Final Project</p>
     </footer>
 
@@ -306,6 +348,66 @@
     <script src="js/overview.js"></script>
     <script src="js/review.js"></script>
     <script src="js/router.js"></script>
+    
+    <!-- Mobile Menu JavaScript -->
+    <script>
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+        function openMobileMenu() {
+            mobileMenu.classList.remove('hidden');
+            mobileMenu.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            
+            // Animate hamburger to X
+            const spans = mobileMenuBtn.querySelectorAll('span');
+            spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
+            spans[1].style.opacity = '0';
+            spans[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
+        }
+
+        function closeMobileMenuFunc() {
+            mobileMenu.classList.add('hidden');
+            mobileMenu.classList.remove('flex');
+            document.body.style.overflow = '';
+            
+            // Reset hamburger animation
+            const spans = mobileMenuBtn.querySelectorAll('span');
+            spans[0].style.transform = '';
+            spans[1].style.opacity = '';
+            spans[2].style.transform = '';
+        }
+
+        function closeMobileMenuAndNavigate(route) {
+            closeMobileMenuFunc();
+            if (typeof router !== 'undefined') {
+                router.navigateTo(route);
+            }
+        }
+
+        // Event listeners
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+
+        // Close menu when clicking outside
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                closeMobileMenuFunc();
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+                closeMobileMenuFunc();
+            }
+        });
+
+        // Make closeMobileMenuAndNavigate globally available
+        window.closeMobileMenuAndNavigate = closeMobileMenuAndNavigate;
+    </script>
 </body>
 
 </html>
