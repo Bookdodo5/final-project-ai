@@ -27,7 +27,7 @@ const updateSrsProgress = async (root) => {
     if (barEl) barEl.style.width = `${pct}%`;
     if (dueEl) dueEl.textContent = String(total);
     if (reviewedEl) reviewedEl.textContent = String(current);
-    if (totalEl) totalEl.textContent = String(window.questionsLearned);
+    if (totalEl) totalEl.textContent = String(window.questionsLearned ?? 0);
 };
 
 const renderSrsCurrent = (root, container, emptyMsg) => {
