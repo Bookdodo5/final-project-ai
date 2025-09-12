@@ -1,3 +1,8 @@
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Color Variables */
 :root {
     --bg: #1c1d1f;
@@ -30,7 +35,7 @@ body {
     padding: 0;
     box-sizing: border-box;
 }
-
+/*
 /* Header */
 .header {
     background: var(--panel);

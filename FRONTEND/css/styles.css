@@ -1,0 +1,62 @@
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color Variables */
+:root {
+    --bg: #1c1d1f;
+    --panel: #2a2b2f;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --line: #3a3b3f;
+    --c1: #1BB88D;
+    --c2: #FAC38D;
+    --c3: #F1E3A4;
+    --c4: #CE7C66;
+    --c5: #8EBE73;
+}
+
+/* Global Layout Improvements */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    font-size: 16px;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.gradient-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background: linear-gradient(135deg, 
+        rgba(27, 184, 141, 0.1) 0%, 
+        rgba(206, 124, 102, 0.1) 50%, 
+        rgba(27, 184, 141, 0.1) 100%);
+    pointer-events: none;
+}
+
+.gradient-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(27, 184, 141, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(206, 124, 102, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
