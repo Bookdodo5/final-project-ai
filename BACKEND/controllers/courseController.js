@@ -6,11 +6,11 @@ import {
     BadRequestError, 
     RateLimitError, 
     InternalServerError, 
-    ValidationError,
     ConflictError
 } from "../error/error.js";
 import { generate } from "../services/gemini.js";
 import { systemInstruction, prompt } from "../PROMPT/courseCreation.js";
+import {deleteQuestionsByModuleId} from "./questionController.js";
 
 /**
  * GET /courses
@@ -65,8 +65,8 @@ async function saveModules(userId, courseId, modules) {
         
         batch.set(moduleRef, {
             moduleName: module.moduleName,
-            description: module.description,
-            contentText: module.contentText || "",
+            description: module.description || "No description available",
+            contentText: module.contentText || "No content available",
             order: index + 1,
             isCompleted: false,
             createdAt: new Date(),
@@ -79,12 +79,13 @@ async function saveModules(userId, courseId, modules) {
             batch.set(questionRef, {
                 questionText: question.questionText,
                 type: question.type,
-                options: question.options,
+                options: question.options || [],
                 correctAnswer: question.correctAnswer,
                 questionOrder: index + 1,
-                star: question.star,
+                star: question.star || 1,
                 createdAt: new Date(),
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                moduleId: moduleId
             });
         })
     });
@@ -100,7 +101,79 @@ async function generateCourseContent(topic, language, length) {
             {
                 temperature: 0.7,
                 topP: 0.9,
-                model: "gemini-2.5-flash"
+                model: "gemini-2.5-pro",
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "object",
+                        properties: {
+                            courseName: {
+                                type: "string",
+                                description: "Course title that is short and clearly conveys the topic"
+                            },
+                            description: {
+                                type: "string",
+                                description: "Brief 1-2 sentence course description"
+                            },
+                            modules: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        moduleName: {
+                                            type: "string",
+                                            description: "Clear and concise module title"
+                                        },
+                                        description: {
+                                            type: "string",
+                                            description: "Brief 1-2 sentence module description"
+                                        },
+                                        contentText: {
+                                            type: "string",
+                                            description: "Detailed lesson content in markdown format"
+                                        },
+                                        moduleQuiz: {
+                                            type: "array",
+                                            items: {
+                                                type: "object",
+                                                properties: {
+                                                    questionText: { type: "string" },
+                                                    type: { 
+                                                        type: "string",
+                                                        enum: ["mcq", "open-ended", "true-false"]
+                                                    },
+                                                    options: {
+                                                        type: "array",
+                                                        items: { type: "string" },
+                                                        description: "Leave empty for open-ended questions"
+                                                    },
+                                                    correctAnswer: { 
+                                                        type: "string",
+                                                        description: "For MCQ, must match one of the options exactly"
+                                                    },
+                                                    star: {
+                                                        type: "integer",
+                                                        minimum: 1,
+                                                        maximum: 5,
+                                                        description: "Difficulty rating (1=easiest, 5=hardest)"
+                                                    }
+                                                },
+                                                required: ["questionText", "type", "correctAnswer", "star"]
+                                            },
+                                            minItems: 5,
+                                            maxItems: 7,
+                                            description: "5-7 questions per module"
+                                        }
+                                    },
+                                    required: ["moduleName", "description", "contentText", "moduleQuiz"]
+                                },
+                                minItems: 1,
+                                description: "Number of modules based on course length"
+                            }
+                        },
+                        required: ["courseName", "description", "modules"]
+                    }
+                }
             }
         );
 
@@ -177,10 +250,16 @@ export const createCourse = async (req, res) => {
 export const regenerateCourse = async (req, res) => {
     const courseId = validate(req.params, 'courseId', 'string');
     const userId = validate(req.params, 'userId', 'string');
+    const userRef = db.collection("users").doc(userId);
+    const userData = await userRef.get();
     const courseRef = db.collection("users").doc(userId).collection("courses").doc(courseId);
     const courseData = await courseRef.get();
+
     if (!courseData.exists) {
         throw new NotFoundError('Course not found');
+    }
+    if (!userData.exists) {
+        throw new NotFoundError('User not found');
     }
 
     await courseRef.update({
@@ -203,11 +282,16 @@ export const regenerateCourse = async (req, res) => {
                 description: courseContent.description,
                 updatedAt: new Date()
             });
+            await userRef.update({
+                moduleCount: userData.data().moduleCount + courseContent.modules.length,
+                updatedAt: new Date()
+            });
         } catch (error) {
             console.error("Error in course generation:", error);
             await courseRef.update({
                 status: "error",
                 error: error.message,
+                description: error.message,
                 updatedAt: new Date()
             });
         }
@@ -221,7 +305,6 @@ export const regenerateCourse = async (req, res) => {
  * Purpose: Delete a course and its associated content for the user.
  * Path Parameters:
  *  - courseId: string (required)
- * Query Parameters:
  *  - userId: string (required)
  * Responses:
  *  - 200: { message: 'Deleted' }
@@ -232,12 +315,46 @@ export const regenerateCourse = async (req, res) => {
 export const deleteCourse = async (req, res) => {
     const courseId = validate(req.params, 'courseId', 'string');
     const userId = validate(req.params, 'userId', 'string');
+    const userRef = db.collection("users").doc(userId);
     const courseRef = db.collection("users").doc(userId).collection("courses").doc(courseId);
+    const modulesRef = courseRef.collection("modules");
+
     const courseDoc = await courseRef.get();
     if (!courseDoc.exists) {
         throw new NotFoundError('Course not found');
     }
+
+    const modulesSnap = await modulesRef.get();
+    let modulesToRemove = 0;
+    let completedToRemove = 0;
+    const batch = db.batch();
+
+    modulesSnap.forEach((doc) => {
+        modulesToRemove += 1;
+        if (doc.data().isCompleted) completedToRemove += 1;
+        deleteQuestionsByModuleId(userId, doc.id);
+        batch.delete(doc.ref);
+    });
+
+    if (modulesToRemove > 0) {
+        await batch.commit();
+    }
+
     await courseRef.delete();
+
+    const userDoc = await userRef.get();
+    if (userDoc.exists) {
+        const current = userDoc.data() || {};
+        const nextModuleCount = Math.max(0, (current.moduleCount || 0) - modulesToRemove);
+        const nextModuleCompleted = Math.max(0, (current.moduleCompleted || 0) - completedToRemove);
+        await userRef.update({
+            moduleCount: nextModuleCount,
+            moduleCompleted: nextModuleCompleted,
+            lastActiveAt: new Date(),
+            updatedAt: new Date(),
+        });
+    }
+
     res.status(200).json({ message: 'Deleted' });
 };
 
@@ -276,6 +393,53 @@ export const updateCourse = async (req, res) => {
         updatedAt: new Date()
     })
     res.status(200).json({ message: 'Updated' });
+};
+
+export const updateModule = async (req, res) => {
+    const courseId = validate(req.params, 'courseId', 'string');
+    const moduleId = validate(req.params, 'moduleId', 'string');
+    const userId = validate(req.params, 'userId', 'string');
+    const moduleRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules").doc(moduleId);
+    const moduleDoc = await moduleRef.get();
+    if (!moduleDoc.exists) {
+        throw new NotFoundError('Module not found');
+    }
+    await moduleRef.update({
+        moduleName: req.body.moduleName ?? moduleDoc.data().moduleName,
+        description: req.body.description ?? moduleDoc.data().description,
+        contentText: req.body.contentText ?? moduleDoc.data().contentText,
+        order: req.body.order ?? moduleDoc.data().order,
+        isCompleted: req.body.isCompleted ?? moduleDoc.data().isCompleted,
+        updatedAt: new Date()
+    });
+    res.status(200).json({ message: 'Updated' });
+};
+
+/**
+ * GET /users/:userId/courses/:courseId/modules
+ * Purpose: Retrieve all modules for a specific course
+ * Path Parameters:
+ *  - userId: string (required)
+ *  - courseId: string (required)
+ * Responses:
+ *  - 200: Array<{ moduleId: string, moduleName: string, description?: string, order: number, isCompleted: boolean, createdAt: Date, updatedAt: Date }>
+ *  - 400: { error: string }
+ *  - 404: { error: 'Course not found' }
+ */
+/** @type {import("express").RequestHandler} */
+export const getModules = async (req, res) => {
+    const courseId = validate(req.params, 'courseId', 'string');
+    const userId = validate(req.params, 'userId', 'string');
+
+    const modulesRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules");
+    const modules = await modulesRef.orderBy("order", "asc").get();
+    
+    const modulesData = modules.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+    }))
+    
+    res.status(200).json(modulesData);
 };
 
 /**

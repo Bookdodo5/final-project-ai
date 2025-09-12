@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get("/:userId", asyncWrapper(userController.getUser));
 router.post("/", asyncWrapper(userController.createUser));
+router.put("/:userId", asyncWrapper(userController.updateUser));
 router.delete("/:userId", asyncWrapper(userController.deleteUser));
 
 export default router;

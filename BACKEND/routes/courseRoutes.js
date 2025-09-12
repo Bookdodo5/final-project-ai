@@ -10,6 +10,8 @@ router.post("/:courseId", asyncWrapper(courseController.regenerateCourse));
 router.delete("/:courseId", asyncWrapper(courseController.deleteCourse));
 router.get("/:courseId", asyncWrapper(courseController.getCourse));
 router.put("/:courseId", asyncWrapper(courseController.updateCourse));
+router.put("/:courseId/modules/:moduleId", asyncWrapper(courseController.updateModule));
+router.get("/:courseId/modules", asyncWrapper(courseController.getModules));
 router.get("/:courseId/modules/:moduleId", asyncWrapper(courseController.getModule));
 
 export default router;

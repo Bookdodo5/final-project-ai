@@ -54,7 +54,6 @@ export const getQuestionById = async (req, res) => {
  * GET /questions/:courseId/:moduleId
  * Purpose: Get all questions for a specific module
  * Path Parameters:
- *  - courseId: string (required)
  *  - moduleId: string (required)
  * Responses:
  *  - 200: Array of question objects
@@ -64,11 +63,9 @@ export const getQuestionById = async (req, res) => {
 /** @type {import("express").RequestHandler} */
 export const getQuestionsByModuleId = async (req, res) => {
     const userId = validate(req.params, 'userId', 'string');
-    const courseId = validate(req.params, 'courseId', 'string');
     const moduleId = validate(req.params, 'moduleId', 'string');
 
     let questionsRef = db.collection("users").doc(userId).collection('questions')
-        .where('courseId', '==', courseId)
         .where('moduleId', '==', moduleId);
 
     const querySnapshot = await questionsRef.get();
@@ -82,6 +79,46 @@ export const getQuestionsByModuleId = async (req, res) => {
     }));
     res.status(200).json(questions);
 };
+
+/**
+ * DELETE /questions/:questionId
+ * Purpose: Delete a specific question
+ * Path Parameters:
+ *  - questionId: string (required)
+ * Responses:
+ *  - 200: Array of question objects
+ *  - 400: { error: string }
+ *  - 404: { error: 'No questions found' }
+ */
+/** @type {import("express").RequestHandler} */
+export const deleteQuestionById = async (req, res) => {
+    const userId = validate(req.params, 'userId', 'string');
+    const questionId = validate(req.params, 'questionId', 'string');
+
+    let questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
+
+    const questionDoc = await questionRef.get();
+    if (!questionDoc.exists) {
+        throw new NotFoundError('No questions found');
+    }
+
+    await questionRef.delete();
+    res.status(200).json({ message: 'Question deleted' });
+};
+
+export async function deleteQuestionsByModuleId(userId, moduleId) {
+    const qs = await db
+        .collection("users").doc(userId)
+        .collection("questions")
+        .where("moduleId", "==", moduleId)
+        .get();
+
+    if (qs.empty) return;
+
+    const batch = db.batch();
+    qs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+}
 
 /**
  * POST /questions/:questionId/submit
@@ -121,7 +158,19 @@ export const submitAnswer = async (req, res) => {
         {
             temperature: 0.7,
             topP: 0.9,
-            model: "gemini-2.5-flash-lite"
+            model: "gemini-2.5-flash-lite",
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: "object",
+                    properties: {
+                        isCorrect: { type: "boolean" },
+                        correctAnswer: { type: "string" },
+                        feedback: { type: "string" }
+                    },
+                    required: ["isCorrect", "correctAnswer", "feedback"]
+                }
+            }
         }
     );
 
@@ -139,7 +188,7 @@ export const submitAnswer = async (req, res) => {
  *  - questionId: string (required)
  *  - userId: string (required)
  * Request Body:
- *  - srsRating: 'Again'|'Hard'|'Good'|'Easy' (required)
+ *  - srsRating: 'Again'|'Hard'|'Good'|'Easy'|'Known' (required)
  * Responses:
  *  - 200: { 
  *      updatedSrsData: {
@@ -159,8 +208,8 @@ export const rateQuestion = async (req, res) => {
     const questionId = validate(req.params, 'questionId', 'string');
     const srsRating = validate(req.body, 'srsRating', 'string');
 
-    if (!['Again', 'Hard', 'Good', 'Easy'].includes(srsRating)) {
-        throw new BadRequestError('Invalid SRS rating. Must be one of: Again, Hard, Good, Easy');
+    if (!['Again', 'Hard', 'Good', 'Easy', 'Known'].includes(srsRating)) {
+        throw new BadRequestError('Invalid SRS rating. Must be one of: Again, Hard, Good, Easy, Known');
     }
 
     const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
@@ -290,10 +339,26 @@ export const markQuestionAsLearned = async (req, res) => {
     const questionRef = db.collection("users").doc(userId).collection('questions').doc(questionId);
     const questionDoc = await questionRef.get();
 
+    const userRef = db.collection("users").doc(userId);
+    const userDoc = await userRef.get();
+
     if (!questionDoc.exists) {
         throw new NotFoundError('Question not found');
     }
+    if (!userDoc.exists) {
+        throw new NotFoundError('User not found');
+    }
+
+    if(questionDoc.data() && questionDoc.data().learned) {
+        res.status(200).json({ message: 'Question already marked as learned' });
+        return;
+    }
+
     await questionRef.update({learned: true});
+
+    await userRef.update({
+        questionsLearned: (userDoc.data().questionsLearned || 0) + 1
+    });
 
     res.status(200).json({ message: 'Question marked as learned' });
 };
