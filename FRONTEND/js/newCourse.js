@@ -2,6 +2,7 @@
 let newCourseModal, courseModalInitial, courseTopicInput;
 let typeTopicBtn, uploadPdfBtn, backToInitialBtn, generateCourseBtn;
 let courseTopicInputField, courseLevelSelect, courseLengthSelect, courseLanguageInputField;
+let pdfFileInput, pdfUploadStatus;
 
 // Initialize modal elements
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,6 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
     courseLevelSelect = document.getElementById('courseLevel');
     courseLengthSelect = document.getElementById('courseLength');
     courseLanguageInputField = document.getElementById('courseLanguage');
+    pdfUploadStatus = document.getElementById('pdfUploadStatus');
+    
+    // Create hidden file input
+    pdfFileInput = document.createElement('input');
+    pdfFileInput.type = 'file';
+    pdfFileInput.accept = 'application/pdf';
+    pdfFileInput.style.display = 'none';
+    document.body.appendChild(pdfFileInput);
+    
+    pdfFileInput.addEventListener('change', handlePdfUpload);
     
     // Add event listeners
     if (typeTopicBtn) typeTopicBtn.addEventListener('click', showTopicInput);
@@ -87,23 +98,53 @@ function showTopicInput() {
 
 // Handle file upload selection
 function selectFileUpload() {
-    alert('PDF upload functionality will be implemented in a future update');
+    if (pdfFileInput) {
+        pdfFileInput.click();
+    }
 }
 
-// Generate course from topic
-async function generateCourseFromTopic() {
-    if (!courseTopicInputField || !courseLevelSelect) return;
-    
-    const topic = courseTopicInputField.value.trim();
-    const level = courseLevelSelect.value || 'foundation';
-    const length = courseLengthSelect.value || 'medium';
-    const language = courseLanguageInputField.value.trim();
-    
-    if (!topic) {
-        alert('Please enter a topic');
-        return;
+// Handle PDF file upload and extraction
+async function handlePdfUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Show upload status
+    if (pdfUploadStatus) {
+        pdfUploadStatus.textContent = 'Extracting text from PDF...';
+        pdfUploadStatus.classList.remove('hidden');
+        pdfUploadStatus.classList.remove('text-red-600');
     }
 
+    try {
+        const result = await apiService.extractTextFromPdf(file);
+        console.log('PDF extraction result:', result);
+        
+        if (!result || !result.fullText) {
+            throw new Error('No text was extracted from the PDF');
+        }
+        
+        if (pdfUploadStatus) {
+            pdfUploadStatus.textContent = 'PDF processed successfully!';
+            pdfUploadStatus.classList.add('text-green-600');
+        }
+
+        // Generate course with the extracted text
+        generateCourse({
+            topicInput: result.fullText,
+            lengthOption: 'Unspecified',
+            languageOption: 'Unspecified',
+        });
+
+    } catch (error) {
+        console.error('Error processing PDF:', error);
+        if (pdfUploadStatus) {
+            pdfUploadStatus.textContent = 'Error processing PDF: ' + (error.message || 'Please try again.');
+            pdfUploadStatus.classList.add('text-red-600');
+        }
+    }
+}
+
+async function generateCourse(courseSettings) {
     try {
         // Show loading state
         if (generateCourseBtn) {
@@ -112,11 +153,7 @@ async function generateCourseFromTopic() {
             generateCourseBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
             
             // Create course
-            await window.apiService.createCourse(window.userId, {
-                topicInput: `${topic} (Difficulty / Scope : ${level})`,
-                lengthOption: length,
-                languageOption: language,
-            });
+            await window.apiService.createCourse(window.userId, courseSettings);
             
             // Reset button state
             generateCourseBtn.disabled = false;
@@ -138,6 +175,31 @@ async function generateCourseFromTopic() {
             generateCourseBtn.innerHTML = '<i class="fas fa-magic"></i> Generate Course';
         }
     }
+}
+
+// Generate course from topic
+async function generateCourseFromTopic() {
+    if (!courseTopicInputField || !courseLevelSelect) return;
+    
+    const topic = courseTopicInputField.value.trim();
+    const level = courseLevelSelect.value || 'foundation';
+    const length = courseLengthSelect.value || 'medium';
+    const language = courseLanguageInputField.value.trim();
+    
+    if (!topic) {
+        alert('Please enter a topic');
+        return;
+    }
+
+    generateCourse({
+        topicInput: `${topic} (Difficulty / Scope : ${level})`,
+        lengthOption: length,
+        languageOption: language,
+    });
+}
+
+async function generateCourseFromPdf() {
+    
 }
 
 // Export functions to global scope

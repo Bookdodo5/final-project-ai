@@ -357,7 +357,8 @@ export const markQuestionAsLearned = async (req, res) => {
     await questionRef.update({learned: true});
 
     await userRef.update({
-        questionsLearned: (userDoc.data().questionsLearned || 0) + 1
+        questionsLearned: (userDoc.data().questionsLearned || 0) + 1,
+        lastActiveAt: new Date()
     });
 
     res.status(200).json({ message: 'Question marked as learned' });

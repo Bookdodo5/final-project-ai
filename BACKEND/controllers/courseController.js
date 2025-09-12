@@ -101,7 +101,7 @@ async function generateCourseContent(topic, language, length) {
             {
                 temperature: 0.7,
                 topP: 0.9,
-                model: "gemini-2.5-pro",
+                model: "gemini-2.5-flash",
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: {
@@ -284,7 +284,7 @@ export const regenerateCourse = async (req, res) => {
             });
             await userRef.update({
                 moduleCount: userData.data().moduleCount + courseContent.modules.length,
-                updatedAt: new Date()
+                lastActiveAt: new Date()
             });
         } catch (error) {
             console.error("Error in course generation:", error);

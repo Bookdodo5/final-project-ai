@@ -61,7 +61,7 @@ const renderCourseGrid = () => {
 
     courseGrid.innerHTML = window.coursesData.map(course => `
         <div class="bg-panel border border-line rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-c1/50 p-5 flex flex-col h-full gap-4 ${course.status === 'generating' ? 'animate-pulse' : ''}">
-            <h3 class="text-lg font-bold text-text" title="${course.courseName || 'Untitled Course'}">
+            <h3 class="text-lg font-bold text-text line-clamp-4" title="${course.courseName || 'Untitled Course'}">
                 ${course.courseName || 'Untitled Course'}
             </h3>
             

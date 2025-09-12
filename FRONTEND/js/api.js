@@ -180,6 +180,48 @@ const apiService = {
         if (!response.ok) throw new Error('Failed to update course');
         return response.json();
     },
+
+    async extractTextFromPdf(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = async (event) => {
+                try {
+                    const base64Data = event.target.result;
+                    
+                    const response = await fetch(`${BACKEND_URL}/pdf/extract-text`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            file: base64Data
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (!result || typeof result.fullText !== 'string') {
+                        throw new Error('Invalid response from server');
+                    }
+                    
+                    resolve(result);
+                } catch (error) {
+                    console.error('PDF Extraction Error:', error);
+                    reject(new Error(error.message || 'Failed to process PDF. Please make sure the file is not encrypted or image-based.'));
+                }
+            };
+            
+            reader.onerror = (error) => {
+                console.error('File reading error:', error);
+                reject(new Error('Failed to read the PDF file.'));
+            };
+            
+            // Read the file as a data URL (base64)
+            reader.readAsDataURL(file);
+        });
+    },
 };
 
 window.apiService = apiService;
