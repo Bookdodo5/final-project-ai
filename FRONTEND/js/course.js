@@ -24,8 +24,8 @@ window.openCourse = async (courseId, forceReload = false) => {
         // Render course content after modules are loaded
         courseView.innerHTML = `
             <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center py-8 pt-16">
-                    <div>
+                <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
+                    <div class="text-center md:text-left">
                         <h2 class="text-3xl font-bold text-white">Course</h2>
                         <p class="text-muted">View the course you created.</p>
                     </div>
@@ -68,7 +68,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                         </div>
                     </div>
                     
-                    <div class="p-8 bg-panel">
+                    <div class="p-6 md:p-8 bg-panel">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-xl font-semibold text-text">Course Modules</h2>
                             <span class="text-sm text-muted">${window.modulesData?.length || 0} modules</span>

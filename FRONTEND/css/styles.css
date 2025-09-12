@@ -112,13 +112,7 @@ body {
 
 /* Small mobile devices */
 @media (max-width: 480px) {
-    /* Tighter spacing for very small screens */
-    .px-4 {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
     
-    /* Smaller font sizes for very small screens */
     h1 {
         font-size: 1.25rem;
     }
@@ -127,7 +121,6 @@ body {
         font-size: 1.75rem;
     }
     
-    /* Better modal sizing */
     #courseModalInitial,
     #courseTopicInput {
         margin: 0.5rem;
@@ -136,9 +129,7 @@ body {
     }
 }
 
-/* Landscape mobile orientation */
 @media (max-width: 768px) and (orientation: landscape) {
-    /* Reduce vertical padding in landscape */
     .py-12 {
         padding-top: 2rem;
         padding-bottom: 2rem;
@@ -149,7 +140,6 @@ body {
         padding-bottom: 3rem;
     }
     
-    /* Adjust hero section for landscape */
     section {
         padding-top: 1.5rem;
         padding-bottom: 1.5rem;
@@ -261,26 +251,6 @@ a:focus {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-/* Improve form elements on mobile */
-@media (max-width: 768px) {
-    input[type="text"],
-    input[type="email"],
-    select,
-    textarea {
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        line-height: 1.5;
-    }
-    
-    button {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-        min-height: 48px;
-    }
 }
 
 /* Safe area insets for devices with notches */

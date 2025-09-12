@@ -42,9 +42,9 @@ window.renderQuestion = (q) => {
 
     return `
             <div class="flex-1 gap-3">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col gap-2 md:flex-row items-center justify-between">
                     <p class="font-medium text-text w-full">${q.questionText || q.question || 'Question'}</p>
-                    ${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1"></i>`).join('')}
+                    <div class="flex items-center gap-1">${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1"></i>`).join('')}</div>
                 </div>
                 ${inputArea}
                 <button type="button" data-action="submit" class="px-4 py-2 mt-4 bg-c1 hover:bg-c1/90 text-white rounded-lg font-medium transition-colors">Submit</button>

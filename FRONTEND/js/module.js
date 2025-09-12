@@ -71,8 +71,8 @@ window.openModule = async (moduleId, courseId) => {
 
         moduleView.innerHTML = `
             <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center py-8 pt-16">
-                    <div>
+                <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
+                    <div class="text-center md:text-left">
                         <h2 class="text-3xl font-bold text-white">Modules</h2>
                         <p class="text-muted">Study the module you created.</p>
                     </div>
@@ -103,15 +103,15 @@ window.openModule = async (moduleId, courseId) => {
                         </div>
                     </div>
                     
-                    <div class="p-8 bg-panel">
-                        <h2 class="text-xl font-semibold text-text mb-6">Module Content</h2>
+                    <div class="p-6 px-2 sm:p-8 sm:px-8 bg-panel">
+                        <h2 class="text-xl px-2 sm:px-0 font-semibold text-text mb-6">Module Content</h2>
                         <article class="prose prose-invert w-full min-w-full bg-bg/60 p-6 md:p-8 rounded-xl border border-line/50 shadow-sm leading-relaxed prose-headings:text-text prose-h1:text-3xl md:prose-h1:text-4xl prose-h2:text-2xl md:prose-h2:text-3xl prose-p:text-text/90 prose-a:text-c1 hover:prose-a:underline prose-strong:text-white prose-code:bg-panel/60 prose-code:text-text prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:marker:text-c1 prose-ol:marker:text-c1 prose-img:rounded-lg">
                             ${module.contentText || '<p class="text-muted italic">No content available for this module.</p>'}
                         </article>
                         
                         <div class="mt-8">
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-xl font-semibold text-text">Quiz</h3>
+                                <h3 class="text-xl px-2 sm:px-0 font-semibold text-text">Quiz</h3>
                                 <span class="text-sm bg-c1/20 text-c1 px-3 py-1 rounded-full">
                                     ${window.questionsData?.length || 0} ${window.questionsData?.length === 1 ? 'Question' : 'Questions'}
                                 </span>

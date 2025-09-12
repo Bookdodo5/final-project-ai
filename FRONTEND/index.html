@@ -56,19 +56,19 @@
         <!-- Desktop Navigation -->
         <div class="hidden sm:flex items-center space-x-2 md:space-x-4">
             <a href="#" data-route="home"
-                class="relative px-4 py-2.5 text-sm md:text-base font-medium text-white/90 hover:text-white transition-all ease-out duration-200 group">
+                class="relative px-4 py-2.5 text-sm md:text-base flex items-center justify-center font-medium text-white/90 hover:text-white transition-all ease-out duration-200 group">
                 <span class="relative z-10">Overview</span>
                 <span
                     class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-c1 to-c5 transition-all duration-300 group-hover:w-full"></span>
             </a>
             <a href="#learn" data-route="learn" onclick="router.navigateTo('learn')"
-                class="relative px-4 py-2.5 text-sm md:text-base font-medium text-white/70 hover:text-white transition-all ease-out duration-200 group">
+                class="relative px-4 py-2.5 text-sm md:text-base flex items-center justify-center font-medium text-white/70 hover:text-white transition-all ease-out duration-200 group">
                 <span class="relative z-10">Learn</span>
                 <span
                     class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-c1 to-c5 transition-all duration-300 group-hover:w-full"></span>
             </a>
             <a href="#review" data-route="review"
-                class="relative px-4 py-2.5 text-sm md:text-base font-medium text-white/70 hover:text-white transition-all ease-out duration-200 group">
+                class="relative px-4 py-2.5 text-sm md:text-base flex items-center justify-center font-medium text-white/70 hover:text-white transition-all ease-out duration-200 group">
                 <span class="relative z-10">Review (SRS)</span>
                 <span
                     class="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-c1 to-c5 transition-all duration-300 group-hover:w-full"></span>
@@ -181,10 +181,10 @@
         <!-- Learn View -->
         <div id="learnView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             <!-- Learn Header -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center py-6 sm:py-8 pt-12 sm:pt-16">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Learn</h2>
-                    <p class="text-sm sm:text-base text-muted">Learn the courses you created. Filter with the search box below.</p>
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
+                <div class="text-center md:text-left">
+                    <h2 class="text-3xl font-bold text-white">Learn</h2>
+                    <p class="text-muted">Learn the courses you created. Filter with the search box below.</p>
                 </div>
                 <button id="newCourseBtn"
                     class="flex items-center space-x-2 bg-c3 hover:bg-c3/90 text-bg font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg transition-colors mt-4 md:mt-0 text-sm sm:text-base">
@@ -348,66 +348,7 @@
     <script src="js/overview.js"></script>
     <script src="js/review.js"></script>
     <script src="js/router.js"></script>
-    
-    <!-- Mobile Menu JavaScript -->
-    <script>
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const closeMobileMenu = document.getElementById('closeMobileMenu');
-
-        function openMobileMenu() {
-            mobileMenu.classList.remove('hidden');
-            mobileMenu.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            
-            // Animate hamburger to X
-            const spans = mobileMenuBtn.querySelectorAll('span');
-            spans[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
-            spans[1].style.opacity = '0';
-            spans[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
-        }
-
-        function closeMobileMenuFunc() {
-            mobileMenu.classList.add('hidden');
-            mobileMenu.classList.remove('flex');
-            document.body.style.overflow = '';
-            
-            // Reset hamburger animation
-            const spans = mobileMenuBtn.querySelectorAll('span');
-            spans[0].style.transform = '';
-            spans[1].style.opacity = '';
-            spans[2].style.transform = '';
-        }
-
-        function closeMobileMenuAndNavigate(route) {
-            closeMobileMenuFunc();
-            if (typeof router !== 'undefined') {
-                router.navigateTo(route);
-            }
-        }
-
-        // Event listeners
-        mobileMenuBtn.addEventListener('click', openMobileMenu);
-        closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
-
-        // Close menu when clicking outside
-        mobileMenu.addEventListener('click', function(e) {
-            if (e.target === mobileMenu) {
-                closeMobileMenuFunc();
-            }
-        });
-
-        // Close menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
-                closeMobileMenuFunc();
-            }
-        });
-
-        // Make closeMobileMenuAndNavigate globally available
-        window.closeMobileMenuAndNavigate = closeMobileMenuAndNavigate;
-    </script>
+    <script src="js/mobileMenu.js"></script>
 </body>
 
 </html>
