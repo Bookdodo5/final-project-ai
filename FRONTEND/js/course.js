@@ -39,11 +39,15 @@ window.openCourse = async (courseId, forceReload = false) => {
                             <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">${course.courseName || 'Course Title'}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
                                 <span class="bg-c3/20 text-c3 px-3 py-1.5 rounded inline-flex items-center">
-                                    <i class="fas fa-clock text-xs mr-1 text-c3"></i>
+                                    <i class="fa fa-clock text-xs mr-1 text-c3"></i>
                                     ${course.lengthOption || 'N/A'}
                                 </span>
+                                <span class="bg-c3/20 text-c3 px-3 py-1.5 rounded inline-flex items-center">
+                                    <i class="fa fa-book text-xs mr-1 text-c3"></i>
+                                    ${course.levelOption || 'N/A'}
+                                </span>
                                 <span class="bg-c2/20 text-c2 px-3 py-1.5 rounded inline-flex items-center">
-                                    <i class="fas fa-language text-xs mr-1 text-c2"></i>
+                                    <i class="fa fa-language text-xs mr-1 text-c2"></i>
                                     ${course.languageOption || 'N/A'}
                                 </span>
                                 <span class="bg-muted/20 text-muted px-3 py-1.5 rounded inline-flex items-center">

@@ -60,7 +60,7 @@ const renderCourseGrid = () => {
     if (!courseGrid) return;
 
     courseGrid.innerHTML = window.coursesData.map(course => `
-        <li class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-c1/50 p-5 flex flex-col h-full gap-4 ${course.status === 'generating' ? 'animate-pulse' : ''}">
+        <li class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-c1/50 p-5 flex flex-col h-full gap-4 ${course.status !== 'active' && course.status !== 'error' ? 'animate-pulse' : ''}">
             <h2 class="text-lg font-bold text-text line-clamp-4" title="${course.courseName || 'Untitled Course'}">
                 ${course.courseName || 'Untitled Course'}
             </h2>
@@ -71,11 +71,15 @@ const renderCourseGrid = () => {
             
             <div class="inline-flex flex-wrap gap-2 text-xs">
                 <span class="bg-c3/20 text-c3 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
-                    <i class="fas fa-clock text-xs mr-1 text-c3"></i>
+                    <i class="fa fa-clock text-xs mr-1 text-c3"></i>
                     ${course.lengthOption || 'N/A'}
                 </span>
+                <span class="bg-c3/20 text-c3 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
+                    <i class="fa fa-book text-xs mr-1 text-c3"></i>
+                    ${course.levelOption || 'N/A'}
+                </span>
                 <span class="bg-c2/20 text-c2 px-2 py-1 rounded whitespace-nowrap flex-shrink-0">
-                    <i class="fas fa-language text-xs mr-1 text-c2"></i>
+                    <i class="fa fa-language text-xs mr-1 text-c2"></i>
                     ${course.languageOption || 'N/A'}
                 </span>
                 <span class="px-2 py-1 rounded whitespace-nowrap flex-shrink-0 ${course.status === 'active' ? 'bg-c1/20 text-c1' : course.status === 'error' ? 'bg-c4/20 text-c4' : 'bg-muted/20 text-muted'}">

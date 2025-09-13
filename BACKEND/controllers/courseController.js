@@ -3,14 +3,10 @@ import { validate } from "../utils/validators.js";
 import { generateId } from "../services/idGenerator.js";
 import { 
     NotFoundError, 
-    BadRequestError, 
-    RateLimitError, 
-    InternalServerError, 
     ConflictError
 } from "../error/error.js";
-import { generate } from "../services/gemini.js";
-import { systemInstruction, prompt } from "../PROMPT/courseCreation.js";
-import {deleteQuestionsByModuleId} from "./questionController.js";
+import { deleteQuestionsByModuleId } from "./questionController.js";
+import { saveModule, generateOutline, generateModuleContent } from "./courseGeneration.js";
 
 /**
  * GET /courses
@@ -54,144 +50,6 @@ export const getCourse = async (req, res) => {
     res.status(200).json(courseData)
 };
 
-async function saveModules(userId, courseId, modules) {
-    const batch = db.batch();
-    const modulesRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules");
-    const questionsRef = db.collection("users").doc(userId).collection("questions");
-    
-    modules.forEach((module, index) => {
-        const moduleId = generateId("module");
-        const moduleRef = modulesRef.doc(moduleId);
-        
-        batch.set(moduleRef, {
-            moduleName: module.moduleName,
-            description: module.description || "No description available",
-            contentText: module.contentText || "No content available",
-            order: index + 1,
-            isCompleted: false,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        });
-
-        module.moduleQuiz.forEach((question, index) => {
-            const questionId = generateId("question");
-            const questionRef = questionsRef.doc(questionId);
-            batch.set(questionRef, {
-                questionText: question.questionText,
-                type: question.type,
-                options: question.options || [],
-                correctAnswer: question.correctAnswer,
-                questionOrder: index + 1,
-                star: question.star || 1,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                moduleId: moduleId
-            });
-        })
-    });
-    
-    await batch.commit();
-}
-
-async function generateCourseContent(topic, language, length) {
-    try {
-        const response = await generate(
-            prompt(topic, language, length), 
-            systemInstruction(topic),
-            {
-                temperature: 0.7,
-                topP: 0.9,
-                model: "gemini-2.5-pro",
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "object",
-                        properties: {
-                            courseName: {
-                                type: "string",
-                                description: "Course title that is short and clearly conveys the topic"
-                            },
-                            description: {
-                                type: "string",
-                                description: "Brief 1-2 sentence course description"
-                            },
-                            modules: {
-                                type: "array",
-                                items: {
-                                    type: "object",
-                                    properties: {
-                                        moduleName: {
-                                            type: "string",
-                                            description: "Clear and concise module title"
-                                        },
-                                        description: {
-                                            type: "string",
-                                            description: "Brief 1-2 sentence module description"
-                                        },
-                                        contentText: {
-                                            type: "string",
-                                            description: "Detailed lesson content in markdown format"
-                                        },
-                                        moduleQuiz: {
-                                            type: "array",
-                                            items: {
-                                                type: "object",
-                                                properties: {
-                                                    questionText: { type: "string" },
-                                                    type: { 
-                                                        type: "string",
-                                                        enum: ["mcq", "open-ended", "true-false"]
-                                                    },
-                                                    options: {
-                                                        type: "array",
-                                                        items: { type: "string" },
-                                                        description: "Leave empty for open-ended questions"
-                                                    },
-                                                    correctAnswer: { 
-                                                        type: "string",
-                                                        description: "For MCQ, must match one of the options exactly"
-                                                    },
-                                                    star: {
-                                                        type: "integer",
-                                                        minimum: 1,
-                                                        maximum: 5,
-                                                        description: "Difficulty rating (1=easiest, 5=hardest)"
-                                                    }
-                                                },
-                                                required: ["questionText", "type", "correctAnswer", "star"]
-                                            },
-                                            minItems: 5,
-                                            maxItems: 7,
-                                            description: "5-7 questions per module"
-                                        }
-                                    },
-                                    required: ["moduleName", "description", "contentText", "moduleQuiz"]
-                                },
-                                minItems: 1,
-                                description: "Number of modules based on course length"
-                            }
-                        },
-                        required: ["courseName", "description", "modules"]
-                    }
-                }
-            }
-        );
-
-        return response;
-    } catch (error) {
-        console.error("Error generating course content:", error);
-        
-        if (error.statusCode === 429) {
-            throw new RateLimitError("Rate limit exceeded. Please try again later.");
-        } else if (error.statusCode >= 500) {
-            throw new InternalServerError("AI service is currently unavailable. Please try again later.");
-        } else if (error.statusCode >= 400) {
-            throw new BadRequestError("Invalid request to AI service");
-        }
-        throw new InternalServerError("Failed to generate course content");
-    }
-}
-
 /**
  * POST /courses
  * Purpose: Create a new course from topic input and generate course content using AI
@@ -210,6 +68,7 @@ export const createCourse = async (req, res) => {
     const userId = validate(req.params, 'userId', 'string');
     const languageOption = validate(req.body, 'languageOption', 'string');
     const lengthOption = validate(req.body, 'lengthOption', 'string');
+    const levelOption = validate(req.body, 'levelOption', 'string');
     const topicInput = validate(req.body, 'topicInput', 'string');
     
     const newCourseId = generateId("course");
@@ -229,6 +88,7 @@ export const createCourse = async (req, res) => {
         updatedAt: new Date(),
         languageOption: languageOption,
         lengthOption: lengthOption,
+        levelOption: levelOption,
         progress: 0,
         topicInput: topicInput,
     });
@@ -243,61 +103,190 @@ export const createCourse = async (req, res) => {
 };
 
 /**
- * 
+ * POST /courses/:courseId
+ * Purpose: Regenerate course content using AI
+ * Path Parameters:
+ *  - courseId: string (required)
+ *  - userId: string (required)
+ * Request Body:
+ *  - topicInput: string (required)
+ *  - lengthOption: string (required)
+ *  - languageOption: string (required)
+ *  - levelOption: string (required)
  * 
 */
 /** @type {import("express").RequestHandler} */
 export const regenerateCourse = async (req, res) => {
+    console.log('[DEBUG] Starting course regeneration');
     const courseId = validate(req.params, 'courseId', 'string');
     const userId = validate(req.params, 'userId', 'string');
+    
+    console.log(`[DEBUG] Regenerating course - User: ${userId}, Course: ${courseId}`);
+    
     const userRef = db.collection("users").doc(userId);
     const userData = await userRef.get();
     const courseRef = db.collection("users").doc(userId).collection("courses").doc(courseId);
     const courseData = await courseRef.get();
+    const modulesRef = courseRef.collection("modules");
 
     if (!courseData.exists) {
+        console.error(`[ERROR] Course not found - Course ID: ${courseId}`);
         throw new NotFoundError('Course not found');
     }
     if (!userData.exists) {
+        console.error(`[ERROR] User not found - User ID: ${userId}`);
         throw new NotFoundError('User not found');
     }
 
-    await courseRef.update({
-        status: "generating",
-        updatedAt: new Date(),
-    });
+    const {topicInput, lengthOption, languageOption, levelOption} = courseData.data();
+    console.log('[DEBUG] Course data loaded:', { topicInput, lengthOption, languageOption, levelOption });
+
+    res.status(202).json({ courseId, message: 'Course generation has started.' });
 
     (async () => {
+        let outline = null;
         try {
-            const courseContent = await generateCourseContent(
-                courseData.data().topicInput,
-                courseData.data().languageOption,
-                courseData.data().lengthOption
-            );
-            await saveModules(userId, courseId, courseContent.modules);
+            if(courseData.data().modules === undefined || courseData.data().modules.length <= 0) {
+                console.log('[DEBUG] Updating course status to: generating outline');
+                await courseRef.update({ status: "generating outline", updatedAt: new Date() });
+
+                //GENERATE OUTLINE
+                console.log('[DEBUG] Generating course outline...');
+                outline = await generateOutline(
+                    topicInput,
+                    languageOption,
+                    lengthOption,
+                    levelOption
+                );
+                console.log('[DEBUG] Course outline generated successfully');
+                console.log('[DEBUG] Outline structure:', {
+                    courseName: outline.courseName,
+                    moduleCount: outline.modules?.length || 0
+                });
+
+                console.log('[DEBUG] Creating module documents...');
+                const batch = db.batch();
+                
+                // First, log the modules that will be created
+                console.log(`[DEBUG] Creating ${outline.modules?.length} modules`);
+                outline.modules.forEach((mod, idx) => {
+                    console.log(`[DEBUG] Module ${idx + 1}: ${mod.moduleName}`);
+                });
+                
+                outline.modules = outline.modules.map((module, index) => {
+                    const moduleId = generateId("module");
+                    const moduleDocRef = modulesRef.doc(moduleId);
+                    const moduleData = {
+                        moduleId: moduleId,
+                        moduleName: module.moduleName,
+                        description: module.description,
+                        status: "pending",
+                        order: index + 1,
+                        isCompleted: false,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    };
+                    console.log(`[DEBUG] Adding module to batch: ${module.moduleName} (ID: ${moduleId})`);
+                    batch.set(moduleDocRef, moduleData);
+                    console.log(`[DEBUG] Batch set operation added for module: ${moduleId}`);
+                    return { ...module, moduleId: moduleId }
+                });
+
+                console.log('[DEBUG] Adding course update to batch');
+                batch.update(courseRef, {
+                    courseName: outline.courseName,
+                    description: outline.description,
+                    modules: outline.modules,
+                    status: "generating content",
+                    updatedAt: new Date()
+                });
+                
+                try {
+                    console.log('[DEBUG] Starting batch commit...');
+                    const commitResult = await batch.commit();
+                    console.log('[DEBUG] Batch commit successful:', commitResult);
+                    console.log('[DEBUG] Module documents created successfully');
+                } catch (error) {
+                    console.error('[ERROR] Batch commit failed:', error);
+                    throw new Error(`Failed to commit batch: ${error.message}`);
+                }
+            }
+            else {
+                console.log('[DEBUG] Course outline already exists');
+                outline = courseData.data();
+            }
+
+            let errorCount = 0;
+            const totalModules = outline.modules?.length;
+            console.log(`[DEBUG] Starting content generation for ${totalModules} modules`);
             
-            await courseRef.update({
-                status: "active",
-                courseName: courseContent.courseName,
-                description: courseContent.description,
-                updatedAt: new Date()
-            });
-            await userRef.update({
-                moduleCount: userData.data().moduleCount + courseContent.modules.length,
-                lastActiveAt: new Date()
-            });
+            for(let i = 0; i < outline.modules?.length; i++) {
+                const {moduleId, moduleName, description} = outline.modules[i];
+                const moduleDocRef = modulesRef.doc(moduleId);
+                const moduleDoc = await moduleDocRef.get();
+                if(moduleDoc.exists && moduleDoc.data().status == "active") {
+                    console.log(`[DEBUG] Module "${moduleName}" already generated`);
+                    continue;
+                }
+                
+                console.log(`[DEBUG] Processing module ${i+1}/${totalModules}: ${moduleName} (ID: ${moduleId})`);
+                
+                try {
+                    console.log(`[DEBUG] Updating module status to: generating`);
+                    await moduleDocRef.update({ status: "generating", updatedAt: new Date() });
+
+                    //GENERATE CONTENT
+                    console.log(`[DEBUG] Generating content for module: ${moduleName}`);
+                    const moduleContent = await generateModuleContent(
+                        moduleName,
+                        description,
+                        topicInput,
+                        languageOption,
+                        lengthOption,
+                        levelOption
+                    );
+                    console.log(`[DEBUG] Content generated, saving module...`);
+
+                    await saveModule(userId, courseId, moduleId, moduleContent);
+                    await moduleDocRef.update({
+                        status: "active",
+                        updatedAt: new Date()
+                    });
+                    console.log(`[SUCCESS] Module "${moduleName}" generated and saved successfully.`);
+                    
+                } catch (error) {
+                    errorCount++;
+                    console.error("Error in module generation:", error);
+                    await moduleDocRef.update({
+                        status: "error",
+                        error: error.message,
+                        updatedAt: new Date()
+                    });
+                }
+            }
+
+            if(errorCount == 0) {
+                await courseRef.update({ status: "active", updatedAt: new Date() });
+                await userRef.update({
+                    moduleCount: userData.data().moduleCount + outline.modules?.length,
+                    lastActiveAt: new Date()
+                });
+                console.log(`Course "${courseId}" generated successfully.`);
+            }
+            else {
+                await courseRef.update({ status: "error", error: "Error in module generation", updatedAt: new Date() });
+                console.log(`Course "${courseId}" generation failed.`);
+            }
+
         } catch (error) {
             console.error("Error in course generation:", error);
             await courseRef.update({
                 status: "error",
                 error: error.message,
-                description: error.message,
                 updatedAt: new Date()
             });
         }
     })();
-    
-    res.status(200).json({ courseId, message: 'Course generating' });
 }
 
 /**

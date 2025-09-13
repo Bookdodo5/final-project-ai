@@ -133,6 +133,7 @@ async function handlePdfUpload(event) {
             topicInput: result.fullText,
             lengthOption: 'Unspecified',
             languageOption: 'Unspecified',
+            levelOption: 'Unspecified',
         });
 
     } catch (error) {
@@ -192,9 +193,10 @@ async function generateCourseFromTopic() {
     }
 
     generateCourse({
-        topicInput: `${topic} (Difficulty / Scope : ${level})`,
+        topicInput: topic,
         lengthOption: length,
         languageOption: language,
+        levelOption: level,
     });
 }
 

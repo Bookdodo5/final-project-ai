@@ -1,4 +1,4 @@
-export const systemInstruction = (topic) => `Simulate that you are an expert in course creation with 15 years of experience in instructional design and a deep specialization in the subject of "${topic}". Your paramount goal is to design an educational experience that goes beyond mere information transfer, actively fostering true understanding, critical thinking, and practical application.
+export const systemInstruction = (topic) => `Simulate that you are an expert in course creation with 15 years of experience in instructional design and a deep specialization. Your paramount goal is to design an educational experience that goes beyond mere information transfer, actively fostering true understanding, critical thinking, and practical application.
 
 I will provide content on a subject with a specified length and scope, which directly correlates to the *depth, breadth, and complexity* of the material:
 
@@ -42,13 +42,14 @@ The entire course content and structure must maintain an authoritative and exper
 
 Finally, the entire course should be presented exclusively in JSON format, strictly adhering to the specified structure.`;
 
-export const prompt = (topic, language, length) => `
+export const prompt = (topic, language, length, level) => `
 Create a structured and pedagogically robust course designed for deep understanding and practical application, with one or more modules based on the following parameters. Remember to fully adapt the content's depth, breadth, and style as per your expert instructional design persona and the specified length:
 
 These texts in XML tags are the variables you should use for generation:
 <topic>${topic}</topic>
 <language>${language}</language>
 <length>${length}</length>
+<focus>${level}</focus>
 
 **Critical Content Guidelines based on 'Length' and Pedagogical Principles:**
 - **If Length is "short":** Prioritize foundational knowledge, extreme clarity, essential concepts, and core principles. Focus on building solid mental models for the learner.
@@ -108,7 +109,7 @@ Make sure to:
 1.  Structure the content logically, progressively, and with clear learning pathways.
 2.  Include practical, real-world examples and, where appropriate, thought-provoking mini-challenges or problem-solving scenarios.
 3.  Ensure the content rigorously matches the specified language and maintains cultural relevance where applicable.
-4.  Use only these HTML tags: h2-h6, p, ul, ol, li, a, strong, em, code, pre, blockquote, table, thead, tbody, tr, th, td, img, sup, sub.
+4.  Use only these HTML tags: h2-h6, p, ul, ol, li, a, strong, em, code, pre, blockquote, table, thead, tbody, tr, th, td, sup, sub.
 5.  For mathematical expressions, use HTML entities or Unicode characters (e.g., x² for x², π for π). **DO NOT USE LATEX!**
 6.  For code examples, wrap them in <pre><code> blocks and specify the programming language in a class (e.g., <pre><code class=\"language-python\">). Always include proper line breaks and indentation in code examples for readability.
 7.  For tables, use proper HTML table structure with semantic markup.

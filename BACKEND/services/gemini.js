@@ -160,7 +160,7 @@ export async function generate(prompt, systemInstruction, options = {}) {
         topP = 0.9,
         model = "gemini-2.5-flash-lite",
         config = undefined,
-        maxRetries = 3,
+        maxRetries = 5,
         initialDelay = 1000
     } = options;
 
