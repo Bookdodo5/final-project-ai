@@ -39,6 +39,16 @@ const router = {
         setTimeout(() => this.route(), 0);
     },
 
+    colorDeg: 0,
+    changeBg() {
+        const imageBg = document.getElementById('imageBg');
+        const gradientBg = document.getElementById('gradientBg');
+        let randomDeg = Math.random() * 20;
+        this.colorDeg += randomDeg;
+        imageBg.style.filter = `hue-rotate(${this.colorDeg}deg)`;
+        gradientBg.style.filter = `hue-rotate(${this.colorDeg}deg)`;
+    },
+
     // Navigate to a route
     navigateTo(route) {
         if (window.location.hash.substring(1) !== route) {
@@ -131,19 +141,19 @@ const router = {
         window.setStat('courseCompletionBar', 'courseCompletionValue', 0);
         window.setStat('quizAccuracyBar', 'quizAccuracyValue', 0);
         window.setStat('retentionRateBar', 'retentionRateValue', 0);
-        setTimeout(() => {
-            console.log('showing home');
-            this.showView('home');
-            if (window.initStatsAnimation) window.initStatsAnimation();
-        }, 60);
+        this.changeBg();
+        this.showView('home');
+        if (window.initStatsAnimation) window.initStatsAnimation();
     },
 
     showLearn() {
+        this.changeBg();
         this.showView('learn');
         if (window.loadCourses) window.loadCourses();
     },
 
     showCourse(courseId) {
+        this.changeBg();
         this.showView('course');
         if (window.openCourse) {
             window.openCourse(courseId, true);
@@ -156,6 +166,7 @@ const router = {
     },
 
     showModule(moduleId, courseId) {
+        this.changeBg();
         this.showView('module');
         if (window.openModule) {
             window.openModule(moduleId, courseId);
@@ -168,11 +179,13 @@ const router = {
     },
 
     showReview() {
+        this.changeBg();
         this.showView('review');
         if (window.loadDueQuestions) window.loadDueQuestions();
     },
 
     showCreateCourse() {
+        this.changeBg();
         this.showView('createCourse');
         // Create course initialization would go here
     }
