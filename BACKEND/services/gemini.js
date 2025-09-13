@@ -144,52 +144,110 @@ function safeJsonParse(jsonString) {
 }
 
 /**
- * Generate content using Gemini AI
+ * Generate content using Gemini AI with exponential backoff retry
  * @param {string} prompt - The user's prompt
  * @param {string} systemInstruction - System instructions for the AI
  * @param {Object} [options] - Configuration options
  * @param {number} [options.temperature=0.7] - Controls randomness (0-1)
  * @param {number} [options.topP=0.9] - Controls diversity (0-1)
  * @param {string} [options.model="gemini-2.5-flash-lite"] - Model to use
+ * @param {number} [options.maxRetries=3] - Maximum number of retry attempts
+ * @param {number} [options.initialDelay=1000] - Initial delay in ms before first retry
  */
 export async function generate(prompt, systemInstruction, options = {}) {
-    try {
-        const {
-            temperature = 0.7,
-            topP = 0.9,
-            model = "gemini-2.5-flash-lite",
-            config = undefined
-        } = options;
+    const {
+        temperature = 0.7,
+        topP = 0.9,
+        model = "gemini-2.5-flash-lite",
+        config = undefined,
+        maxRetries = 3,
+        initialDelay = 1000
+    } = options;
 
-        const response = await ai.models.generateContent({
-            model,
-            contents: prompt,
-            systemInstruction,
-            generationConfig: {
-                temperature: Math.min(Math.max(temperature, 0), 2),
-                topP: Math.min(Math.max(topP, 0), 1),
-            },
-            config: config
-        });
+    let attempt = 0;
+    let currentDelay = initialDelay;
+    let lastError = null;
 
-        let responseText = response.text || '';
-        responseText = responseText.trim();
+    while (attempt <= maxRetries) {
+        try {
+            const response = await ai.models.generateContent({
+                model,
+                contents: prompt,
+                systemInstruction,
+                generationConfig: {
+                    temperature: Math.min(Math.max(temperature, 0), 2),
+                    topP: Math.min(Math.max(topP, 0), 1),
+                },
+                config: config
+            });
 
-        console.error(responseText);
+            let responseText = response.text || '';
+            responseText = responseText.trim();
 
-        // If the response is empty, throw an error
-        if (!responseText) {
-            throw new Error('Empty response from AI service');
+            if (!responseText) {
+                throw new Error('Empty response from AI service');
+            }
+
+            return safeJsonParse(responseText);
+
+        } catch (error) {
+            lastError = error;
+            const isRetryable = isErrorRetryable(error);
+            
+            if (!isRetryable || attempt >= maxRetries) {
+                break;
+            }
+
+            console.warn(`Attempt ${attempt + 1} failed (${error.message}). Retrying in ${currentDelay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, currentDelay));
+            
+            // Exponential backoff with jitter
+            currentDelay = Math.min(currentDelay * 2 + Math.random() * 1000, 30000);
+            attempt++;
         }
-
-        return safeJsonParse(responseText);
-
-    } catch (error) {
-        console.error("Error in generate function:", error);
-        if (error.response) {
-            console.error("API response error:", error.response.status, error.response.data);
-            throw new Error(`AI service error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-        }
-        throw new Error(`Failed to generate content: ${error.message}`);
     }
+
+    // If we get here, all retries failed
+    console.error(`All ${maxRetries} retry attempts failed. Last error:`, lastError);
+    
+    if (lastError.response) {
+        console.error("API response error:", lastError.response.status, lastError.response.data);
+        throw new Error(`AI service error after ${maxRetries} retries: ${lastError.response.status} - ${JSON.stringify(lastError.response.data)}`);
+    }
+    
+    throw new Error(`Failed to generate content after ${maxRetries} retries: ${lastError.message}`);
+}
+
+/**
+ * Check if an error is retryable
+ * @param {Error} error - The error to check
+ * @returns {boolean} True if the error is retryable
+ */
+function isErrorRetryable(error) {
+    // 503 Service Unavailable
+    if (error.response?.status === 503) {
+        return true;
+    }
+    
+    // Network errors
+    if (error.code === 'ECONNRESET' || 
+        error.code === 'ETIMEDOUT' || 
+        error.code === 'ENOTFOUND' ||
+        error.code === 'ECONNREFUSED') {
+        return true;
+    }
+    
+    // Rate limiting
+    if (error.response?.status === 429) {
+        return true;
+    }
+    
+    // Empty response or parsing errors might be transient
+    if (error.message.includes('Empty response') || 
+        error.message.includes('Unexpected token') ||
+        error.message.includes('JSON')) {
+        return true;
+    }
+    
+    return false;
 }

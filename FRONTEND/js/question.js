@@ -1,9 +1,7 @@
 window.renderQuestion = (q) => {
-    const optionItem = (text, idx, active) => `
-        <button type="button" data-action="select" data-index="${idx}" class="w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm ${active ? 'border-c1/50 bg-c1/5 shadow-c1/10' : 'border-line/50 hover:border-c1/30 hover:bg-c1/5'}">
-            <span class="w-3 h-3 rounded-full border transition-all duration-300 ease-in-out ${active ? 'border-c1 bg-c1 shadow-sm' : 'border-line'} flex items-center justify-center flex-shrink-0">
-                ${active ? '<span class="w-1.5 h-1.5 rounded-full bg-white block animate-pulse"></span>' : ''}
-            </span>
+    const optionItem = (text, idx) => `
+        <button type="button" data-action="select" data-index="${idx}" class="cursor-glow magnetic w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm border-line/50 hover:border-c1/30 bg-panel/50 hover:bg-c1/5}">
+            <span class="w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-line flex items-center justify-center flex-shrink-0"></span>
             <span class="text-sm transition-colors duration-200">${text}</span>
         </button>
     `;
@@ -22,26 +20,27 @@ window.renderQuestion = (q) => {
         if (q.type === 'mcq') {
             return `
             <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
-                ${Array.isArray(q.options) ? q.options.map((o, i) => optionItem(o, i, false)).join('') : '<p class="text-muted text-sm">No options</p>'}
+                ${Array.isArray(q.options) ? q.options.map((o, i) => optionItem(o, i)).join('') : '<p class="text-muted text-sm">No options</p>'}
             </div>
         `;
         }
         if (q.type === 'true-false') {
             return `
             <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
-                ${tfOptions.map((o, i) => optionItem(o, i, false)).join('')}
+                ${tfOptions.map((o, i) => optionItem(o, i)).join('')}
             </div>
         `;
         }
         return `
         <div class="mt-3 px-2 animate-fadeIn">
-            <textarea data-role="open" class="w-full bg-panel border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md focus:bg-panel/80 placeholder-muted/50" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
+            <textarea data-role="open" class="w-full bg-bg border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md magnetic focus:bg-bg/80 placeholder-muted/50" placeholder="Type your answer here..."></textarea>
+            <div data-role="error" class="hidden mt-2 text-c4 text-sm">Please enter your answer</div>
         </div>
     `;
     })();
 
     return `
-            <div class="flex-1 gap-3 animate-slideUp cursor-glow particle-container px-2">
+            <div class="flex-1 gap-3 animate-slideUp particle-container px-2">
                 <div class="flex flex-col gap-2 md:flex-row items-center justify-between">
                     <p class="font-medium text-text w-full transition-colors duration-200">${q.questionText || q.question || 'Question'}</p>
                     <div class="flex items-center gap-1">${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1 transition-all duration-200"></i>`).join('')}</div>
@@ -51,7 +50,7 @@ window.renderQuestion = (q) => {
                 <div data-role="feedback" class="hidden mt-4 mx-2 rounded-lg border border-line/50 p-3 bg-panel/50 transition-all duration-500 ease-in-out animate-fadeIn"></div>
                 <div data-role="rating" class="hidden mt-4 grid-cols-5 gap-2 px-2 animate-slideUp">
                     ${['Again', 'Hard', 'Good', 'Easy', 'Known'].map(r => `
-                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm ripple-effect float-element">${r}</button>
+                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm cursor-glow magnetic ripple-effect">${r}</button>
                     `).join('')}
                 </div>
             </div>
@@ -67,17 +66,6 @@ window.mountQuestion = (containerEl, q, onComplete) => {
 
     const render = () => {
         containerEl.innerHTML = window.renderQuestion(q);
-        
-        // Add interactive classes to elements
-        const textarea = containerEl.querySelector('[data-role="open"]');
-        if (textarea) {
-            textarea.classList.add('border-glow', 'magnetic');
-        }
-        
-        const options = containerEl.querySelectorAll('[data-action="select"]');
-        options.forEach(option => {
-            option.classList.add('cursor-glow', 'magnetic');
-        });
     };
 
     // Cursor tracking for glow effects
@@ -87,6 +75,7 @@ window.mountQuestion = (containerEl, q, onComplete) => {
             const rect = element.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
+            console.log(element.innerHTML, x, y);
             
             element.style.setProperty('--mouse-x', `${x}%`);
             element.style.setProperty('--mouse-y', `${y}%`);
@@ -101,14 +90,20 @@ window.mountQuestion = (containerEl, q, onComplete) => {
         const options = containerEl.querySelectorAll('[data-role="options"] [data-action="select"]');
         options.forEach((btn, i) => {
             const active = i === selectedIndex;
-            btn.className = `w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm cursor-glow magnetic ${active ? 'border-c1/50 bg-c1/5 shadow-c1/10' : 'border-line/50 hover:border-c1/30 hover:bg-c1/5'}`;
-            const dot = btn.querySelector('span > span');
-            if (active) {
-                btn.children[0].className = 'w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-c1 bg-c1 shadow-sm flex items-center justify-center flex-shrink-0';
-                if (!dot) btn.children[0].innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-white block animate-pulse"></span>';
-            } else {
-                btn.children[0].className = 'w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-line flex items-center justify-center flex-shrink-0';
-                btn.children[0].innerHTML = '';
+            btn.classList.toggle('border-c1/50', active);
+            btn.classList.toggle('bg-c1/5', active);
+            btn.classList.toggle('border-line/50', !active);
+            
+            const dot = btn.children[0];
+            dot.classList.toggle('border-c1', active);
+            dot.classList.toggle('bg-c1', active);
+            dot.classList.toggle('shadow-sm', active);
+            dot.classList.toggle('border-line', !active);
+            
+            if (active && !btn.querySelector('span > span')) {
+                dot.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-white block animate-pulse"></span>';
+            } else if (!active) {
+                dot.innerHTML = '';
             }
         });
     };
@@ -156,35 +151,21 @@ window.mountQuestion = (containerEl, q, onComplete) => {
         const answer = getAnswerPayload();
         
         // Validation for open answer questions
-        if (q.type !== 'mcq' && q.type !== 'true-false') {
+        if (q.type === "open-ended") {
             const textarea = containerEl.querySelector('[data-role="open"]');
             const errorDiv = containerEl.querySelector('[data-role="error"]');
             
             if (!answer || answer.length === 0) {
                 // Show red border and error message
-                textarea.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                textarea.classList.add('border-c4', 'focus:border-c4', 'focus:ring-c4', 'hover:border-c4');
                 textarea.classList.remove('border-line/50', 'focus:border-c1/50', 'focus:ring-c1');
-                
-                if (errorDiv) {
-                    errorDiv.classList.remove('hidden');
-                    errorDiv.textContent = 'กรุณาพิมพ์คำตอบก่อนส่ง';
-                } else {
-                    // Create error message if it doesn't exist
-                    const newErrorDiv = document.createElement('div');
-                    newErrorDiv.setAttribute('data-role', 'error');
-                    newErrorDiv.className = 'text-red-500 text-sm mt-2';
-                    newErrorDiv.textContent = 'กรุณาพิมพ์คำตอบก่อนส่ง';
-                    textarea.parentNode.appendChild(newErrorDiv);
-                }
+                errorDiv.classList.remove('hidden');
                 return;
             } else {
                 // Remove error styling if answer is provided
-                textarea.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
-                textarea.classList.add('border-line/50', 'focus:border-c1/50', 'focus:ring-c1');
-                
-                if (errorDiv) {
-                    errorDiv.classList.add('hidden');
-                }
+                textarea.classList.remove('border-c4', 'focus:border-c4', 'focus:ring-c4', 'hover:border-c4');
+                textarea.classList.add('border-line/50', 'focus:border-c1/50', 'focus:ring-c1', 'hover:border-c1');
+                errorDiv.classList.add('hidden');
             }
         }
         

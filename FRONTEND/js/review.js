@@ -54,20 +54,20 @@ const renderSrs = () => {
     if (!questionContainer) return;
 
     questionContainer.innerHTML = `
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-            <div class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+        <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 list-none p-0 m-0">
+            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsDueCount">0</h2>
                 <p class="text-sm text-muted">Cards Due</p>
-            </div>
-            <div class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+            </li>
+            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsReviewedCount">0</h2>
                 <p class="text-sm text-muted">Cards Reviewed</p>
-            </div>
-            <div class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+            </li>
+            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsTotalCount">0</h2>
                 <p class="text-sm text-muted">Total Cards</p>
-            </div>
-        </div>
+            </li>
+        </ul>
         <div class="bg-panel/50 p-6 rounded-lg border border-line/50">
             <div class="mb-6">
                 <div class="flex items-center justify-between text-sm text-muted mb-2">

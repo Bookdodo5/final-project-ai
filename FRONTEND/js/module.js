@@ -73,7 +73,7 @@ window.openModule = async (moduleId, courseId) => {
             <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
                     <div class="text-center md:text-left">
-                        <h2 class="text-3xl font-bold text-white">Modules</h2>
+                        <h1 class="text-3xl font-bold text-white">Modules</h1>
                         <p class="text-muted">Study the module you created.</p>
                     </div>
                     <button onclick="window.router.showCourse('${courseId}')" class="flex items-center text-c1 hover:text-c1/80 mb-8 transition-colors">
@@ -83,7 +83,7 @@ window.openModule = async (moduleId, courseId) => {
                 <div class="bg-panel border border-line rounded-2xl overflow-hidden mb-8">
                     <div class="p-6 md:p-8 border-b border-line flex flex-col lg:flex-row gap-8">
                         <div class="flex-1">
-                            <h1 class="text-2xl md:text-3xl font-bold text-text mb-4">${module.moduleName || 'Module Title'}</h1>
+                            <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">${module.moduleName || 'Module Title'}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
                                 <span class="bg-muted/20 text-muted px-3 py-1.5 rounded inline-flex items-center">
                                     <i class="far fa-calendar mr-1.5"></i> Created: ${formatDate(module.createdAt)}
@@ -97,16 +97,16 @@ window.openModule = async (moduleId, courseId) => {
                             </div>
 
                             <div class="prose prose-invert max-w-none">
-                                <h2 class="text-xl font-semibold text-text mb-2">Module Description</h2>
+                                <h3 class="text-xl font-semibold text-text mb-2">Module Description</h3>
                                 <p class="text-text/80">${module.description || 'No description available'}</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="p-6 px-2 sm:p-8 sm:px-8 bg-panel">
-                        <h2 class="text-xl px-2 sm:px-0 font-semibold text-text mb-6">Module Content</h2>
-                        <article class="prose prose-invert w-full min-w-full bg-bg/60 p-6 md:p-8 rounded-xl border border-line/50 shadow-sm leading-relaxed prose-headings:text-text prose-h1:text-3xl md:prose-h1:text-4xl prose-h2:text-2xl md:prose-h2:text-3xl prose-p:text-text/90 prose-a:text-c1 hover:prose-a:underline prose-strong:text-white prose-code:bg-panel/60 prose-code:text-text prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:marker:text-c1 prose-ol:marker:text-c1 prose-img:rounded-lg">
-                            ${module.contentText || '<p class="text-muted italic">No content available for this module.</p>'}
+                        <h3 class="text-xl px-2 sm:px-0 font-semibold text-text mb-6">Module Content</h3>
+                        <article class="prose prose-invert w-full min-w-full bg-bg/60 p-6 md:p-8 rounded-xl border border-line/50 shadow-sm leading-relaxed prose-headings:text-text prose-h1:text-3xl md:prose-h1:text-4xl prose-h2:text-2xl md:prose-h2:text-3xl prose-p:text-text/90 prose-a:text-c1 hover:prose-a:underline prose-strong:text-white prose-code:bg-panel/60 prose-code:text-text prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:marker:text-c1 prose-ol:marker:text-c1 prose-img:rounded-lg whitespace-pre-line">
+                            ${module.contentText ? module.contentText.replace(/\n/g, '\n') : '<p class="text-muted italic">No content available for this module.</p>'}
                         </article>
                         
                         <div class="mt-8">
@@ -117,7 +117,7 @@ window.openModule = async (moduleId, courseId) => {
                                 </span>
                             </div>
                             
-                            <div class="bg-panel/50 p-6 rounded-lg border border-line/50">
+                            <div class="bg-bg/60 p-6 rounded-lg border border-line/50">
                                 <div class="mb-6">
                                     <div class="flex items-center justify-between text-sm text-muted mb-2">
                                         <span id="questionProgressText">0/0</span>

@@ -146,6 +146,112 @@ body {
     }
 }
 
+/* High Contrast Mode */
+@media (forced-colors: active) {
+    :root {
+        --bg: Canvas;
+        --panel: Canvas;
+        --text: CanvasText;
+        --muted: GrayText;
+        --line: ButtonText;
+        --c1: Highlight;
+        --c2: LinkText;
+        --c3: VisitedText;
+        --c4: ButtonText;
+        --c5: ActiveText;
+    }
+    
+    body {
+        background: var(--bg) !important;
+        color: var(--text) !important;
+    }
+    
+    .bg-bg, .bg-panel, .bg-line,
+    nav, header, footer, .modal, .card {
+        background: var(--bg) !important;
+        color: var(--text) !important;
+        border-color: var(--line) !important;
+    }
+    
+    button, a, input, select, .btn, .course-option {
+        border: 2px solid var(--text) !important;
+        background: var(--bg) !important;
+        color: var(--text) !important;
+    }
+    
+    .text-muted {
+        color: var(--muted) !important;
+    }
+    
+    /* Ensure text is visible on backgrounds */
+    * {
+        text-shadow: none !important;
+    }
+    
+    /* Progress bars in high contrast mode */
+    .progress-bar,
+    .h-2.bg-line\/50,
+    .h-2\.5.bg-line\/50,
+    #questionProgressBar,
+    #courseCompletionBar,
+    #quizAccuracyBar,
+    #retentionRateBar {
+        border: 2px solid ButtonText !important;
+        background-color: Canvas !important;
+        height: 10px !important;
+        min-height: 10px !important;
+        border-radius: 4px !important;
+    }
+    
+    .progress-fill,
+    .h-2.bg-c1,
+    .h-2.bg-c3,
+    .h-2\.5.bg-c1,
+    .h-2\.5.bg-c3,
+    #questionProgressBar > div,
+    #courseCompletionBar > div {
+        background-color: Highlight !important;
+        border: 1px solid ButtonText !important;
+        height: 100% !important;
+        min-height: 6px !important;
+        border-radius: 4px !important;
+    }
+    
+    .bg-c2,
+    .h-2.bg-c2,
+    .h-2\.5.bg-c2,
+    #quizAccuracyBar > div {
+        background-color: LinkText !important;
+        border: 1px solid ButtonText !important;
+    }
+    
+    .bg-c4,
+    .h-2.bg-c4,
+    .h-2\.5.bg-c4,
+    #retentionRateBar > div {
+        background-color: ButtonText !important;
+        border: 1px solid ButtonText !important;
+    }
+    
+    /* Fix for gradients and transparent elements */
+    .gradient-bg, .gradient-bg::before {
+        display: none;
+    }
+    
+    /* Ensure form controls are visible */
+    input, textarea, select {
+        background: var(--bg) !important;
+        border: 2px solid var(--text) !important;
+        color: var(--text) !important;
+    }
+    
+    /* Fix for focus states */
+    :focus-visible {
+        outline: 3px solid #ffff00 !important;
+        outline-offset: 2px;
+    }
+}
+
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     /* Ensure crisp rendering on high DPI screens */
@@ -156,10 +262,17 @@ body {
 }
 
 /* Focus improvements for accessibility */
-button:focus,
-input:focus,
-select:focus,
-a:focus {
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+    outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
     outline: 2px solid var(--c1);
     outline-offset: 2px;
 }
@@ -366,23 +479,6 @@ input, textarea, button, select {
     transform: none;
 }
 
-/* Floating Elements */
-@keyframes float {
-    0%, 100% { 
-        transform: translateY(0px);
-    }
-    33% { 
-        transform: translateY(-3px);
-    }
-    66% { 
-        transform: translateY(-1px);
-    }
-}
-
-.float-element {
-    animation: float 6s ease-in-out infinite;
-}
-
 /* Interactive Ripple Effect */
 .ripple-effect {
     position: relative;
@@ -397,14 +493,14 @@ input, textarea, button, select {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(27, 184, 141, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(28, 29, 31, 0.12) 0%, transparent 70%);
     transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
+    transition: width 1s ease, height 1s ease;
 }
 
 .ripple-effect:hover::after {
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
 }
 
 /* Magnetic Hover Effect - Only color changes */
@@ -454,8 +550,8 @@ input, textarea, button, select {
     right: 0;
     bottom: 0;
     background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(27, 184, 141, 0.06) 0%, 
-                rgba(27, 184, 141, 0.02) 40%, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                rgba(255, 255, 255, 0.02) 40%, 
                 transparent 70%);
     pointer-events: none;
     opacity: 0;
@@ -465,31 +561,6 @@ input, textarea, button, select {
 
 .cursor-glow:hover::before {
     opacity: 1;
-}
-
-/* Interactive Border Glow */
-.border-glow {
-    position: relative;
-    background: linear-gradient(var(--bg), var(--bg)) padding-box,
-                linear-gradient(45deg, 
-                    rgba(27, 184, 141, 0.3) 0%, 
-                    rgba(250, 195, 141, 0.2) 25%,
-                    rgba(241, 227, 164, 0.2) 50%,
-                    rgba(206, 124, 102, 0.2) 75%,
-                    rgba(142, 190, 115, 0.3) 100%) border-box;
-    border: 1px solid transparent;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.border-glow:hover {
-    background: linear-gradient(var(--bg), var(--bg)) padding-box,
-                linear-gradient(45deg, 
-                    rgba(27, 184, 141, 0.6) 0%, 
-                    rgba(250, 195, 141, 0.4) 25%,
-                    rgba(241, 227, 164, 0.4) 50%,
-                    rgba(206, 124, 102, 0.4) 75%,
-                    rgba(142, 190, 115, 0.6) 100%) border-box;
-    box-shadow: 0 0 30px rgba(27, 184, 141, 0.15);
 }
 
 /* Gradient Text Animation */
