@@ -1,6 +1,6 @@
 window.renderQuestion = (q) => {
     const optionItem = (text, idx) => `
-        <button type="button" data-action="select" data-index="${idx}" class="cursor-glow magnetic w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm border-line/50 hover:border-c1/30 bg-panel/50 hover:bg-c1/5}">
+        <button type="button" data-action="select" data-index="${idx}" class="magnetic w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm border-line/50 hover:border-c1/30 bg-panel/60 hover:bg-c1/5}">
             <span class="w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-line flex items-center justify-center flex-shrink-0"></span>
             <span class="text-sm transition-colors duration-200">${text}</span>
         </button>
@@ -33,7 +33,7 @@ window.renderQuestion = (q) => {
         }
         return `
         <div class="mt-3 px-2 animate-fadeIn">
-            <textarea data-role="open" class="w-full bg-bg border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md magnetic focus:bg-bg/80 placeholder-muted/50" placeholder="Type your answer here..."></textarea>
+            <textarea data-role="open" class="w-full bg-bg/50 border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md magnetic focus:bg-bg/80 placeholder-muted/50" placeholder="Type your answer here..."></textarea>
             <div data-role="error" class="hidden mt-2 text-c4 text-sm">Please enter your answer</div>
         </div>
     `;
@@ -50,7 +50,7 @@ window.renderQuestion = (q) => {
                 <div data-role="feedback" class="hidden mt-4 mx-2 rounded-lg border border-line/50 p-3 bg-panel/50 transition-all duration-500 ease-in-out animate-fadeIn"></div>
                 <div data-role="rating" class="hidden mt-4 grid-cols-5 gap-2 px-2 animate-slideUp">
                     ${['Again', 'Hard', 'Good', 'Easy', 'Known'].map(r => `
-                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm cursor-glow magnetic ripple-effect">${r}</button>
+                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm magnetic ripple-effect">${r}</button>
                     `).join('')}
                 </div>
             </div>
@@ -67,23 +67,6 @@ window.mountQuestion = (containerEl, q, onComplete) => {
     const render = () => {
         containerEl.innerHTML = window.renderQuestion(q);
     };
-
-    // Cursor tracking for glow effects
-    const handleMouseMove = (e) => {
-        const glowElements = containerEl.querySelectorAll('.cursor-glow');
-        glowElements.forEach(element => {
-            const rect = element.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            console.log(element.innerHTML, x, y);
-            
-            element.style.setProperty('--mouse-x', `${x}%`);
-            element.style.setProperty('--mouse-y', `${y}%`);
-        });
-    };
-
-    // Add mouse tracking to container
-    containerEl.addEventListener('mousemove', handleMouseMove);
 
     const setSelected = (idx) => {
         selectedIndex = idx;

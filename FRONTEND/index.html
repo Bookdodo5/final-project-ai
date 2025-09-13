@@ -24,7 +24,7 @@
                 extend: {
                     colors: {
                         bg: '#1d1d1f',
-                        panel: '#2a2b2f', 
+                        panel: '#2a2b2f',
                         text: '#f4f4f5',
                         muted: '#a1a1aa',
                         line: '#3a3b3f',
@@ -54,7 +54,7 @@
                 <img class="size-9 sm:size-12 md:size-14 duration-300"
                     src="./assets/MasteryPath.png" alt="MasteryPath Logo" draggable="false">
                 <div
-                    class="logo-font text-lg sm:text-2xl md:text-3xl font-semibold tracking-normal bg-gradient-to-b from-c1 to-c5 bg-clip-text text-transparent">
+                    class="logo-font text-lg sm:text-2xl md:text-3xl font-semibold tracking-normal bg-gradient-to-r from-c1 to-c5 bg-clip-text text-transparent">
                     MASTERY PATH
                 </div>
             </div>
@@ -119,6 +119,11 @@
         </div>
     </div>
 
+    <!-- Gradient Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div id="gradientBg" class="gradient-bg w-full h-full opacity-40" aria-hidden="true"></div>
+    </div>
+
     <!-- Main Content Container -->
     <main id="main-content" role="main" class="flex-grow flex flex-col relative" tabindex="-1">
 
@@ -129,38 +134,6 @@
 
         <!-- Home View -->
         <div id="homeView" class="relative px-4 sm:px-6 pb-8 sm:pb-12 flex-grow block">
-
-            <!-- Gradient Background -->
-            <div class="absolute inset-0 z-0 pointer-events-none">
-                <div class="gradient-bg w-full h-full opacity-50" aria-hidden="true">
-                    <!-- Floating Particles -->
-                    <div class="particles-container">
-                        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-                        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
-                        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
-                        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
-                        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
-                        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
-                        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
-                        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
-                        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
-                        <div class="particle" style="left: 15%; animation-delay: 1s;"></div>
-                        <div class="particle" style="left: 25%; animation-delay: 3s;"></div>
-                        <div class="particle" style="left: 35%; animation-delay: 5s;"></div>
-                        <div class="particle" style="left: 45%; animation-delay: 7s;"></div>
-                        <div class="particle" style="left: 55%; animation-delay: 9s;"></div>
-                        <div class="particle" style="left: 65%; animation-delay: 11s;"></div>
-                        <div class="particle" style="left: 75%; animation-delay: 13s;"></div>
-                        <div class="particle" style="left: 85%; animation-delay: 15s;"></div>
-                        <div class="particle" style="left: 95%; animation-delay: 17s;"></div>
-                    </div>
-                    
-                    <!-- Geometric Shapes -->
-                    <div class="geometric-shape shape-circle"></div>
-                    <div class="geometric-shape shape-triangle"></div>
-                    <div class="geometric-shape shape-hexagon"></div>
-                </div>
-            </div>
 
             <!-- Hero Section -->
             <section class="py-12 sm:py-20 md:py-28 text-center space-y-3 sm:space-y-4">
@@ -183,7 +156,7 @@
                             <span class="text-sm sm:text-base text-white font-medium" id="courseCompletionValue">0%</span>
                         </div>
                         <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                            <div id="courseCompletionBar" class="h-full bg-c3 rounded-full" style="width: 50%"></div>
+                            <div id="courseCompletionBar" class="h-full bg-c3 rounded-full" style="width: 0%"></div>
                         </div>
                     </li>
 
@@ -194,7 +167,7 @@
                             <span class="text-sm sm:text-base text-white font-medium" id="quizAccuracyValue">0%</span>
                         </div>
                         <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                            <div id="quizAccuracyBar" class="h-full bg-c2 rounded-full" style="width: 50%"></div>
+                            <div id="quizAccuracyBar" class="h-full bg-c2 rounded-full" style="width: 0%"></div>
                         </div>
                     </li>
 
@@ -205,7 +178,7 @@
                             <span class="text-sm sm:text-base text-white font-medium" id="retentionRateValue">0%</span>
                         </div>
                         <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                            <div id="retentionRateBar" class="h-full bg-c4 rounded-full" style="width: 60%"></div>
+                            <div id="retentionRateBar" class="h-full bg-c4 rounded-full" style="width: 0%"></div>
                         </div>
                     </li>
                 </ul>
@@ -214,38 +187,6 @@
 
         <!-- Learn View -->
         <div id="learnView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
-            <!-- Gradient Background for Learn View -->
-            <div class="absolute inset-0 z-0 pointer-events-none">
-                <div class="gradient-bg w-full h-full opacity-50" aria-hidden="true">
-                    <!-- Floating Particles -->
-                    <div class="particles-container">
-                        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-                        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
-                        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
-                        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
-                        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
-                        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
-                        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
-                        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
-                        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
-                        <div class="particle" style="left: 15%; animation-delay: 1s;"></div>
-                        <div class="particle" style="left: 25%; animation-delay: 3s;"></div>
-                        <div class="particle" style="left: 35%; animation-delay: 5s;"></div>
-                        <div class="particle" style="left: 45%; animation-delay: 7s;"></div>
-                        <div class="particle" style="left: 55%; animation-delay: 9s;"></div>
-                        <div class="particle" style="left: 65%; animation-delay: 11s;"></div>
-                        <div class="particle" style="left: 75%; animation-delay: 13s;"></div>
-                        <div class="particle" style="left: 85%; animation-delay: 15s;"></div>
-                        <div class="particle" style="left: 95%; animation-delay: 17s;"></div>
-                    </div>
-                    
-                    <!-- Geometric Shapes -->
-                    <div class="geometric-shape shape-circle"></div>
-                    <div class="geometric-shape shape-triangle"></div>
-                    <div class="geometric-shape shape-hexagon"></div>
-                </div>
-            </div>
-
             <!-- Learn Header -->
             <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
                 <div class="text-center md:text-left">
@@ -261,12 +202,12 @@
 
             <!-- Search Bar -->
             <div class="relative mb-6 sm:mb-8">
+                <input type="search" id="courseSearch"
+                    class="w-full bg-panel/60 border border-line/50 backdrop-blur-sm rounded-lg pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
+                    placeholder="Search courses..." autocomplete="search" spellcheck="false" aria-label="Search courses">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-muted"></i>
                 </div>
-                <input type="search" id="courseSearch"
-                    class="w-full bg-panel border border-line/50 rounded-lg pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
-                    placeholder="Search courses..." autocomplete="search" spellcheck="false" aria-label="Search courses">
             </div>
 
             <!-- Course Grid -->
@@ -285,50 +226,15 @@
 
         </div>
 
-        <!-- Full Screen Gradient Background for Review View -->
-        <div class="fixed inset-0 z-0 pointer-events-none" id="reviewBackground">
-            <div class="gradient-bg w-full h-full opacity-60" aria-hidden="true">
-                <!-- Floating Particles -->
-                <div class="particles-container">
-                    <div class="particle" style="left: 10%; animation-delay: 0s; bottom: 0;"></div>
-                    <div class="particle" style="left: 20%; animation-delay: 2s; bottom: 0;"></div>
-                    <div class="particle" style="left: 30%; animation-delay: 4s; bottom: 0;"></div>
-                    <div class="particle" style="left: 40%; animation-delay: 6s; bottom: 0;"></div>
-                    <div class="particle" style="left: 50%; animation-delay: 8s; bottom: 0;"></div>
-                    <div class="particle" style="left: 60%; animation-delay: 10s; bottom: 0;"></div>
-                    <div class="particle" style="left: 70%; animation-delay: 12s; bottom: 0;"></div>
-                    <div class="particle" style="left: 80%; animation-delay: 14s; bottom: 0;"></div>
-                    <div class="particle" style="left: 90%; animation-delay: 16s; bottom: 0;"></div>
-                    <div class="particle" style="left: 15%; animation-delay: 1s; bottom: 0;"></div>
-                    <div class="particle" style="left: 25%; animation-delay: 3s; bottom: 0;"></div>
-                    <div class="particle" style="left: 35%; animation-delay: 5s; bottom: 0;"></div>
-                    <div class="particle" style="left: 45%; animation-delay: 7s; bottom: 0;"></div>
-                    <div class="particle" style="left: 55%; animation-delay: 9s; bottom: 0;"></div>
-                    <div class="particle" style="left: 65%; animation-delay: 11s; bottom: 0;"></div>
-                    <div class="particle" style="left: 75%; animation-delay: 13s; bottom: 0;"></div>
-                    <div class="particle" style="left: 85%; animation-delay: 15s; bottom: 0;"></div>
-                    <div class="particle" style="left: 95%; animation-delay: 17s; bottom: 0;"></div>
-                </div>
-                
-                <!-- Geometric Shapes -->
-                <div class="geometric-shape shape-circle" style="top: 20%; left: 15%;"></div>
-                <div class="geometric-shape shape-triangle" style="top: 60%; right: 20%;"></div>
-                <div class="geometric-shape shape-hexagon" style="top: 40%; left: 70%;"></div>
-                <div class="geometric-shape shape-circle" style="top: 80%; left: 40%; transform: scale(0.7);"></div>
-                <div class="geometric-shape shape-triangle" style="top: 10%; left: 80%; transform: scale(0.8);"></div>
-            </div>
-        </div>
-
         <!-- Review View -->
-        <div id="reviewView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden relative">
-            
+        <div id="reviewView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             <!-- Review Header -->
-            <div class="flex flex-col items-start py-6 sm:py-8 pt-12 sm:pt-16 relative z-10">
-                <h2 class="text-2xl sm:text-3xl font-bold text-white">Review (SRS)</h2>
+            <div class="flex flex-col items-start py-6 sm:py-8 pt-12 sm:pt-16">
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">Review (SRS)</h1>
                 <p class="text-sm sm:text-base text-muted">Review the questions you've seen before with spaced repetition.</p>
             </div>
 
-            <div id="questionContainer" class="relative z-10">
+            <div id="questionContainer">
 
             </div>
 
@@ -451,6 +357,7 @@
     <script src="js/review.js"></script>
     <script src="js/router.js"></script>
     <script src="js/mobileMenu.js"></script>
+    <script src="js/background.js"></script>
 </body>
 
 </html>

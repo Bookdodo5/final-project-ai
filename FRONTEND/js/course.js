@@ -33,8 +33,8 @@ window.openCourse = async (courseId, forceReload = false) => {
                         <i class="fas fa-arrow-left mr-2"></i> Back to Courses
                     </button>
                 </div>
-                <div class="bg-panel border border-line rounded-2xl overflow-hidden mb-8">
-                    <div class="p-6 md:p-8 border-b border-line flex flex-col lg:flex-row gap-8">
+                <div class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-2xl overflow-hidden mb-8">
+                    <div class="p-6 md:p-8 border-b border-line/50 flex flex-col lg:flex-row gap-8">
                         <div class="flex-1">
                             <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">${course.courseName || 'Course Title'}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
@@ -68,7 +68,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                         </div>
                     </div>
                     
-                    <div class="p-6 md:p-8 bg-panel">
+                    <div class="p-6 md:p-8">
                         <div class="flex justify-between items-center mb-6">
                             <h3 class="text-xl font-semibold text-text">Course Modules</h3>
                             <span class="text-sm text-muted">${window.modulesData?.length || 0} modules</span>
@@ -77,7 +77,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                         <ol id="modulesContainer" class="grid gap-4 sm:grid-cols-1 list-none p-0 m-0">
                             ${window.modulesData?.length > 0 
                                 ? window.modulesData.map((module, index) => `
-                                    <li class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-panel'} border border-line rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex items-start gap-5">
+                                    <li class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-muted/5'} border border-line/50 rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex items-start gap-5">
                                         <div class="flex-shrink-0 w-12 h-12 rounded-xl ${module.isCompleted ? 'bg-c5/5 text-c5' : 'bg-c1/5 text-c1'} flex items-center justify-center text-xl font-semibold">
                                             ${module.isCompleted ? '<i class="fas fa-check"></i>' : index + 1}
                                         </div>

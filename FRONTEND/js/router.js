@@ -128,8 +128,14 @@ const router = {
 
     // View handlers
     showHome() {
-        this.showView('home');
-        if (window.initStatsAnimation) window.initStatsAnimation();
+        window.setStat('courseCompletionBar', 'courseCompletionValue', 0);
+        window.setStat('quizAccuracyBar', 'quizAccuracyValue', 0);
+        window.setStat('retentionRateBar', 'retentionRateValue', 0);
+        setTimeout(() => {
+            console.log('showing home');
+            this.showView('home');
+            if (window.initStatsAnimation) window.initStatsAnimation();
+        }, 60);
     },
 
     showLearn() {

@@ -80,8 +80,8 @@ window.openModule = async (moduleId, courseId) => {
                         <i class="fas fa-arrow-left mr-2"></i> Back to Course
                     </button>
                 </div>
-                <div class="bg-panel border border-line rounded-2xl overflow-hidden mb-8">
-                    <div class="p-6 md:p-8 border-b border-line flex flex-col lg:flex-row gap-8">
+                <div class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-2xl overflow-hidden mb-8">
+                    <div class="p-6 md:p-8 border-b border-line/50 flex flex-col lg:flex-row gap-8">
                         <div class="flex-1">
                             <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">${module.moduleName || 'Module Title'}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
@@ -103,7 +103,7 @@ window.openModule = async (moduleId, courseId) => {
                         </div>
                     </div>
                     
-                    <div class="p-6 px-2 sm:p-8 sm:px-8 bg-panel">
+                    <div class="p-6 px-2 sm:p-8 sm:px-8">
                         <h3 class="text-xl px-2 sm:px-0 font-semibold text-text mb-6">Module Content</h3>
                         <article class="prose prose-invert w-full min-w-full bg-bg/60 p-6 md:p-8 rounded-xl border border-line/50 shadow-sm leading-relaxed prose-headings:text-text prose-h1:text-3xl md:prose-h1:text-4xl prose-h2:text-2xl md:prose-h2:text-3xl prose-p:text-text/90 prose-a:text-c1 hover:prose-a:underline prose-strong:text-white prose-code:bg-panel/60 prose-code:text-text prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-ul:marker:text-c1 prose-ol:marker:text-c1 prose-img:rounded-lg whitespace-pre-line">
                             ${module.contentText ? module.contentText.replace(/\n/g, '\n') : '<p class="text-muted italic">No content available for this module.</p>'}

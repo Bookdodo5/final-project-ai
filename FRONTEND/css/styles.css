@@ -38,7 +38,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Outfit', 'Inter', 'Oxanium', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Poppins', 'Inter', 'Oxanium', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .gradient-bg {
@@ -48,200 +48,27 @@ body {
     right: 0;
     bottom: 0;
     z-index: 0;
-    overflow: hidden;
     background: linear-gradient(135deg, 
-        rgba(71, 85, 105, 0.12) 0%, 
-        rgba(100, 116, 139, 0.08) 25%,
-        rgba(148, 163, 184, 0.06) 50%,
-        rgba(51, 65, 85, 0.10) 75%,
-        rgba(30, 41, 59, 0.12) 100%);
-    animation: gradientShift 20s ease-in-out infinite;
+        rgba(27, 184, 141, 0.1) 0%, 
+        rgba(206, 124, 102, 0.1) 50%, 
+        rgba(27, 184, 141, 0.1) 100%);
+    pointer-events: none;
 }
 
 .gradient-bg::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
+    z-index: 10;
     background: 
-        radial-gradient(circle at 20% 50%, rgba(71, 85, 105, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(100, 116, 139, 0.06) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(148, 163, 184, 0.04) 0%, transparent 50%),
-        radial-gradient(circle at 90% 60%, rgba(51, 65, 85, 0.07) 0%, transparent 50%);
-    animation: floatingOrbs 25s ease-in-out infinite;
-}
-
-/* Floating particles container */
-.particles-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 3;
-    overflow: hidden;
+        radial-gradient(circle at 30% 20%, rgba(27, 184, 141, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(206, 124, 102, 0.1) 0%, transparent 50%);
     pointer-events: none;
-}
-
-.particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: rgba(27, 184, 141, 0.6);
-    border-radius: 50%;
-    animation: floatUp 15s linear infinite;
-}
-
-.particle:nth-child(2n) {
-    background: rgba(206, 124, 102, 0.5);
-    width: 3px;
-    height: 3px;
-    animation-duration: 18s;
-}
-
-.particle:nth-child(3n) {
-    background: rgba(241, 227, 164, 0.4);
-    width: 2px;
-    height: 2px;
-    animation-duration: 22s;
-}
-
-.particle:nth-child(4n) {
-    background: rgba(142, 190, 115, 0.5);
-    width: 5px;
-    height: 5px;
-    animation-duration: 12s;
-}
-
-/* Geometric shapes */
-.geometric-shape {
-    position: absolute;
-    pointer-events: none;
-    opacity: 0.1;
-}
-
-.shape-circle {
-    width: 100px;
-    height: 100px;
-    border: 2px solid rgba(27, 184, 141, 0.3);
-    border-radius: 50%;
-    top: 20%;
-    left: 10%;
-    animation: rotateFloat 20s ease-in-out infinite;
-}
-
-.shape-triangle {
-    width: 0;
-    height: 0;
-    border-left: 40px solid transparent;
-    border-right: 40px solid transparent;
-    border-bottom: 70px solid rgba(206, 124, 102, 0.2);
-    top: 60%;
-    right: 15%;
-    animation: triangleFloat 25s ease-in-out infinite reverse;
-}
-
-.shape-hexagon {
-    width: 80px;
-    height: 46px;
-    background: rgba(241, 227, 164, 0.15);
-    position: relative;
-    top: 40%;
-    right: 30%;
-    animation: hexagonFloat 18s ease-in-out infinite;
-}
-
-.shape-hexagon:before,
-.shape-hexagon:after {
-    content: "";
-    position: absolute;
-    width: 0;
-    border-left: 40px solid transparent;
-    border-right: 40px solid transparent;
-}
-
-.shape-hexagon:before {
-    bottom: 100%;
-    border-bottom: 23px solid rgba(241, 227, 164, 0.15);
-}
-
-.shape-hexagon:after {
-    top: 100%;
-    border-top: 23px solid rgba(241, 227, 164, 0.15);
-}
-
-/* Animation keyframes */
-@keyframes gradientShift {
-    0%, 100% {
-        background: linear-gradient(135deg, 
-            rgba(71, 85, 105, 0.12) 0%, 
-            rgba(100, 116, 139, 0.08) 25%,
-            rgba(148, 163, 184, 0.06) 50%,
-            rgba(51, 65, 85, 0.10) 75%,
-            rgba(30, 41, 59, 0.12) 100%);
-    }
-    25% {
-        background: linear-gradient(135deg, 
-            rgba(100, 116, 139, 0.12) 0%, 
-            rgba(148, 163, 184, 0.08) 25%,
-            rgba(51, 65, 85, 0.06) 50%,
-            rgba(71, 85, 105, 0.10) 75%,
-            rgba(100, 116, 139, 0.12) 100%);
-    }
-    50% {
-        background: linear-gradient(135deg, 
-            rgba(148, 163, 184, 0.12) 0%, 
-            rgba(51, 65, 85, 0.08) 25%,
-            rgba(71, 85, 105, 0.06) 50%,
-            rgba(100, 116, 139, 0.10) 75%,
-            rgba(148, 163, 184, 0.12) 100%);
-    }
-    75% {
-        background: linear-gradient(135deg, 
-            rgba(51, 65, 85, 0.12) 0%, 
-            rgba(71, 85, 105, 0.08) 25%,
-            rgba(100, 116, 139, 0.06) 50%,
-            rgba(148, 163, 184, 0.10) 75%,
-            rgba(51, 65, 85, 0.12) 100%);
-    }
-}
-
-@keyframes floatingOrbs {
-    0%, 100% {
-        background: 
-            radial-gradient(circle at 20% 50%, rgba(71, 85, 105, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(100, 116, 139, 0.06) 0%, transparent 50%),
-            radial-gradient(circle at 40% 80%, rgba(148, 163, 184, 0.04) 0%, transparent 50%),
-            radial-gradient(circle at 90% 60%, rgba(51, 65, 85, 0.07) 0%, transparent 50%);
-    }
-    25% {
-        background: 
-            radial-gradient(circle at 30% 60%, rgba(71, 85, 105, 0.1) 0%, transparent 52%),
-            radial-gradient(circle at 70% 30%, rgba(100, 116, 139, 0.09) 0%, transparent 53%),
-            radial-gradient(circle at 50% 70%, rgba(148, 163, 184, 0.07) 0%, transparent 51%),
-            radial-gradient(circle at 80% 80%, rgba(51, 65, 85, 0.09) 0%, transparent 54%);
-    }
-    50% {
-        background: 
-            radial-gradient(circle at 40% 60%, rgba(71, 85, 105, 0.09) 0%, transparent 54%),
-            radial-gradient(circle at 60% 40%, rgba(100, 116, 139, 0.11) 0%, transparent 51%),
-            radial-gradient(circle at 60% 60%, rgba(148, 163, 184, 0.09) 0%, transparent 53%),
-            radial-gradient(circle at 70% 90%, rgba(51, 65, 85, 0.07) 0%, transparent 56%);
-    }
-    75% {
-        background: 
-            radial-gradient(circle at 50% 60%, rgba(71, 85, 105, 0.07) 0%, transparent 56%),
-            radial-gradient(circle at 50% 50%, rgba(100, 116, 139, 0.12) 0%, transparent 51%),
-            radial-gradient(circle at 70% 50%, rgba(148, 163, 184, 0.1) 0%, transparent 53%),
-            radial-gradient(circle at 60% 100%, rgba(51, 65, 85, 0.06) 0%, transparent 58%);
-    }
 }
 
 @keyframes floatUp {
     0% {
-        transform: translateY(100vh) rotate(0deg);
+        transform: translateY(100vh);
         opacity: 0;
     }
     10% {
@@ -251,51 +78,34 @@ body {
         opacity: 1;
     }
     100% {
-        transform: translateY(-100px) rotate(360deg);
+        transform: translateY(-100vh);
         opacity: 0;
     }
 }
 
-@keyframes rotateFloat {
-    0%, 100% {
-        transform: rotate(0deg) translateY(0px);
-    }
-    25% {
-        transform: rotate(90deg) translateY(-20px);
-    }
-    50% {
-        transform: rotate(180deg) translateY(0px);
-    }
-    75% {
-        transform: rotate(270deg) translateY(20px);
-    }
+.space-element {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.6;
+    filter: blur(1px);
+    will-change: transform;
 }
 
-@keyframes triangleFloat {
-    0%, 100% {
-        transform: translateY(0px) rotate(0deg);
-    }
-    33% {
-        transform: translateY(-30px) rotate(120deg);
-    }
-    66% {
-        transform: translateY(15px) rotate(240deg);
-    }
+.star {
+    background: white;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
-@keyframes hexagonFloat {
-    0%, 100% {
-        transform: translateY(0px) translateX(0px) rotate(0deg);
-    }
-    25% {
-        transform: translateY(-25px) translateX(15px) rotate(60deg);
-    }
-    50% {
-        transform: translateY(0px) translateX(30px) rotate(120deg);
-    }
-    75% {
-        transform: translateY(25px) translateX(15px) rotate(180deg);
-    }
+.planet {
+    background: radial-gradient(circle, var(--planet-color, #8EBE73) 0%, var(--planet-shade, #6d9a57) 100%);
+    box-shadow: 0 0 10px var(--planet-shade);
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
 }
 
 /* Mobile-specific improvements */
@@ -529,118 +339,19 @@ a:focus-visible {
     }
 }
 
-/* Mobile Menu Styles */
-#mobileMenuBtn {
-    transition: all 0.3s ease;
-}
-
-#mobileMenuBtn:active {
-    transform: none;
-}
-
-#mobileMenuBtn span {
-    transform-origin: center;
-}
-
-#mobileMenu {
-    transition: opacity 0.3s ease;
-}
-
-#mobileMenu .bg-bg {
-    transform: translateY(-100%);
-    transition: transform 0.3s ease;
-}
-
-#mobileMenu:not(.hidden) .bg-bg {
-    transform: translateY(0);
-}
-
-/* Smooth animations for mobile menu items */
-#mobileMenu nav a {
-    transform: translateX(-20px);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-#mobileMenu:not(.hidden) nav a {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-#mobileMenu nav a:nth-child(1) { transition-delay: 0.1s; }
-#mobileMenu nav a:nth-child(2) { transition-delay: 0.15s; }
-#mobileMenu nav a:nth-child(3) { transition-delay: 0.2s; }
-
-/* Improve course cards for mobile */
-@media (max-width: 768px) {
-    .course-card {
-        padding: 1rem;
-        border-radius: 0.75rem;
-    }
-    
-    .course-card h3 {
-        font-size: 1.125rem;
-        line-height: 1.4;
-    }
-    
-    .course-card p {
-        font-size: 0.875rem;
-        line-height: 1.5;
-    }
-}
-
-/* Loading states for mobile */
-.loading-spinner {
-    width: 2rem;
-    height: 2rem;
-    border: 2px solid var(--line);
-    border-top: 2px solid var(--c1);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-    0% { 
-        opacity: 0; 
-        transform: translateY(10px);
-    }
-    100% { 
-        opacity: 1; 
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    0% { 
-        opacity: 0; 
-        transform: translateY(20px);
-    }
-    100% { 
-        opacity: 1; 
-        transform: translateY(0);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% { 
-        opacity: 1; 
-    }
-    50% { 
-        opacity: 0.7; 
-    }
-}
-
 @keyframes shimmer {
     0% { 
         background-position: -200% 0; 
     }
     100% { 
         background-position: 200% 0; 
+    }
+
+    0%, 100% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0.7; 
     }
 }
 
@@ -669,54 +380,8 @@ button:active {
     transform: none;
 }
 
-.border-animate {
-    position: relative;
-    overflow: hidden;
-}
-
-.border-animate::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--c1), transparent);
-    animation: shimmer 2s infinite;
-}
-
 input, textarea, button, select {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-lift:hover {
-    transform: none;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.glow-on-hover:hover {
-    box-shadow: 0 0 20px rgba(27, 184, 141, 0.3);
-}
-
-/* Breathing Animation for Cards */
-@keyframes breathe {
-    0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    50% { 
-        transform: scale(1);
-        box-shadow: 0 6px 25px rgba(27, 184, 141, 0.06);
-    }
-}
-
-.card-breathe {
-    animation: breathe 4s ease-in-out infinite;
-}
-
-.card-breathe:hover {
-    animation-play-state: paused;
-    transform: none;
 }
 
 /* Interactive Ripple Effect */
@@ -774,81 +439,4 @@ input, textarea, button, select {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
-}
-
-/* Cursor Following Gradient Effects */
-.cursor-glow {
-    position: relative;
-    overflow: hidden;
-}
-
-.cursor-glow::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(255, 255, 255, 0.06) 0%, 
-                rgba(255, 255, 255, 0.02) 40%, 
-                transparent 70%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1;
-}
-
-.cursor-glow:hover::before {
-    opacity: 1;
-}
-
-/* Gradient Text Animation */
-@keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-.gradient-text {
-    background: linear-gradient(45deg, var(--c1), var(--c2), var(--c3), var(--c1));
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s ease infinite;
-}
-
-/* Subtle Particle Effect */
-.particle-container {
-    position: relative;
-    overflow: hidden;
-}
-
-.particle-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-        radial-gradient(1px 1px at 20px 30px, rgba(27, 184, 141, 0.3), transparent),
-        radial-gradient(1px 1px at 40px 70px, rgba(250, 195, 141, 0.2), transparent),
-        radial-gradient(1px 1px at 90px 40px, rgba(241, 227, 164, 0.2), transparent),
-        radial-gradient(1px 1px at 130px 80px, rgba(142, 190, 115, 0.3), transparent);
-    background-size: 200px 100px;
-    animation: particle-float 20s linear infinite;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.particle-container:hover::before {
-    opacity: 1;
-}
-
-@keyframes particle-float {
-    0% { transform: translateY(100px); }
-    100% { transform: translateY(-100px); }
 }

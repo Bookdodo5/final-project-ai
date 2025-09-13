@@ -8,35 +8,34 @@ function lerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
-function animateStat(barId, valueId, targetValue) {
+window.setStat = (barId, valueId, targetValue) => {
     const bar = document.getElementById(barId);
     const valueElement = document.getElementById(valueId);
+    bar.style.width = `${targetValue}%`;
+    valueElement.textContent = `${Math.round(targetValue)}%`;
+}
+
+function animateStat(barId, valueId, targetValue) {
+    const bar = document.getElementById(barId);
+    const startValue = parseFloat(bar.style.width) || 0;
     let startTime = null;
-    const duration = 1500; // 1.5 seconds
-    const startValue = 0;
+    const duration = 1000; // 1 second
     
     function step(timestamp) {
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Apply easing to the progress
         const easedProgress = easeOutQuart(progress);
-        
-        // Calculate current value with easing
         const currentValue = lerp(startValue, targetValue, easedProgress);
         
-        // Update the UI
-        bar.style.width = `${currentValue}%`;
-        valueElement.textContent = `${Math.round(currentValue)}%`;
+        setStat(barId, valueId, currentValue);
         
-        // Continue the animation until duration is reached
         if (progress < 1) {
             window.requestAnimationFrame(step);
         }
     }
     
-    // Start the animation
     window.requestAnimationFrame(step);
 }
 
@@ -63,24 +62,4 @@ async function initStatsAnimation() {
     return true;
 }
 
-// Make initStatsAnimation globally available
 window.initStatsAnimation = initStatsAnimation;
-
-// Initialize when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // If we're already on the overview page, initialize animations
-    const overviewView = document.getElementById('homeView');
-    if (overviewView && !overviewView.classList.contains('hidden')) {
-        initStatsAnimation();
-    }
-    
-    // Also initialize when the router shows the home view
-    if (window.router) {
-        const originalShowHome = window.router.showHome;
-        window.router.showHome = function() {
-            originalShowHome.apply(this, arguments);
-            // Small delay to ensure DOM is updated
-            setTimeout(initStatsAnimation, 50);
-        };
-    }
-});

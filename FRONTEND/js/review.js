@@ -40,6 +40,7 @@ const renderSrsCurrent = (root, container, emptyMsg) => {
     if (window.currentQuestionIndex >= window.questionsData.length) {
         emptyMsg.classList.remove('hidden');
         emptyMsg.classList.add('flex');
+        container.innerHTML = '';
         return;
     }
     const q = window.questionsData[window.currentQuestionIndex];
@@ -55,15 +56,15 @@ const renderSrs = () => {
 
     questionContainer.innerHTML = `
         <ul class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 list-none p-0 m-0">
-            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+            <li class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsDueCount">0</h2>
                 <p class="text-sm text-muted">Cards Due</p>
             </li>
-            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+            <li class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsReviewedCount">0</h2>
                 <p class="text-sm text-muted">Cards Reviewed</p>
             </li>
-            <li class="bg-panel/60 border border-line/50 rounded-lg p-6 flex flex-col items-center justify-center gap-1">
+            <li class="bg-panel/60 border border-line/50 backdrop-blur-sm rounded-lg p-6 flex flex-col items-center justify-center gap-1">
                 <h2 class="text-2xl font-bold text-text" id="srsTotalCount">0</h2>
                 <p class="text-sm text-muted">Total Cards</p>
             </li>
@@ -96,47 +97,3 @@ const renderSrs = () => {
     // Initialize stats display
     updateSrsProgress(questionContainer);
 };
-
-// Show review background when review view is active
-function showReviewView() {
-    const reviewBackground = document.getElementById('reviewBackground');
-    if (reviewBackground) {
-        reviewBackground.style.display = 'block';
-    }
-}
-
-// Hide review background when leaving review view
-function hideReviewView() {
-    const reviewBackground = document.getElementById('reviewBackground');
-    if (reviewBackground) {
-        reviewBackground.style.display = 'none';
-    }
-}
-
-// Add event listeners for view changes
-document.addEventListener('DOMContentLoaded', function() {
-    const reviewView = document.getElementById('reviewView');
-    
-    // Observer to detect when review view becomes visible
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                const target = mutation.target;
-                if (target.id === 'reviewView') {
-                    if (!target.classList.contains('hidden')) {
-                        showReviewView();
-                    } else {
-                        hideReviewView();
-                    }
-                }
-            }
-        });
-    });
-    
-    if (reviewView) {
-        observer.observe(reviewView, { attributes: true });
-    }
-    
-    // Initially hide the background
-    hideReviewView();
-});
