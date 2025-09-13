@@ -956,7 +956,7 @@ function setupBackButton() {
             
             // Remove the setTimeout delay that might cause issues
             console.log('Back button (backup): course cards recreated, should be clickable now;');
-        });
+        };
         
         console.log('Back button setup complete');
     } else {
