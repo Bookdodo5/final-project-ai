@@ -35,7 +35,7 @@ window.renderQuestion = (q) => {
         }
         return `
         <div class="mt-3">
-            <textarea data-role="open" class="w-full bg-panel border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 min-h-24 resize-none"></textarea>
+            <textarea data-role="open" class="w-full bg-panel border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none"></textarea>
         </div>
     `;
     })();
@@ -127,7 +127,43 @@ window.mountQuestion = (containerEl, q, onComplete) => {
     const onSubmit = async () => {
         if (submitted || isSubmitting) return;
         const answer = getAnswerPayload();
+        
+        // Validation for open answer questions
+        if (q.type !== 'mcq' && q.type !== 'true-false') {
+            const textarea = containerEl.querySelector('[data-role="open"]');
+            const errorDiv = containerEl.querySelector('[data-role="error"]');
+            
+            if (!answer || answer.length === 0) {
+                // Show red border and error message
+                textarea.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                textarea.classList.remove('border-line/50', 'focus:border-c1/50', 'focus:ring-c1');
+                
+                if (errorDiv) {
+                    errorDiv.classList.remove('hidden');
+                    errorDiv.textContent = 'กรุณาพิมพ์คำตอบก่อนส่ง';
+                } else {
+                    // Create error message if it doesn't exist
+                    const newErrorDiv = document.createElement('div');
+                    newErrorDiv.setAttribute('data-role', 'error');
+                    newErrorDiv.className = 'text-red-500 text-sm mt-2';
+                    newErrorDiv.textContent = 'กรุณาพิมพ์คำตอบก่อนส่ง';
+                    textarea.parentNode.appendChild(newErrorDiv);
+                }
+                return;
+            } else {
+                // Remove error styling if answer is provided
+                textarea.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                textarea.classList.add('border-line/50', 'focus:border-c1/50', 'focus:ring-c1');
+                
+                if (errorDiv) {
+                    errorDiv.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Original validation for MCQ and True/False
         if (!answer) return;
+        
         const submitBtn = containerEl.querySelector('[data-action="submit"]');
         submitBtn.disabled = true;
         submitBtn.classList.add('opacity-50', 'pointer-events-none');
