@@ -26,7 +26,7 @@ window.openCourse = async (courseId, forceReload = false) => {
             <div class="max-w-7xl mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
                     <div class="text-center md:text-left">
-                        <h2 class="text-3xl font-bold text-white">Course</h2>
+                        <h1 class="text-3xl font-bold text-white">Course</h1>
                         <p class="text-muted">View the course you created.</p>
                     </div>
                     <button onclick="window.backToCourseGrid()" class="flex items-center text-c1 hover:text-c1/80 mb-8 transition-colors">
@@ -36,7 +36,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                 <div class="bg-panel border border-line rounded-2xl overflow-hidden mb-8">
                     <div class="p-6 md:p-8 border-b border-line flex flex-col lg:flex-row gap-8">
                         <div class="flex-1">
-                            <h1 class="text-2xl md:text-3xl font-bold text-text mb-4">${course.courseName || 'Course Title'}</h1>
+                            <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">${course.courseName || 'Course Title'}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-muted mb-6">
                                 <span class="bg-c3/20 text-c3 px-3 py-1.5 rounded inline-flex items-center">
                                     <i class="fas fa-clock text-xs mr-1 text-c3"></i>
@@ -52,7 +52,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                             </div>
 
                             <div class="prose prose-invert max-w-none mb-8">
-                                <h2 class="text-xl font-semibold text-text mb-2">Course Description</h2>
+                                <h3 class="text-xl font-semibold text-text mb-2">Course Description</h3>
                                 <p class="text-text/80">${course.description || 'No description available'}</p>
                             </div>
 
@@ -62,7 +62,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                                     <span class="text-white font-medium">${Math.round(course.progress)}%</span>
                                 </div>
                                 <div class="w-full bg-line/50 h-2.5 rounded-full">
-                                    <div class="h-full bg-c3 rounded-full" style="width: ${course.progress}%"></div>
+                                    <div class="h-full bg-c1 rounded-full" style="width: ${course.progress}%"></div>
                                 </div>
                             </div>
                         </div>
@@ -70,20 +70,20 @@ window.openCourse = async (courseId, forceReload = false) => {
                     
                     <div class="p-6 md:p-8 bg-panel">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-xl font-semibold text-text">Course Modules</h2>
+                            <h3 class="text-xl font-semibold text-text">Course Modules</h3>
                             <span class="text-sm text-muted">${window.modulesData?.length || 0} modules</span>
                         </div>
                         
-                        <div id="modulesContainer" class="grid gap-4 sm:grid-cols-1">
+                        <ol id="modulesContainer" class="grid gap-4 sm:grid-cols-1 list-none p-0 m-0">
                             ${window.modulesData?.length > 0 
                                 ? window.modulesData.map((module, index) => `
-                                    <div class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-panel'} border border-line rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex items-start gap-5">
+                                    <li class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-panel'} border border-line rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex items-start gap-5">
                                         <div class="flex-shrink-0 w-12 h-12 rounded-xl ${module.isCompleted ? 'bg-c5/5 text-c5' : 'bg-c1/5 text-c1'} flex items-center justify-center text-xl font-semibold">
                                             ${module.isCompleted ? '<i class="fas fa-check"></i>' : index + 1}
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-start gap-4">
-                                                <h3 class="font-semibold text-text">${module.moduleName || 'Untitled Module'}</h3>
+                                                <h4 class="font-semibold text-text">${module.moduleName || 'Untitled Module'}</h4>
                                                 <span class="text-xs text-muted whitespace-nowrap">
                                                     <i class="far fa-clock mr-1"></i>${Math.ceil(module.contentText?.length / 1000) || 5} min
                                                 </span>
@@ -100,17 +100,16 @@ window.openCourse = async (courseId, forceReload = false) => {
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
+                                    </li>
                                 `).join('')
                                 : `
-                                    <div class="text-center py-12 border-2 border-dashed border-line/50 rounded-xl">
+                                    <li class="text-center py-12 border-2 border-dashed border-line/50 rounded-xl">
                                         <i class="fas fa-book-open text-4xl text-muted mb-3"></i>
-                                        <h3 class="text-lg font-medium text-text mb-1">No Modules Yet</h3>
                                         <p class="text-muted max-w-md mx-auto">This course doesn't have any modules yet.</p>
-                                    </div>
+                                    </li>
                                 `
                             }
-                        </div>
+                        </ol>
                     </div>
                 </div>
             </div>

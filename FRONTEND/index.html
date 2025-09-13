@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-gray-900 text-gray-100">
+<html lang="en-US" class="bg-gray-900 text-gray-100">
 
 <head>
     <meta charset="UTF-8">
@@ -75,19 +75,20 @@
             </a>
         </div>
 
-        <!-- Mobile Hamburger Menu -->
-        <button id="mobileMenuBtn" class="sm:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none">
-            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
-            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
-            <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
-        </button>
-    </nav>
+            <!-- Mobile Hamburger Menu -->
+            <button id="mobileMenuBtn" class="sm:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1.5 focus:outline-none">
+                <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+                <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+                <span class="block w-6 h-0.5 bg-text transition-all duration-300 ease-out"></span>
+            </button>
+        </nav>
+    </header>
 
     <!-- Mobile Navigation Menu -->
     <div id="mobileMenu" class="sm:hidden fixed top-0 left-0 right-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm hidden">
         <div class="bg-bg border-b border-line w-full">
             <div class="flex justify-between items-center px-4 py-4 border-b border-line">
-                <h2 class="text-lg font-semibold text-text">Menu</h2>
+                <p class="text-lg font-semibold text-text">Menu</p>
                 <button id="closeMobileMenu" class="text-muted hover:text-text">
                     <i class="fas fa-times text-xl"></i>
                 </button>
@@ -113,7 +114,7 @@
     </div>
 
     <!-- Main Content Container -->
-    <div id="app" class="flex-grow flex flex-col relative">
+    <main id="main-content" role="main" class="flex-grow flex flex-col relative" tabindex="-1">
 
         <!-- Global Loading Progress Bar -->
         <div id="appLoader" class="hidden fixed top-0 left-0 right-0 z-[60]">
@@ -130,7 +131,7 @@
 
             <!-- Hero Section -->
             <section class="py-12 sm:py-20 md:py-28 text-center space-y-3 sm:space-y-4">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-c1 leading-tight">Master Your Path to Knowledge</h2>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-c1 leading-tight">Master Your Path to Knowledge</h1>
                 <p class="text-base sm:text-lg md:text-xl text-muted max-w-3xl mx-auto px-4">
                     State the topic, and you get your personalized learning experiences.
                     <br class="hidden sm:block">AI-generated
@@ -139,43 +140,43 @@
             </section>
 
             <!-- Learning Analytics -->
-            <div
-                class="relative z-20 bg-panel/60 backdrop-blur-sm rounded-xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 max-w-5xl mx-auto shadow-lg shadow-black/30 border border-line space-y-3 sm:space-y-4">
-                <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Learning Analytics</h3>
+            <section class="relative z-20 bg-panel/60 backdrop-blur-sm rounded-xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 max-w-5xl mx-auto shadow-lg shadow-black/30 border border-line">
+                <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Learning Analytics</h2>
+                <ul class="space-y-3 sm:space-y-4 list-none p-0 m-0">
+                    <!-- Course Completion -->
+                    <li class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
+                        <div class="flex justify-between">
+                            <span class="text-sm sm:text-base text-gray-300">Course Completion</span>
+                            <span class="text-sm sm:text-base text-white font-medium" id="courseCompletionValue">0%</span>
+                        </div>
+                        <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
+                            <div id="courseCompletionBar" class="h-full bg-c3 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </li>
 
-                <!-- Course Completion -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
-                    <div class="flex justify-between">
-                        <span class="text-sm sm:text-base text-gray-300">Course Completion</span>
-                        <span class="text-sm sm:text-base text-white font-medium" id="courseCompletionValue">0%</span>
-                    </div>
-                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                        <div id="courseCompletionBar" class="h-full bg-c3 rounded-full" style="width: 50%"></div>
-                    </div>
-                </div>
+                    <!-- Quiz Accuracy -->
+                    <li class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
+                        <div class="flex justify-between">
+                            <span class="text-sm sm:text-base text-gray-300">Quiz Accuracy</span>
+                            <span class="text-sm sm:text-base text-white font-medium" id="quizAccuracyValue">0%</span>
+                        </div>
+                        <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
+                            <div id="quizAccuracyBar" class="h-full bg-c2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </li>
 
-                <!-- Quiz Accuracy -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
-                    <div class="flex justify-between">
-                        <span class="text-sm sm:text-base text-gray-300">Quiz Accuracy</span>
-                        <span class="text-sm sm:text-base text-white font-medium" id="quizAccuracyValue">0%</span>
-                    </div>
-                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                        <div id="quizAccuracyBar" class="h-full bg-c2 rounded-full" style="width: 50%"></div>
-                    </div>
-                </div>
-
-                <!-- Retention Rate -->
-                <div class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
-                    <div class="flex justify-between">
-                        <span class="text-sm sm:text-base text-gray-300">Retention Rate</span>
-                        <span class="text-sm sm:text-base text-white font-medium" id="retentionRateValue">0%</span>
-                    </div>
-                    <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
-                        <div id="retentionRateBar" class="h-full bg-c4 rounded-full" style="width: 60%"></div>
-                    </div>
-                </div>
-            </div>
+                    <!-- Retention Rate -->
+                    <li class="space-y-2 bg-bg/50 rounded-xl p-3 sm:p-4 shadow-sm shadow-black/30 border-line border">
+                        <div class="flex justify-between">
+                            <span class="text-sm sm:text-base text-gray-300">Retention Rate</span>
+                            <span class="text-sm sm:text-base text-white font-medium" id="retentionRateValue">0%</span>
+                        </div>
+                        <div class="w-full bg-line/50 h-2 sm:h-2.5 rounded-full">
+                            <div id="retentionRateBar" class="h-full bg-c4 rounded-full" style="width: 60%"></div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
         </div>
 
         <!-- Learn View -->
@@ -183,7 +184,7 @@
             <!-- Learn Header -->
             <div class="flex flex-col md:flex-row justify-between items-center md:items-start md:py-8 md:pt-16 py-4 pt-8">
                 <div class="text-center md:text-left">
-                    <h2 class="text-3xl font-bold text-white">Learn</h2>
+                    <h1 class="text-3xl font-bold text-white">Learn</h1>
                     <p class="text-muted">Learn the courses you created. Filter with the search box below.</p>
                 </div>
                 <button id="newCourseBtn"
@@ -198,15 +199,15 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-muted"></i>
                 </div>
-                <input type="text" id="courseSearch"
+                <input type="search" id="courseSearch"
                     class="w-full bg-panel border border-line/50 rounded-lg pl-10 pr-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
-                    placeholder="Search courses..." autocomplete="off" spellcheck="false">
+                    placeholder="Search courses..." autocomplete="search" spellcheck="false" aria-label="Search courses">
             </div>
 
             <!-- Course Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="courseGrid">
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="courseGrid">
 
-            </div>
+            </ul>
         </div>
 
         <!-- Course Detail View (initially hidden) -->
@@ -223,7 +224,7 @@
         <div id="reviewView" class="max-w-7xl w-full mx-auto px-4 sm:px-6 pb-8 sm:pb-12 hidden">
             <!-- Review Header -->
             <div class="flex flex-col items-start py-6 sm:py-8 pt-12 sm:pt-16">
-                <h2 class="text-2xl sm:text-3xl font-bold text-white">Review (SRS)</h2>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">Review (SRS)</h1>
                 <p class="text-sm sm:text-base text-muted">Review the questions you've seen before with spaced repetition.</p>
             </div>
 
@@ -232,7 +233,7 @@
             </div>
 
         </div>
-    </div>
+    </main>
 
     <!-- Course Creation Modal -->
     <div id="newCourseModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/50">
@@ -293,7 +294,7 @@
                 <label for="courseTopic" class="block text-sm font-medium text-muted mb-1">Course Topic</label>
                 <input type="text" id="courseTopic"
                     class="w-full bg-panel border border-line/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 focus:outline-none focus:ring-1 focus:ring-c1 focus:border-c1/50 transition-colors text-sm sm:text-base"
-                    placeholder="e.g. Machine Learning Basics, Web Development, Data Structures..." maxlength="100">
+                    placeholder="e.g. Machine Learning Basics, Web Development, Data Structures...">
                 </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-7 gap-3 sm:gap-4">
@@ -333,7 +334,7 @@
         </div>
     </div>
 
-    <footer class="py-4 sm:py-6 text-center text-muted text-xs sm:text-sm border-t border-line bg-bg/50 backdrop-blur-sm mt-auto">
+    <footer role="contentinfo" class="py-4 sm:py-6 text-center text-muted text-xs sm:text-sm border-t border-line bg-bg/50 backdrop-blur-sm mt-auto">
         <p>&copy; 2025 MasteryPath - Group 4 Final Project</p>
     </footer>
 

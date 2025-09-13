@@ -1,6 +1,14 @@
 // Simple Router
 const router = {
     currentView: 'home',
+    pageTitles: {
+        'home': 'Home - MasteryPath',
+        'learn': 'Learn - MasteryPath',
+        'course': 'Course - MasteryPath',
+        'module': 'Module - MasteryPath',
+        'review': 'Review - MasteryPath',
+        'createCourse': 'Create Course - MasteryPath'
+    },
     navPages: {
         'home': 'home',
         'learn': 'learn',
@@ -70,6 +78,15 @@ const router = {
         }
     },
 
+    // Update page title
+    updatePageTitle(viewName, additionalInfo = '') {
+        let title = this.pageTitles[viewName] || 'MasteryPath';
+        if (additionalInfo) {
+            title = `${additionalInfo} | ${title}`;
+        }
+        document.title = title;
+    },
+
     // Show a view
     showView(viewName) {
         // Hide all views
@@ -83,6 +100,7 @@ const router = {
             view.classList.remove('hidden');
             this.currentView = viewName;
             this.updateNav();
+            this.updatePageTitle(viewName);
         }
     },
 
@@ -121,12 +139,26 @@ const router = {
 
     showCourse(courseId) {
         this.showView('course');
-        if (window.openCourse) window.openCourse(courseId, true);
+        if (window.openCourse) {
+            window.openCourse(courseId, true);
+            // Update title with course name if available
+            const course = window.coursesData?.find(c => c.id === courseId || c._id === courseId);
+            if (course?.courseName) {
+                this.updatePageTitle('course', course.courseName);
+            }
+        }
     },
 
     showModule(moduleId, courseId) {
         this.showView('module');
-        if (window.openModule) window.openModule(moduleId, courseId);
+        if (window.openModule) {
+            window.openModule(moduleId, courseId);
+            // Update title with module name if available
+            const module = window.modulesData?.find(m => m.id === moduleId || m._id === moduleId);
+            if (module?.moduleName) {
+                this.updatePageTitle('module', module.moduleName);
+            }
+        }
     },
 
     showReview() {

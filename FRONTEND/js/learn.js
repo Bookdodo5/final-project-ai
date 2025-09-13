@@ -6,7 +6,7 @@ const initLearnPage = () => {
         const searchTerm = e.target.value.toLowerCase();
         document.querySelectorAll('#courseGrid > div').forEach(card => {
             const text = card.querySelector('h3')?.textContent?.toLowerCase();
-            card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            card.style.display = text.includes(searchTerm) ? 'flex' : 'none';
         });
     });
 
@@ -60,10 +60,10 @@ const renderCourseGrid = () => {
     if (!courseGrid) return;
 
     courseGrid.innerHTML = window.coursesData.map(course => `
-        <div class="bg-panel border border-line rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-c1/50 p-5 flex flex-col h-full gap-4 ${course.status === 'generating' ? 'animate-pulse' : ''}">
-            <h3 class="text-lg font-bold text-text line-clamp-4" title="${course.courseName || 'Untitled Course'}">
+        <li class="bg-panel border border-line rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-c1/50 p-5 flex flex-col h-full gap-4 ${course.status === 'generating' ? 'animate-pulse' : ''}">
+            <h2 class="text-lg font-bold text-text line-clamp-4" title="${course.courseName || 'Untitled Course'}">
                 ${course.courseName || 'Untitled Course'}
-            </h3>
+            </h2>
             
             <p class="text-muted text-sm line-clamp-4 h-20" title="${course.description || 'No description available'}">
                 ${course.description || 'No description available'}
@@ -122,8 +122,8 @@ const renderCourseGrid = () => {
                 </div>
             ` : course.status === 'active' ? `
             <div class="mt-auto pt-4 border-t border-line/50">
-                <div class="flex items-center w-full px-4 pb-4">
-                    <div class="w-full bg-bg/30 rounded-full h-1.5 mr-2">
+                <div class="flex items-center w-full px-2 pb-4">
+                    <div class="w-full bg-line/50 rounded-full h-1.5 mr-2">
                         <div class="bg-c1 h-full rounded-full transition-all duration-500" style="width: ${course.progress || 0}%"></div>
                     </div>
                     <span class="text-xs font-medium text-white">${course.progress || 0}%</span>
@@ -145,6 +145,6 @@ const renderCourseGrid = () => {
                     </button>
                 </div>
             </div>` : ''}
-        </div>
+        </li>
     `).join('');
 };

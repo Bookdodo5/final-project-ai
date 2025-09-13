@@ -110,19 +110,27 @@ Make sure to:
 3.  Ensure the content rigorously matches the specified language and maintains cultural relevance where applicable.
 4.  Use only these HTML tags: h2-h6, p, ul, ol, li, a, strong, em, code, pre, blockquote, table, thead, tbody, tr, th, td, img, sup, sub.
 5.  For mathematical expressions, use HTML entities or Unicode characters (e.g., x² for x², π for π). **DO NOT USE LATEX!**
-6.  For code examples, wrap them in <pre><code> blocks and specify the programming language in a class (e.g., <pre><code class=\"language-python\">).
+6.  For code examples, wrap them in <pre><code> blocks and specify the programming language in a class (e.g., <pre><code class=\"language-python\">). Always include proper line breaks and indentation in code examples for readability.
 7.  For tables, use proper HTML table structure with semantic markup.
 8.  Do not include any JavaScript, CSS, or style attributes within the \`contentText\`.
 9.  Keep the HTML clean, semantic, and minimalist - the frontend will handle all styling.
-10. Use proper heading hierarchy (h2 for main sections, h3 for subsections, h4 for specific topics/examples) to enhance readability and structure.
-11. For images, include descriptive alt text and ensure they're relevant to the content (e.g., <img src=\"path/to/image.jpg\" alt=\"Diagram showing concept X\">).
-12. Use <strong> for emphasis on key terms or crucial points and <em> for subtle emphasis or highlighting terms.
-13. Adhere strictly to the specified 'length' (short, medium, long) by adjusting depth, scope, detail, and the number of examples/proofs/applications.
-14. Add relevant examples and real-world applications that actively encourage critical thinking and understanding of practical implications.
-15. Do not output anything other than the raw JSON file. Do not include any additional text outside the JSON structure (e.g., \`\`\`json\` or \`\`\`json\`\`\`).
-16. If the course is requested in other language that is not English, make sure to have the content in that language. However, if there are technical terms that are used widely in English, do not translate them.
-17. IMPORTANT!!!: For questions, write them without referring to the content of the course. Assume that these questions may appear in a different context without the course content being available. You MUST write the questions clearly in a way that they can be understood and used in any context. Another model will need to be able to explain why the answer is correct even without the course content.
-18. The number of module should be based on the specified 'length' (short, medium, long) and the complexity of the topic. Short should have 1-3 modules, medium should have 3-5 modules, and long should have 4-7 modules.
-19. Long length must have exhaustive content. For example, if it's about language, it should cover all the grammar or vocabulary, and practical applications. If it's about science, it should cover all the topics and applications. If it's about science, it should cover all the topics and applications. If it's about history, it should cover all the events and consequences, and their relation to each other.
-20. Some questions should not be obvious or easy to answer. The choices should be close enough to confuse people who hasn't learned it, but not too close, so there is only one clear answer.
+10. Replace the & character with &amp;, the < character with &lt; and the > character with &gt; in the \`contentText\` if you want to display the HTML code as a content.
+11. Use proper heading hierarchy (h2 for main sections, h3 for subsections, h4 for specific topics/examples) to enhance readability and structure.
+12. For images, include descriptive alt text and ensure they're relevant to the content (e.g., <img src=\"path/to/image.jpg\" alt=\"Diagram showing concept X\">).
+13. Use <strong> for emphasis on key terms or crucial points and <em> for subtle emphasis or highlighting terms.
+14. Adhere strictly to the specified 'length' (short, medium, long) by adjusting depth, scope, detail, and the number of examples/proofs/applications.
+15. Add relevant examples and real-world applications that actively encourage critical thinking and understanding of practical implications.
+16. Do not output anything other than the raw JSON file. Do not include any additional text outside the JSON structure (e.g., \`\`\`json\` or \`\`\`json\`\`\`).
+17. If the course is requested in other language that is not English, make sure to have the content in that language. However, if there are technical terms that are used widely in English, do not translate them.
+18. IMPORTANT!!!: For questions, write them without referring to the content of the course. Assume that these questions may appear in a different context without the course content being available. You MUST write the questions clearly in a way that they can be understood and used in any context. Another model will need to be able to explain why the answer is correct even without the course content.
+19. The number of module should be based on the specified 'length' (short, medium, long) and the complexity of the topic. Short should have 1-3 modules, medium should have 3-5 modules, and long should have 4-7 modules.
+20. Long length must have exhaustive content. For example, if it's about language, it should cover all the grammar or vocabulary, and practical applications. If it's about science, it should cover all the topics and applications. If it's about science, it should cover all the topics and applications. If it's about history, it should cover all the events and consequences, and their relation to each other.
+21. Some questions should not be obvious or easy to answer. The choices should be close enough to confuse people who hasn't learned it, but not too close, so there is only one clear answer.
+22. For JSON and code examples inside modules content, always format them with proper line breaks and indentation. For JSON, use this format with proper line breaks and indentation:
+
+{\\n  \\\"user\\\": {\\n    \\\"id\\\": 101,\\n    \\\"name\\\": \\\"John Doe\\\",\\n    \\\"email\\\": \\\"john.doe@example.com\\\",\\n    \\\"isActive\\\": true,\\n    \\\"roles\\\": [\\\"admin\\\", \\\"editor\\\"]\\n  }\\n}
+
+23. When showing HTML examples inside modules content, use proper indentation and line breaks for better readability. For example:
+
+<div class=\\\"example\\\">\\n  <p>This is a properly formatted HTML example</p>\\n  <ul>\\n    <li>With proper indentation</li>\\n    <li>And line breaks</li>\\n  </ul>\\n</div>
 `;
