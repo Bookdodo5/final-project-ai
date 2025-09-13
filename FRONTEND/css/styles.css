@@ -173,18 +173,16 @@ a:focus {
     
     button:active,
     .course-option:active {
-        transform: scale(0.98);
-        transition: transform 0.1s ease;
+        transform: none;
     }
 }
-
 /* Mobile Menu Styles */
 #mobileMenuBtn {
     transition: all 0.3s ease;
 }
 
 #mobileMenuBtn:active {
-    transform: scale(0.95);
+    transform: none;
 }
 
 #mobileMenuBtn span {
@@ -253,6 +251,171 @@ a:focus {
     100% { transform: rotate(360deg); }
 }
 
+@keyframes fadeIn {
+    0% { 
+        opacity: 0; 
+        transform: translateY(10px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    0% { 
+        opacity: 0; 
+        transform: translateY(20px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0.7; 
+    }
+}
+
+@keyframes shimmer {
+    0% { 
+        background-position: -200% 0; 
+    }
+    100% { 
+        background-position: 200% 0; 
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slideUp {
+    animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+textarea:focus {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(27, 184, 141, 0.15);
+}
+
+button:hover {
+    transform: none;
+}
+
+button:active {
+    transform: none;
+}
+
+.border-animate {
+    position: relative;
+    overflow: hidden;
+}
+
+.border-animate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--c1), transparent);
+    animation: shimmer 2s infinite;
+}
+
+input, textarea, button, select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: none;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 20px rgba(27, 184, 141, 0.3);
+}
+
+/* Breathing Animation for Cards */
+@keyframes breathe {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    50% { 
+        transform: scale(1);
+        box-shadow: 0 6px 25px rgba(27, 184, 141, 0.06);
+    }
+}
+
+.card-breathe {
+    animation: breathe 4s ease-in-out infinite;
+}
+
+.card-breathe:hover {
+    animation-play-state: paused;
+    transform: none;
+}
+
+/* Floating Elements */
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px);
+    }
+    33% { 
+        transform: translateY(-3px);
+    }
+    66% { 
+        transform: translateY(-1px);
+    }
+}
+
+.float-element {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Interactive Ripple Effect */
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(27, 184, 141, 0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.ripple-effect:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* Magnetic Hover Effect - Only color changes */
+.magnetic {
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.magnetic:hover {
+    transform: none;
+}
+
 /* Safe area insets for devices with notches */
 @supports (padding: max(0px)) {
     body {
@@ -275,4 +438,106 @@ a:focus {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* Cursor Following Gradient Effects */
+.cursor-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.cursor-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(27, 184, 141, 0.06) 0%, 
+                rgba(27, 184, 141, 0.02) 40%, 
+                transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.cursor-glow:hover::before {
+    opacity: 1;
+}
+
+/* Interactive Border Glow */
+.border-glow {
+    position: relative;
+    background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                linear-gradient(45deg, 
+                    rgba(27, 184, 141, 0.3) 0%, 
+                    rgba(250, 195, 141, 0.2) 25%,
+                    rgba(241, 227, 164, 0.2) 50%,
+                    rgba(206, 124, 102, 0.2) 75%,
+                    rgba(142, 190, 115, 0.3) 100%) border-box;
+    border: 1px solid transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.border-glow:hover {
+    background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                linear-gradient(45deg, 
+                    rgba(27, 184, 141, 0.6) 0%, 
+                    rgba(250, 195, 141, 0.4) 25%,
+                    rgba(241, 227, 164, 0.4) 50%,
+                    rgba(206, 124, 102, 0.4) 75%,
+                    rgba(142, 190, 115, 0.6) 100%) border-box;
+    box-shadow: 0 0 30px rgba(27, 184, 141, 0.15);
+}
+
+/* Gradient Text Animation */
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, var(--c1), var(--c2), var(--c3), var(--c1));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+}
+
+/* Subtle Particle Effect */
+.particle-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.particle-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, rgba(27, 184, 141, 0.3), transparent),
+        radial-gradient(1px 1px at 40px 70px, rgba(250, 195, 141, 0.2), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(241, 227, 164, 0.2), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(142, 190, 115, 0.3), transparent);
+    background-size: 200px 100px;
+    animation: particle-float 20s linear infinite;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.particle-container:hover::before {
+    opacity: 1;
+}
+
+@keyframes particle-float {
+    0% { transform: translateY(100px); }
+    100% { transform: translateY(-100px); }
 }

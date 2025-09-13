@@ -859,18 +859,8 @@ function setupBackButton() {
                                 ${course.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                             </div>
                         `;
-                        courseCard.onclick = function() {
-                            console.log('Course card clicked:', course.title);
-                            openCourse(course.title, course.description, course.tags);
-                        };
-                        courseCard.style.cursor = 'pointer';
-                        courseCard.onmouseenter = function() {
-                            this.style.transform = 'translateY(-3px)';
-                        };
-                        courseCard.onmouseleave = function() {
-                            this.style.transform = 'translateY(0)';
-                        };
-                        grid.appendChild(courseCard);
+                        courseCard.addEventListener('click', () => openCourse(course.title, course.description, course.tags));
+                        courseGrid.appendChild(courseCard);
                     });
                 }
                 if (search) search.style.display = 'block';
@@ -895,7 +885,7 @@ function setupBackButton() {
             });
             
             // Remove the setTimeout delay that might cause issues
-            console.log('Back button: course cards recreated, should be clickable now');
+            console.log('Back button: course cards recreated, should be clickable now;');
         });
         
         // Also add onclick as backup
@@ -965,8 +955,8 @@ function setupBackButton() {
             });
             
             // Remove the setTimeout delay that might cause issues
-            console.log('Back button (backup): course cards recreated, should be clickable now');
-        };
+            console.log('Back button (backup): course cards recreated, should be clickable now;');
+        });
         
         console.log('Back button setup complete');
     } else {
@@ -2187,3 +2177,108 @@ function showOverviewPage() {
     // Update navigation
     updateNavigation('Overview');
 }
+
+// Initialize interactive effects and cursor tracking
+document.addEventListener('DOMContentLoaded', function() {
+    // Global cursor tracking for glow effects
+    let isTracking = false;
+    
+    const handleGlobalMouseMove = (e) => {
+        if (!isTracking) {
+            isTracking = true;
+            requestAnimationFrame(() => {
+                const glowElements = document.querySelectorAll('.cursor-glow');
+                glowElements.forEach(element => {
+                    const rect = element.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    
+                    element.style.setProperty('--mouse-x', `${x}%`);
+                    element.style.setProperty('--mouse-y', `${y}%`);
+                });
+                isTracking = false;
+            });
+        }
+    };
+    
+    // Add global mouse tracking
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    
+    // Add interactive classes to existing elements
+    const addInteractiveClasses = () => {
+        // Add classes to cards and panels
+        const cards = document.querySelectorAll('.bg-panel, .glass-panel');
+        cards.forEach(card => {
+            card.classList.add('cursor-glow', 'card-breathe');
+        });
+        
+        // Add classes to buttons
+        const buttons = document.querySelectorAll('button:not([data-action])');
+        buttons.forEach(btn => {
+            btn.classList.add('magnetic', 'ripple-effect');
+        });
+        
+        // Add classes to input elements
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.classList.add('border-glow');
+        });
+        
+        // Add gradient text to headings
+        const headings = document.querySelectorAll('h1, h2.text-3xl, .hero-title');
+        headings.forEach(heading => {
+            if (!heading.classList.contains('gradient-text')) {
+                heading.classList.add('gradient-text');
+            }
+        });
+        
+        // Add particle effects to main containers
+        const containers = document.querySelectorAll('#homeView, #learnView, #courseView, #moduleView');
+        containers.forEach(container => {
+            container.classList.add('particle-container');
+        });
+    };
+    
+    // Initialize on load
+    addInteractiveClasses();
+    
+    // Re-apply classes when content changes (for dynamic content)
+    const observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                shouldUpdate = true;
+            }
+        });
+        
+        if (shouldUpdate) {
+            setTimeout(addInteractiveClasses, 100);
+        }
+    });
+    
+    // Observe changes in main content areas
+    const mainContent = document.getElementById('app');
+    if (mainContent) {
+        observer.observe(mainContent, {
+            childList: true,
+            subtree: true
+        });
+    }
+    
+    // Add magnetic effect to navigation items
+    const navItems = document.querySelectorAll('nav a, nav button');
+    navItems.forEach(item => {
+        item.classList.add('magnetic', 'float-element');
+    });
+    
+    // Enhanced hover effects for course cards
+    const enhanceCourseCards = () => {
+        const courseCards = document.querySelectorAll('.course-card, [onclick*="openCourse"]');
+        courseCards.forEach(card => {
+            card.classList.add('cursor-glow', 'magnetic', 'card-breathe');
+        });
+    };
+    
+    // Call enhance function periodically for dynamic content
+    setInterval(enhanceCourseCards, 2000);
+});

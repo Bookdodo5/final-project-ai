@@ -1,57 +1,57 @@
 window.renderQuestion = (q) => {
     const optionItem = (text, idx, active) => `
-        <button type="button" data-action="select" data-index="${idx}" class="w-full text-left flex items-center gap-3 p-3 rounded-lg border ${active ? 'border-c1/50 bg-c1/5' : 'border-line/50 hover:border-c1/30'}">
-            <span class="w-4 h-4 rounded-full border ${active ? 'border-c1 bg-c1' : 'border-line'} flex items-center justify-center">
-                ${active ? '<span class="w-2 h-2 rounded-full bg-white block"></span>' : ''}
+        <button type="button" data-action="select" data-index="${idx}" class="w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm ${active ? 'border-c1/50 bg-c1/5 shadow-c1/10' : 'border-line/50 hover:border-c1/30 hover:bg-c1/5'}">
+            <span class="w-3 h-3 rounded-full border transition-all duration-300 ease-in-out ${active ? 'border-c1 bg-c1 shadow-sm' : 'border-line'} flex items-center justify-center flex-shrink-0">
+                ${active ? '<span class="w-1.5 h-1.5 rounded-full bg-white block animate-pulse"></span>' : ''}
             </span>
-            <span class="text-sm">${text}</span>
+            <span class="text-sm transition-colors duration-200">${text}</span>
         </button>
     `;
 
     const tfOptions = ['True', 'False'];
 
     const rateStyles = {
-        Again: 'bg-c4/25 border-c4/50 text-c4 hover:bg-c4/40',
-        Hard: 'bg-c2/25 border-c2/50 text-c2 hover:bg-c2/40',
-        Good: 'bg-c5/25 border-c5/50 text-c5 hover:bg-c5/40',
-        Easy: 'bg-c1/25 border-c1/50 text-c1 hover:bg-c1/40',
-        Known: 'bg-bg border-line/40 text-text hover:bg-bg/80',
+        Again: 'bg-c4/25 border-c4/50 text-c4 hover:bg-c4/40 hover:shadow-md transition-all duration-300',
+        Hard: 'bg-c2/25 border-c2/50 text-c2 hover:bg-c2/40 hover:shadow-md transition-all duration-300',
+        Good: 'bg-c5/25 border-c5/50 text-c5 hover:bg-c5/40 hover:shadow-md transition-all duration-300',
+        Easy: 'bg-c1/25 border-c1/50 text-c1 hover:bg-c1/40 hover:shadow-md transition-all duration-300',
+        Known: 'bg-bg border-line/40 text-text hover:bg-bg/80 hover:shadow-md transition-all duration-300',
     };
 
     const inputArea = (() => {
         if (q.type === 'mcq') {
             return `
-            <div data-role="options" class="mt-3 space-y-2">
+            <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
                 ${Array.isArray(q.options) ? q.options.map((o, i) => optionItem(o, i, false)).join('') : '<p class="text-muted text-sm">No options</p>'}
             </div>
         `;
         }
         if (q.type === 'true-false') {
             return `
-            <div data-role="options" class="mt-3 space-y-2">
+            <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
                 ${tfOptions.map((o, i) => optionItem(o, i, false)).join('')}
             </div>
         `;
         }
         return `
-        <div class="mt-3">
-            <textarea data-role="open" class="w-full bg-panel border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none"></textarea>
+        <div class="mt-3 px-2 animate-fadeIn">
+            <textarea data-role="open" class="w-full bg-panel border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md focus:bg-panel/80 placeholder-muted/50" placeholder="พิมพ์คำตอบของคุณที่นี่..."></textarea>
         </div>
     `;
     })();
 
     return `
-            <div class="flex-1 gap-3">
+            <div class="flex-1 gap-3 animate-slideUp cursor-glow particle-container px-2">
                 <div class="flex flex-col gap-2 md:flex-row items-center justify-between">
-                    <p class="font-medium text-text w-full">${q.questionText || q.question || 'Question'}</p>
-                    <div class="flex items-center gap-1">${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1"></i>`).join('')}</div>
+                    <p class="font-medium text-text w-full transition-colors duration-200">${q.questionText || q.question || 'Question'}</p>
+                    <div class="flex items-center gap-1">${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1 transition-all duration-200"></i>`).join('')}</div>
                 </div>
                 ${inputArea}
-                <button type="button" data-action="submit" class="px-4 py-2 mt-4 bg-c1 hover:bg-c1/90 text-white rounded-lg font-medium transition-colors">Submit</button>
-                <div data-role="feedback" class="hidden mt-4 rounded-lg border border-line/50 p-3bg-panel/50"></div>
-                <div data-role="rating" class="hidden mt-4 grid-cols-5 gap-2">
+                <button type="button" data-action="submit" class="px-4 py-2 mt-4 mx-2 bg-c1 hover:bg-c1/90 text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-c1/50 ripple-effect magnetic">Submit</button>
+                <div data-role="feedback" class="hidden mt-4 mx-2 rounded-lg border border-line/50 p-3 bg-panel/50 transition-all duration-500 ease-in-out animate-fadeIn"></div>
+                <div data-role="rating" class="hidden mt-4 grid-cols-5 gap-2 px-2 animate-slideUp">
                     ${['Again', 'Hard', 'Good', 'Easy', 'Known'].map(r => `
-                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm">${r}</button>
+                        <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm ripple-effect float-element">${r}</button>
                     `).join('')}
                 </div>
             </div>
@@ -67,20 +67,47 @@ window.mountQuestion = (containerEl, q, onComplete) => {
 
     const render = () => {
         containerEl.innerHTML = window.renderQuestion(q);
+        
+        // Add interactive classes to elements
+        const textarea = containerEl.querySelector('[data-role="open"]');
+        if (textarea) {
+            textarea.classList.add('border-glow', 'magnetic');
+        }
+        
+        const options = containerEl.querySelectorAll('[data-action="select"]');
+        options.forEach(option => {
+            option.classList.add('cursor-glow', 'magnetic');
+        });
     };
+
+    // Cursor tracking for glow effects
+    const handleMouseMove = (e) => {
+        const glowElements = containerEl.querySelectorAll('.cursor-glow');
+        glowElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            
+            element.style.setProperty('--mouse-x', `${x}%`);
+            element.style.setProperty('--mouse-y', `${y}%`);
+        });
+    };
+
+    // Add mouse tracking to container
+    containerEl.addEventListener('mousemove', handleMouseMove);
 
     const setSelected = (idx) => {
         selectedIndex = idx;
         const options = containerEl.querySelectorAll('[data-role="options"] [data-action="select"]');
         options.forEach((btn, i) => {
             const active = i === selectedIndex;
-            btn.className = `w-full text-left flex items-center gap-3 p-3 rounded-lg border ${active ? 'border-c1/50 bg-c1/5' : 'border-line/50 hover:border-c1/30'}`;
+            btn.className = `w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm cursor-glow magnetic ${active ? 'border-c1/50 bg-c1/5 shadow-c1/10' : 'border-line/50 hover:border-c1/30 hover:bg-c1/5'}`;
             const dot = btn.querySelector('span > span');
             if (active) {
-                btn.children[0].className = 'w-4 h-4 rounded-full border border-c1 bg-c1 flex items-center justify-center';
-                if (!dot) btn.children[0].innerHTML = '<span class="w-2 h-2 rounded-full bg-white block"></span>';
+                btn.children[0].className = 'w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-c1 bg-c1 shadow-sm flex items-center justify-center flex-shrink-0';
+                if (!dot) btn.children[0].innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-white block animate-pulse"></span>';
             } else {
-                btn.children[0].className = 'w-4 h-4 rounded-full border border-line flex items-center justify-center';
+                btn.children[0].className = 'w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-line flex items-center justify-center flex-shrink-0';
                 btn.children[0].innerHTML = '';
             }
         });
@@ -91,11 +118,11 @@ window.mountQuestion = (containerEl, q, onComplete) => {
         box.classList.remove('hidden');
         box.innerHTML = `
         <div class="flex items-start gap-3 p-4">
-            <div class="w-5 h-5 rounded-full ${ok ? 'bg-c1' : 'bg-c4'} flex-shrink-0 mt-0.5"></div>
+            <div class="w-5 h-5 rounded-full ${ok ? 'bg-c1' : 'bg-c4'} flex-shrink-0 mt-0.5 transition-all duration-300"></div>
             <div class="flex-1">
-                <p class="${ok ? 'text-c1' : 'text-c4'} font-medium">${ok ? 'Correct' : 'Incorrect'}</p>
-                <p class="text-sm text-text/80 mt-1">${text || ''}</p>
-                ${correct !== undefined ? `<p class="text-sm text-muted mt-2">Answer: <span class="text-text">${Array.isArray(correct) ? correct.join(', ') : correct}</span></p>` : ''}
+                <p class="${ok ? 'text-c1' : 'text-c4'} font-medium transition-colors duration-200">${ok ? 'Correct' : 'Incorrect'}</p>
+                <p class="text-sm text-text/80 mt-1 transition-colors duration-200">${text || ''}</p>
+                ${correct !== undefined ? `<p class="text-sm text-muted mt-2 transition-colors duration-200">Answer: <span class="text-text">${Array.isArray(correct) ? correct.join(', ') : correct}</span></p>` : ''}
             </div>
         </div>`;
     };
