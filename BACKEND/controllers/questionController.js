@@ -113,11 +113,16 @@ export async function deleteQuestionsByModuleId(userId, moduleId) {
         .where("moduleId", "==", moduleId)
         .get();
 
-    if (qs.empty) return;
+    if (qs.empty) return 0;
 
     const batch = db.batch();
-    qs.forEach(d => batch.delete(d.ref));
+    let learnedQuestions = 0
+    qs.forEach(d => {
+        if (d.data().learned) learnedQuestions += 1;
+        batch.delete(d.ref);
+    });
     await batch.commit();
+    return learnedQuestions;
 }
 
 /**

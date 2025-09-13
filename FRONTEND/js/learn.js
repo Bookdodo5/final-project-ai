@@ -43,7 +43,7 @@ const deleteCourse = async (courseId) => {
 const regenerateCourse = async (courseId) => {
     try {
         await window.apiService.regenerateCourse(window.userId, courseId);
-        window.loadCourses();
+        window.loadCourses()
     } catch (error) {
         console.error('Error regenerating course:', error);
     }

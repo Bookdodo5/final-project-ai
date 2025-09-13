@@ -233,6 +233,7 @@ export const regenerateCourse = async (req, res) => {
                 
                 try {
                     console.log(`[DEBUG] Updating module status to: generating`);
+                    courseRef.update({ status: `generating module ${i+1}/${totalModules}`, updatedAt: new Date() });
                     await moduleDocRef.update({ status: "generating", updatedAt: new Date() });
 
                     //GENERATE CONTENT
@@ -316,12 +317,14 @@ export const deleteCourse = async (req, res) => {
     const modulesSnap = await modulesRef.get();
     let modulesToRemove = 0;
     let completedToRemove = 0;
+    let learnedQuestionsToRemove = 0;
     const batch = db.batch();
 
     modulesSnap.forEach((doc) => {
         modulesToRemove += 1;
         if (doc.data().isCompleted) completedToRemove += 1;
-        deleteQuestionsByModuleId(userId, doc.id);
+        const deletedLearnedQuestions = deleteQuestionsByModuleId(userId, doc.id);
+        learnedQuestionsToRemove += deletedLearnedQuestions;
         batch.delete(doc.ref);
     });
 
@@ -336,9 +339,11 @@ export const deleteCourse = async (req, res) => {
         const current = userDoc.data() || {};
         const nextModuleCount = Math.max(0, (current.moduleCount || 0) - modulesToRemove);
         const nextModuleCompleted = Math.max(0, (current.moduleCompleted || 0) - completedToRemove);
+        const nextLearnedQuestions = Math.max(0, (current.learnedQuestions || 0) - learnedQuestionsToRemove);
         await userRef.update({
             moduleCount: nextModuleCount,
             moduleCompleted: nextModuleCompleted,
+            learnedQuestions: nextLearnedQuestions,
             lastActiveAt: new Date(),
             updatedAt: new Date(),
         });

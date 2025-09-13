@@ -161,7 +161,9 @@ export async function generate(prompt, systemInstruction, options = {}) {
         model = "gemini-2.5-flash-lite",
         config = undefined,
         maxRetries = 5,
-        initialDelay = 1000
+        initialDelay = 2000,
+        maxDelay = 60000,
+        backoffFactor = 2.5
     } = options;
 
     let attempt = 0;
@@ -169,7 +171,11 @@ export async function generate(prompt, systemInstruction, options = {}) {
     let lastError = null;
 
     while (attempt <= maxRetries) {
+        const attemptNumber = attempt + 1;
+        console.log(`[Gemini API] Attempt ${attemptNumber} of ${maxRetries}...`);
+        
         try {
+            const startTime = Date.now();
             const response = await ai.models.generateContent({
                 model,
                 contents: prompt,
@@ -180,6 +186,9 @@ export async function generate(prompt, systemInstruction, options = {}) {
                 },
                 config: config
             });
+            
+            const duration = Date.now() - startTime;
+            console.log(`[Gemini API] Request completed in ${duration}ms`);
 
             let responseText = response.text || '';
             responseText = responseText.trim();
@@ -193,29 +202,42 @@ export async function generate(prompt, systemInstruction, options = {}) {
         } catch (error) {
             lastError = error;
             const isRetryable = isErrorRetryable(error);
+            const errorMessage = error.response?.data?.error?.message || error.message;
             
             if (!isRetryable || attempt >= maxRetries) {
+                console.error(`[Gemini API] Non-retryable error or max retries reached:`, errorMessage);
                 break;
             }
 
-            console.warn(`Attempt ${attempt + 1} failed (${error.message}). Retrying in ${currentDelay}ms...`);
-            await new Promise(resolve => setTimeout(resolve, currentDelay));
+            // Calculate next delay with exponential backoff and jitter
+            const jitter = Math.random() * 2000; // Add up to 2 seconds of jitter
+            const nextDelay = Math.min(
+                initialDelay * Math.pow(backoffFactor, attempt) + jitter,
+                maxDelay
+            );
             
-            // Exponential backoff with jitter
-            currentDelay = Math.min(currentDelay * 2 + Math.random() * 1000, 30000);
+            console.warn(`[Gemini API] Attempt ${attemptNumber} failed (${errorMessage}). Retrying in ${Math.round(nextDelay/1000)}s...`);
+            
+            await new Promise(resolve => setTimeout(resolve, nextDelay));
+            
+            // Update current delay for the next iteration
+            currentDelay = nextDelay;
             attempt++;
         }
     }
 
     // If we get here, all retries failed
-    console.error(`All ${maxRetries} retry attempts failed. Last error:`, lastError);
+    const errorDetails = lastError.response 
+        ? `Status: ${lastError.response.status}, Data: ${JSON.stringify(lastError.response.data)}`
+        : lastError.message;
+        
+    console.error(`[Gemini API] All ${maxRetries} retry attempts failed. Last error:`, errorDetails);
     
-    if (lastError.response) {
-        console.error("API response error:", lastError.response.status, lastError.response.data);
-        throw new Error(`AI service error after ${maxRetries} retries: ${lastError.response.status} - ${JSON.stringify(lastError.response.data)}`);
+    if (lastError.response?.status === 503) {
+        throw new Error(`The AI service is currently overloaded. Please try again later. (Attempted ${maxRetries} times)`);
     }
     
-    throw new Error(`Failed to generate content after ${maxRetries} retries: ${lastError.message}`);
+    throw new Error(`Failed to generate content after ${maxRetries} attempts. ${errorDetails}`);
 }
 
 /**

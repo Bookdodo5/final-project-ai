@@ -34,15 +34,15 @@ Level: ${level}
 Generate the course outline in the following JSON format:
 {
   "courseName": "Course Title (Keep it short and simple while conveying the topic)",
-  "description": "Short 1-2 sentences course description",
+  "description": "Short 2-3 sentences course description",
   "modules": [
     {
       "moduleName": "Module 1 Title",
-      "description": "2-4 sentences module description (Make it cover everything the module should cover. This will be used for module content generation, so it should be detailed and clear.)"
+      "description": "3-5 sentences module description (Make it cover everything the module should cover. This will be used for module content generation, so it should be detailed and clear.) It should also mention what the previous modules should have covered, and how this module will build upon it."
     },
     {
       "moduleName": "Module 2 Title",
-      "description": "2-4 sentences module description (Make it cover everything the module should cover. This will be used for module content generation, so it should be detailed and clear.)"
+      "description": "3-5 sentences module description (Make it cover everything the module should cover. This will be used for module content generation, so it should be detailed and clear.) It should also mention what the previous modules should have covered, and how this module will build upon it."
     }
   ]
 }

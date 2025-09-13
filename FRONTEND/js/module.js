@@ -1,6 +1,7 @@
 window.loadQuestions = async (moduleId) => {
     try {
         window.questionsData = await window.apiService.getQuestions(window.userId, moduleId);
+        window.questionsData.sort((a, b) => a.questionOrder - b.questionOrder);
     } catch (error) {
         console.error('Error loading questions:', error);
         window.questionsData = [];
@@ -40,10 +41,11 @@ const renderCurrent = (moduleView, courseId, moduleId, container, emptyMsg) => {
     window.mountQuestion(container, q, async () => {
         if (window.currentQuestionIndex + 1 < window.questionsData.length) {
             await window.apiService.markQuestionAsLearned(window.userId, q.id)
+            window.currentQuestionIndex += 1;
         } else {
             await window.apiService.markModuleAsCompleted(window.userId, courseId, moduleId)
+            window.currentQuestionIndex += 1;
         }
-        window.currentQuestionIndex += 1;
         renderCurrent(moduleView, courseId, moduleId, container, emptyMsg);
     });
 };

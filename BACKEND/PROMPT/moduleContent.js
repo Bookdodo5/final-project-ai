@@ -7,6 +7,11 @@ Your expertise should manifest in the depth and clarity of explanations, anticip
 - For **humanities, arts, or social science topics**, adopt a more analytical, critical, contextual, and sometimes narrative style, encouraging diverse perspectives, interpretation, and conceptual exploration.
 - For **technological or practical skill-based topics**, focus on problem-solving methodologies, hands-on application, best practices, step-by-step guides, and real-world utility, often with a solution-oriented approach.
 
+**Length:**
+- **short (≈50-150 lines/module):** This length focuses on building a foundational understanding. It covers core concepts, essential vocabulary, primary principles, and fundamental methodologies. The content should be exceptionally clear, direct, and establish a solid, coherent building block for any further learning.
+- **medium (≈200-250 lines/module):** This length offers a comprehensive exploration, striking a balance between breadth and depth. It systematically covers core concepts, delves into their interconnections, explores various facets of the subject, and introduces practical applications.
+- **long (≈250-400 lines/module):** This length provides a deep dive into the subject, covering advanced topics, intricate details, theoretical underpinnings, and a wider range of applications and case studies. It should explore nuances, common pitfalls, current challenges, and may touch upon ongoing research or complex real-world scenarios.
+
 **Key Content Requirements for Optimal Learning:**
 *   **Definitions:** If the course presents a definition, it must explain it in a way that is immediately understandable and intuitive, using multiple suitable and diverse examples or analogies that resonate with various learning styles. Crucially, explain *why* this definition is important and its implications within the topic's context.
 *   **Theorems/Principles:** If the course presents a theorem, model, or fundamental principle, it must:
@@ -32,18 +37,19 @@ Application questions should be hard and analytical and require deep thinking. F
 For questions, write them without referring to the content of the course. Assume that these questions may appear in a different context without the course content being available. You MUST write the questions clearly in a way that they can be understood and used in any context. Another model will need to be able to explain why the answer is correct even without the course content.
 `;
 
-export const prompt = (moduleName, moduleDescription, topic, language, scope) => `
+export const prompt = (moduleName, moduleDescription, topic, language, length, scope) => `
 Create detailed educational content for a module based on the following parameters:
 
 Module Name: ${moduleName}
 Module Description: ${moduleDescription}
 Topic: ${topic}
+Length: ${length}
 Language: ${language}
 Scope: ${scope}
 
 Generate the module content in the following JSON format. Be concise and avoid excessive details. The content should be under 4000 characters total.
 {
-  "contentText": "<div class='prose prose-invert max-w-none prose-headings:text-text prose-p:text-text/80 prose-strong:text-text prose-strong:font-semibold prose-a:text-c1 hover:prose-a:text-c1/80 prose-code:before:content-[''] prose-code:after:content-[''] prose-code:bg-line/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-bg/50 prose-pre:border prose-pre:border-line/50 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-table:border-collapse prose-table:border prose-table:border-line prose-th:bg-line/30 prose-th:p-2 prose-th:text-left prose-td:p-2 prose-td:border-t prose-td:border-line/50'><h2>${moduleName}</h2><p>${moduleDescription}</p><h3>Key Concepts</h3><p>Concise explanation of core concepts...</p><h3>Example</h3><p>Brief practical example...</p><pre><code class=\"language-js\">// Example code\nfunction example() {\n  return 'Example';\n}</code></pre></div>",
+  "contentText": "<h2>${moduleName}</h2><p>${moduleDescription}</p><h3>Key Concepts</h3><p>Concise explanation of core concepts...</p><h3>Example</h3><p>Brief practical example...</p><pre><code class=\"language-js\">// Example code\nfunction example() {\n  return 'Example';\n}</code></pre>",
   "moduleQuiz": [
     {
       "questionText": "Example multiple choice question?",
@@ -86,4 +92,5 @@ Guidelines:
 However, do not put indentation or line breaks in the contentText if you're not trying to show an example of HTML. For example, if you're talking about biology, don't put any \\n in contentText.
 
 15. IMPORTANT!!! YOU MUST GENERATE THE FULL HTML. DON'T CUT IT OFF ANT ANY POINT. THE HTML MUST BE COMPLETE AND VALID.
+16. The length of your generation must be according to the length parameter given. Short: 50-150 lines, Medium: 200-250 lines, Long: 250-400 lines.
 `;
