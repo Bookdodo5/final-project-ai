@@ -62,7 +62,7 @@ window.openModule = async (moduleId, courseId) => {
     if (!moduleView) return false;
 
     try {
-        if (window.loading) window.loading.show('Loading module...');
+        if (window.loading) window.loading.show();
         const module = window.modulesData?.find(c => c.id === moduleId || c._id === moduleId);
         if (!module) return false;
 

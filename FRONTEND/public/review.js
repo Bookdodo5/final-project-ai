@@ -1,14 +1,17 @@
 window.loadDueQuestions = async () => {
     try {
+        if (window.loading) window.loading.show();
         const userData = await window.apiService.getUser(window.userId);
         console.log(userData, userData.questionsLearned)
         window.questionsLearned = userData.questionsLearned || 0;
         window.questionsData = await window.apiService.getDueQuestions(window.userId);
         renderSrs();
+        if (window.loading) window.loading.hide();
     } catch (error) {
         console.error('Error loading questions:', error);
         window.questionsData = [];
         renderSrs();
+        if (window.loading) window.loading.hide();
     }
 };
 

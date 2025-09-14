@@ -19,7 +19,7 @@ document.readyState === 'loading'
 
 window.loadCourses = async () => {
     try {
-        if (window.loading) window.loading.show('Loading courses...');
+        if (window.loading) window.loading.show();
         window.coursesData = await window.apiService.getCourses(window.userId);
         renderCourseGrid();
     } catch (error) {

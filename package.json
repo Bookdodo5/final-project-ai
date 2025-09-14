@@ -1,8 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node BACKEND/server.js",
-    "dev": "nodemon BACKEND/server.js"
+    "start:back": "node BACKEND/server.js",
+    "start:front": "node FRONTEND/server.js"
   },
   "dependencies": {
     "@google/genai": "^1.17.0",
@@ -12,8 +12,5 @@
     "express": "^5.1.0",
     "firebase": "^12.2.1",
     "firebase-admin": "^12.5.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
   }
 }

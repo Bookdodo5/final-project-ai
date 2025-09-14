@@ -22,3 +22,8 @@ const PORT = 3222;
 const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Backend Server ready at http://localhost:${PORT}`);
 });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Log the stack trace
+    res.status(500).send('Something broke!');
+});

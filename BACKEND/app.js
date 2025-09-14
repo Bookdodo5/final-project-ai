@@ -23,6 +23,14 @@ app.use("/users/:userId/questions", QuestionRoutes);
 app.use("/gemini", GeminiRoutes);
 app.use("/pdf", pdfRoutes);
 
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+        uptime: process.uptime(),
+        timestamp: Date.now(),
+    });
+});
+
 // Handle 404 - Not Found
 app.use((req, res, next) => {
     res.status(404).json({

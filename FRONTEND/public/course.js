@@ -12,7 +12,7 @@ window.openCourse = async (courseId, forceReload = false) => {
     if (!courseView) return (window.loadingCourse = null, false);
     
     try {
-        if (window.loading) window.loading.show('Loading course...');
+        if (window.loading) window.loading.show();
         courseView.innerHTML = '';
         
         const course = window.coursesData?.find(c => c.id === courseId || c._id === courseId);
