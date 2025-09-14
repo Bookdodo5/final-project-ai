@@ -13,8 +13,36 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// allow request from other origin (Frontend which is at different port)
-app.use(cors());
+// Configure CORS with specific allowed origins
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // List of allowed domains
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:8080',
+            'http://54.221.178.70/',
+            'http://mastery-path.cloud-ip.cc/',
+            'http://www.mastery-path.cloud-ip.cc/',
+            'https://mastery-path.cloud-ip.cc/',
+            'https://www.mastery-path.cloud-ip.cc/',
+        ];
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        
+        return callback(null, true);
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 
 // use routes
 app.use("/users", UserRoutes);

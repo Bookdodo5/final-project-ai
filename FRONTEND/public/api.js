@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3222';
+const BACKEND_URL = window.location.protocol + '//' + window.location.hostname + ':3222';
 
 const apiService = {
     async createUser(userId) {
