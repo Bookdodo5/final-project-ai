@@ -10,14 +10,14 @@ import pdfRoutes from "./routes/pdfRoutes.js";
 const app = express();
 
 // body-parser with increased limit for file uploads
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Simple CORS configuration
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:8080',
-    'http://34.202.161.183',
+    'http://54.167.12.46',
     'http://mastery-path.cloud-ip.cc',
     'http://www.mastery-path.cloud-ip.cc',
     'https://mastery-path.cloud-ip.cc',
@@ -25,22 +25,18 @@ const allowedOrigins = [
 ];
 
 // CORS middleware
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin) || !origin) {
-        res.setHeader('Access-Control-Allow-Origin', origin || '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
-    
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
-    next();
-});
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    credentials: true,
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization']
+}));
 
 // use routes
 app.use("/users", UserRoutes);
