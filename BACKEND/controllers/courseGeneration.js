@@ -10,44 +10,57 @@ import { systemInstruction as systemOutline, prompt as promptOutline } from "../
 import { systemInstruction as systemContent, prompt as promptContent } from "../PROMPT/moduleContent.js";
 
 export const saveModule = async (userId, courseId, moduleId, moduleContent) => {
-    console.log('[DEBUG] Starting to save module:', { userId, courseId, moduleId });
-    console.log('[DEBUG] Module content type:', typeof moduleContent);
-    console.log('[DEBUG] Module content keys:', Object.keys(moduleContent));
-    
-    const moduleRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules").doc(moduleId);
-    const questionsRef = db.collection("users").doc(userId).collection("questions");
+    try {
+        console.log('[DEBUG] Starting to save module:', { userId, courseId, moduleId });
+        console.log('[DEBUG] Module content type:', typeof moduleContent);
+        console.log('[DEBUG] Module content keys:', Object.keys(moduleContent));
+        
+        const moduleRef = db.collection("users").doc(userId).collection("courses").doc(courseId).collection("modules").doc(moduleId);
+        const questionsRef = db.collection("users").doc(userId).collection("questions");
 
-    const batch = db.batch();
-    
-    const moduleData = {
-        contentText: moduleContent.contentText || "No content available",
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
-    
-    console.log('[DEBUG] Saving module data:', JSON.stringify(moduleData, null, 2));
-    batch.update(moduleRef, moduleData);
+        // First check if the document exists
+        const doc = await moduleRef.get();
+        if (!doc.exists) {
+            throw new Error(`Module ${moduleId} does not exist in course ${courseId}`);
+        }
 
-    console.log('[DEBUG] Processing module quiz. Question count:', moduleContent.moduleQuiz?.length || 0);
-    moduleContent.moduleQuiz?.forEach((question, index) => {
-        const questionId = generateId("question");
-        const questionRef = questionsRef.doc(questionId);
-        batch.set(questionRef, {
-            questionText: question.questionText,
-            type: question.type,
-            options: question.options || [],
-            correctAnswer: question.correctAnswer,
-            questionOrder: index + 1,
-            star: question.star || 1,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            moduleId: moduleId
+        const batch = db.batch();
+        
+        const moduleData = {
+            contentText: moduleContent.contentText || "No content available",
+            updatedAt: new Date()
+        };
+        
+        console.log('[DEBUG] Saving module data:', JSON.stringify(moduleData, null, 2));
+        
+        // Use set with merge instead of update to handle both create and update
+        batch.set(moduleRef, moduleData, { merge: true });
+
+        console.log('[DEBUG] Processing module quiz. Question count:', moduleContent.moduleQuiz?.length || 0);
+        (moduleContent.moduleQuiz || []).forEach((question, index) => {
+            const questionId = generateId("question");
+            const questionRef = questionsRef.doc(questionId);
+            batch.set(questionRef, {
+                questionText: question.questionText,
+                type: question.type,
+                options: question.options || [],
+                correctAnswer: question.correctAnswer,
+                questionOrder: index + 1,
+                star: question.star || 1,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                moduleId: moduleId
+            });
         });
-    })
-    
-    console.log('[DEBUG] Committing batch operation');
-    await batch.commit();
-    console.log('[DEBUG] Module saved successfully');
+        
+        console.log('[DEBUG] Committing batch operation');
+        await batch.commit();
+        console.log('[DEBUG] Module saved successfully');
+        return { success: true };
+    } catch (error) {
+        console.error('Error in saveModule:', error);
+        throw error; // Re-throw to be handled by the caller
+    }
 }
 
 export const generateOutline = async (topic, language, length, level) => {
