@@ -13,18 +13,17 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configure CORS to allow requests from specific origins
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:8080',
-    'http://54.221.178.70',
-    'http://mastery-path.cloud-ip.cc',
-    'https://mastery-path.cloud-ip.cc'
-];
-
+// Configure CORS options
 const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'http://localhost:8080',
+            'http://54.221.178.70',
+            'http://mastery-path.cloud-ip.cc',
+            'https://mastery-path.cloud-ip.cc'
+        ];
+        
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -36,10 +35,17 @@ const corsOptions = {
     credentials: true
 };
 
+// Enable CORS for all routes
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Handle preflight requests for all routes
+app.options('*', (req, res) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.status(200).end();
+});
 
 // use routes
 app.use("/users", UserRoutes);
