@@ -1,6 +1,6 @@
 window.renderQuestion = (q) => {
     const optionItem = (text, idx) => `
-        <button type="button" data-action="select" data-index="${idx}" class="magnetic w-full text-left flex items-center gap-2 p-2 mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm border-line/50 hover:border-c1/30 bg-panel/60 hover:bg-c1/5}">
+        <button type="button" data-action="select" data-index="${idx}" class="magnetic w-full text-left flex items-center gap-2 p-2 mx-0 md:mx-1 rounded-lg border transition-all duration-300 ease-in-out hover:shadow-sm border-line/50 hover:border-c1/30 bg-panel/60 hover:bg-c1/5}">
             <span class="w-3 h-3 rounded-full border transition-all duration-300 ease-in-out border-line flex items-center justify-center flex-shrink-0"></span>
             <span class="text-sm transition-colors duration-200">${text}</span>
         </button>
@@ -19,20 +19,20 @@ window.renderQuestion = (q) => {
     const inputArea = (() => {
         if (q.type === 'mcq') {
             return `
-            <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
+            <div data-role="options" class="mt-3 space-y-2 px-0 md:px-2 animate-fadeIn">
                 ${Array.isArray(q.options) ? q.options.map((o, i) => optionItem(o, i)).join('') : '<p class="text-muted text-sm">No options</p>'}
             </div>
         `;
         }
         if (q.type === 'true-false') {
             return `
-            <div data-role="options" class="mt-3 space-y-2 px-2 animate-fadeIn">
+            <div data-role="options" class="mt-3 space-y-2 px-0 md:px-2 animate-fadeIn">
                 ${tfOptions.map((o, i) => optionItem(o, i)).join('')}
             </div>
         `;
         }
         return `
-        <div class="mt-3 px-2 animate-fadeIn">
+        <div class="mt-3 px-0 md:px-2 animate-fadeIn">
             <textarea data-role="open" class="w-full bg-bg/50 border border-line/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:border-c1/50 min-h-24 resize-none transition-all duration-300 ease-in-out hover:border-c1/30 hover:shadow-sm focus:shadow-md magnetic focus:bg-bg/80 placeholder-muted/50" placeholder="Type your answer here..."></textarea>
             <div data-role="error" class="hidden mt-2 text-c4 text-sm">Please enter your answer</div>
         </div>
@@ -46,9 +46,9 @@ window.renderQuestion = (q) => {
                     <div class="flex items-center gap-1">${Array.from({ length: 5 }, (_, i) => `<i class="${(Number(q.star) || 0) > i ? 'fas text-yellow-400' : 'far text-muted'} fa-star text-xs mr-1 transition-all duration-200"></i>`).join('')}</div>
                 </div>
                 ${inputArea}
-                <button type="button" data-action="submit" class="px-4 py-2 mt-4 mx-2 bg-c1 hover:bg-c1/90 text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-c1/50 ripple-effect magnetic">Submit</button>
-                <div data-role="feedback" class="hidden mt-4 mx-2 rounded-lg border border-line/50 p-3 bg-panel/50 transition-all duration-500 ease-in-out animate-fadeIn"></div>
-                <div data-role="rating" class="hidden mt-4 grid-cols-5 gap-2 px-2 animate-slideUp">
+                <button type="button" data-action="submit" class="px-4 py-2 mt-4 mx-0 md:mx-2 bg-c1 hover:bg-c1/90 text-white rounded-lg font-medium transition-all duration-300 ease-in-out hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-c1/50 ripple-effect magnetic">Submit</button>
+                <div data-role="feedback" class="hidden mt-4 mx-0 md:mx-2 rounded-lg border border-line/50 p-3 bg-panel/50 transition-all duration-500 ease-in-out animate-fadeIn"></div>
+                <div data-role="rating" class="hidden mt-4 grid-cols-1 sm:grid-cols-5 gap-2 px-0 md:px-2 animate-slideUp">
                     ${['Again', 'Hard', 'Good', 'Easy', 'Known'].map(r => `
                         <button type="button" data-action="rate" data-rating="${r}" class="px-3 py-2 rounded-lg border ${rateStyles[r]} text-sm magnetic ripple-effect">${r}</button>
                     `).join('')}
@@ -95,10 +95,13 @@ window.mountQuestion = (containerEl, q, onComplete) => {
         const box = containerEl.querySelector('[data-role="feedback"]');
         box.classList.remove('hidden');
         box.innerHTML = `
-        <div class="flex items-start gap-3 p-4">
-            <div class="w-5 h-5 rounded-full ${ok ? 'bg-c1' : 'bg-c4'} flex-shrink-0 mt-0.5 transition-all duration-300"></div>
+        <div class="flex items-start gap-3 p-4 flex-col sm:flex-row">
+            <div class="flex gap-3">
+                <div class="w-5 h-5 rounded-full ${ok ? 'bg-c1' : 'bg-c4'} flex-shrink-0 mt-0.5 transition-all duration-300"></div>
+                <p class="${ok ? 'text-c1' : 'text-c4'} block sm:hidden font-medium transition-colors duration-200">${ok ? 'Correct' : 'Incorrect'}</p>
+            </div>
             <div class="flex-1">
-                <p class="${ok ? 'text-c1' : 'text-c4'} font-medium transition-colors duration-200">${ok ? 'Correct' : 'Incorrect'}</p>
+                <p class="${ok ? 'text-c1' : 'text-c4'} hidden sm:block font-medium transition-colors duration-200">${ok ? 'Correct' : 'Incorrect'}</p>
                 <p class="text-sm text-text/80 mt-1 transition-colors duration-200">${text || ''}</p>
                 ${correct !== undefined ? `<p class="text-sm text-muted mt-2 transition-colors duration-200">Answer: <span class="text-text">${Array.isArray(correct) ? correct.join(', ') : correct}</span></p>` : ''}
             </div>

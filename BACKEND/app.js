@@ -19,7 +19,9 @@ const allowedOrigins = [
     'http://localhost:8080',
     'http://54.221.178.70',
     'http://mastery-path.cloud-ip.cc',
-    'https://mastery-path.cloud-ip.cc'
+    'http://www.mastery-path.cloud-ip.cc',
+    'https://mastery-path.cloud-ip.cc',
+    'https://www.mastery-path.cloud-ip.cc'
 ];
 
 // CORS middleware

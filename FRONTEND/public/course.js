@@ -81,7 +81,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                         <ol id="modulesContainer" class="grid gap-4 sm:grid-cols-1 list-none p-0 m-0">
                             ${window.modulesData?.length > 0 
                                 ? window.modulesData.map((module, index) => `
-                                    <li class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-muted/5'} border border-line/50 rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex items-start gap-5">
+                                    <li class="group ${module.isCompleted ? 'bg-c5/10' : 'bg-muted/5'} border border-line/50 rounded-xl p-5 transition-all ${module.isCompleted ? 'hover:border-c5/50' : 'hover:border-c1/50'} hover:shadow-sm flex flex-col md:flex-row items-start gap-5">
                                         <div class="flex-shrink-0 w-12 h-12 rounded-xl ${module.isCompleted ? 'bg-c5/5 text-c5' : 'bg-c1/5 text-c1'} flex items-center justify-center text-xl font-semibold">
                                             ${module.isCompleted ? '<i class="fas fa-check"></i>' : index + 1}
                                         </div>
@@ -93,7 +93,7 @@ window.openCourse = async (courseId, forceReload = false) => {
                                                 </span>
                                             </div>
                                             ${module.description ? `
-                                                <p class="text-sm text-text/70 leading-relaxed">
+                                                <p class="text-sm text-text/70 leading-relaxed line-clamp-4">
                                                     ${module.description}
                                                 </p>
                                             ` : ''}
