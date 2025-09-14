@@ -1,4 +1,7 @@
-const BACKEND_URL = window.location.protocol + '//' + window.location.hostname + ':3222';
+// Use the EC2 instance IP for production
+const BACKEND_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3222' 
+    : 'http://54.221.178.70:3222';
 
 const apiService = {
     async createUser(userId) {
