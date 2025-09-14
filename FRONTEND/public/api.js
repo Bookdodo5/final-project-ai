@@ -127,6 +127,16 @@ const apiService = {
     },
 
     async markModuleAsCompleted(userId, courseId, moduleId) {
+
+        const moduleRes = await fetch(`${BACKEND_URL}/users/${userId}/courses/${courseId}/modules/${moduleId}`);
+        if (!moduleRes.ok) throw new Error('Failed to fetch module');
+        const moduleData = await moduleRes.json();
+
+        // If already completed, just return without incrementing
+        if (moduleData.isCompleted) {
+            return;
+        }
+
         const response = await fetch(`${BACKEND_URL}/users/${userId}/courses/${courseId}/modules/${moduleId}`, {
             method: 'PUT',
             headers: {
@@ -145,6 +155,7 @@ const apiService = {
         const progress = Math.round((completed / total) * 100);
 
         await this.updateCourse(userId, courseId, { progress });
+        
         const user = await this.getUser(userId);
         await this.updateUser(userId, { moduleCompleted: (user.moduleCompleted || 0) + 1 });
     },
