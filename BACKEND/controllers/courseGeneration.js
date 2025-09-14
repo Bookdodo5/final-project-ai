@@ -134,7 +134,7 @@ export const generateModuleContent = async (name, description, topic, language, 
             {
                 temperature: 0.7,
                 topP: 0.9,
-                model: "gemini-2.5-pro",
+                model: "gemini-2.5-flash",
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: {

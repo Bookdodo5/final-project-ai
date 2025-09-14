@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:8080',
-    'http://54.221.178.70',
+    'http://34.202.161.183',
     'http://mastery-path.cloud-ip.cc',
     'http://www.mastery-path.cloud-ip.cc',
     'https://mastery-path.cloud-ip.cc',

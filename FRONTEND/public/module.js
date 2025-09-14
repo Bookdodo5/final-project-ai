@@ -39,10 +39,11 @@ const renderCurrent = (moduleView, courseId, moduleId, container, emptyMsg) => {
     }
     const q = window.questionsData[window.currentQuestionIndex];
     window.mountQuestion(container, q, async () => {
-        if (window.currentQuestionIndex + 1 < window.questionsData.length) {
+        if (window.currentQuestionIndex < window.questionsData.length) {
             await window.apiService.markQuestionAsLearned(window.userId, q.id)
             window.currentQuestionIndex += 1;
-        } else {
+        }
+        if (window.currentQuestionIndex == window.questionsData.length) {
             await window.apiService.markModuleAsCompleted(window.userId, courseId, moduleId)
             window.currentQuestionIndex += 1;
         }
