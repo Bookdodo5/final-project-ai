@@ -2,7 +2,6 @@ window.loadDueQuestions = async () => {
     try {
         if (window.loading) window.loading.show();
         const userData = await window.apiService.getUser(window.userId);
-        console.log(userData, userData.questionsLearned)
         window.questionsLearned = userData.questionsLearned || 0;
         window.questionsData = await window.apiService.getDueQuestions(window.userId);
         renderSrs();

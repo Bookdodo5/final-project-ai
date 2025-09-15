@@ -76,7 +76,7 @@ Guidelines:
 5.  For mathematical expressions, use HTML entities or Unicode characters (e.g., x² for x², π for π). **DO NOT USE LATEX!**
 6.  For code examples, wrap them in <pre><code> blocks and specify the programming language in a class (e.g., <pre><code class=\"language-python\">). Always include proper line breaks and indentation in code examples for readability.
 7.  Do not include any JavaScript, CSS, or style attributes within the \`contentText\`.
-8. Replace the & character with &amp;, the < character with &lt; and the > character with &gt; in the \`contentText\` if you want to display the HTML code as a content.
+8. Replace the < character with &lt; and the > character with &gt; in the \`contentText\` if you want to display the HTML code as a content. Do not replace any other characters with their code, since they will not be interpreted back and displayed directly.
 9. Use <strong> for emphasis on key terms or crucial points and <em> for subtle emphasis or highlighting terms.
 10. Add relevant examples and real-world applications that actively encourage critical thinking and understanding of practical implications.
 11. IMPORTANT!!!: For questions, write them without referring to the content of the course. Assume that these questions may appear in a different context without the course content being available. You MUST write the questions clearly in a way that they can be understood and used in any context. Another model will need to be able to explain why the answer is correct even without the course content.
