@@ -343,7 +343,7 @@ export const deleteCourse = async (req, res) => {
         await userRef.update({
             moduleCount: nextModuleCount,
             moduleCompleted: nextModuleCompleted,
-            learnedQuestions: nextLearnedQuestions,
+            questionsLearned: nextLearnedQuestions,
             lastActiveAt: new Date(),
             updatedAt: new Date(),
         });
