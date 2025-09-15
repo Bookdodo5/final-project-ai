@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Simple CORS configuration
 const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:3222',
     'http://localhost:8080',
     'http://34.202.161.183',
     'http://mastery-path.cloud-ip.cc',
