@@ -339,7 +339,7 @@ export const deleteCourse = async (req, res) => {
         const current = userDoc.data() || {};
         const nextModuleCount = Math.max(0, (current.moduleCount || 0) - modulesToRemove);
         const nextModuleCompleted = Math.max(0, (current.moduleCompleted || 0) - completedToRemove);
-        const nextLearnedQuestions = Math.max(0, (current.learnedQuestions || 0) - learnedQuestionsToRemove);
+        const nextLearnedQuestions = Math.max(0, (current.questionsLearned || 0) - learnedQuestionsToRemove);
         await userRef.update({
             moduleCount: nextModuleCount,
             moduleCompleted: nextModuleCompleted,
