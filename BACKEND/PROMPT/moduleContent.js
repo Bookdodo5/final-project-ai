@@ -64,6 +64,13 @@ Generate the module content in the following JSON format. Be concise and avoid e
       "options": [],
       "correctAnswer": "Expected answer guidance...",
       "star": 3
+    },
+    {
+      "questionText": "Example true-false question.",
+      "type": "true-false",
+      "options": [True, False],
+      "correctAnswer": "True", // HAS TO BE EITHER "True" OR "False" REGARDLESS OF THE LANGUAGE!!!
+      "star": 3
     }
   ]
 }

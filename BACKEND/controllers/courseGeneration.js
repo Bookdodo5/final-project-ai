@@ -163,11 +163,11 @@ export const generateModuleContent = async (name, description, topic, language, 
                                             items: { 
                                                 type: "string" 
                                             },
-                                            description: "Array of options (for MCQ and true-false only)"
+                                            description: "Array of options (for MCQ and true-false only). In case of true-false, the choices are either 'True' or 'False' regardless of the language of the question content."
                                         },
                                         correctAnswer: { 
                                             type: "string",
-                                            description: "Correct answer or expected answer guidance"
+                                            description: "Correct answer or expected answer guidance. In case of true-false, the answer is either 'True' or 'False' regardless of the language of the question content."
                                         },
                                         star: {
                                             type: "integer",

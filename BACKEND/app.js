@@ -18,7 +18,7 @@ const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3222',
     'http://localhost:8080',
-    'http://54.167.12.46',
+    'http://54.147.133.123',
     'http://mastery-path.cloud-ip.cc',
     'http://www.mastery-path.cloud-ip.cc',
     'https://mastery-path.cloud-ip.cc',
