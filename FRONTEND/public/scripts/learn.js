@@ -4,8 +4,8 @@ const initLearnPage = () => {
     const searchInput = document.getElementById('courseSearch');
     searchInput?.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        document.querySelectorAll('#courseGrid > div').forEach(card => {
-            const text = card.querySelector('h3')?.textContent?.toLowerCase();
+        document.querySelectorAll('#courseGrid > li').forEach(card => {
+            const text = card.querySelector('h2')?.textContent?.toLowerCase();
             card.style.display = text.includes(searchTerm) ? 'flex' : 'none';
         });
     });
