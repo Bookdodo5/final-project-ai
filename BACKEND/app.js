@@ -23,6 +23,8 @@ const allowedOrigins = [
     'http://34.207.210.0:3222',
     'http://mastery-path.cloud-ip.cc',
     'http://www.mastery-path.cloud-ip.cc',
+    'http://mastery-path.cloud-ip.cc:3221',
+    'http://www.mastery-path.cloud-ip.cc:3221',
     'https://mastery-path.cloud-ip.cc',
     'https://www.mastery-path.cloud-ip.cc'
 ];
