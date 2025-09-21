@@ -13,19 +13,17 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// CORS configuration
-const corsOptions = {
-    origin: '*',
+// Enable CORS for all routes
+app.use(cors({
+    origin: true, // Allow all origins
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true,
-    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
-};
-
-app.use(cors(corsOptions));
+    optionsSuccessStatus: 200
+}));
 
 // Handle preflight requests
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 
 // use routes
 app.use("/users", UserRoutes);
