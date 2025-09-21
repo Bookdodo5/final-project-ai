@@ -1,14 +1,14 @@
 import admin from 'firebase-admin';
 
-let db, auth, firebaseAdmin;
+let db = null;
+let auth = null;
 
 const initializeFirebase = async () => {
+    // Return if already initialized
     if (admin.apps.length > 0) {
-        // Already initialized
         db = admin.firestore();
         auth = admin.auth();
-        firebaseAdmin = admin;
-        return { db, auth, admin: firebaseAdmin };
+        return { db, auth, admin };
     }
 
     try {
@@ -27,24 +27,28 @@ const initializeFirebase = async () => {
             serviceAccount = serviceAccountModule.default || serviceAccountModule;
         }
 
-        // Initialize with settings for Firestore
-        firebaseAdmin = admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: process.env.FIREBASE_DATABASE_URL
+        // Initialize Firebase Admin
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
         });
         
+        // Initialize Firestore
         db = admin.firestore();
+        
+        // Initialize Auth
         auth = admin.auth();
         
-        // Configure Firestore
-        const settings = { timestampsInSnapshots: true };
-        db.settings(settings);
+        // Configure Firestore settings
+        db.settings({
+            ignoreUndefinedProperties: true
+        });
         
-        console.log('Firebase Admin initialized successfully');
-        return { db, auth, admin: firebaseAdmin };
+        console.log('Firebase Admin initialized with Firestore');
+        return { db, auth, admin };
+        
     } catch (error) {
         console.error('Error initializing Firebase:', error);
-        // Don't crash in production, allow the app to continue without Firebase
+        // Don't crash in production
         if (process.env.NODE_ENV !== 'production') {
             throw error;
         }
@@ -54,6 +58,9 @@ const initializeFirebase = async () => {
 
 // Initialize immediately if not in a serverless environment
 if (process.env.VERCEL !== '1') {
+    initializeFirebase().catch(console.error);
+} else {
+    // In serverless environment, we'll initialize on first request
     initializeFirebase().catch(console.error);
 }
 

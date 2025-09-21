@@ -33,8 +33,8 @@ const allowedOrigins = [
     /^[a-zA-Z0-9-]+\.vercel\.app$/
 ];
 
-// CORS middleware
-app.use(cors({
+// CORS middleware with error handling
+const corsOptions = {
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
@@ -62,10 +62,13 @@ app.use(cors({
     maxAge: 86400,
     preflightContinue: false,
     optionsSuccessStatus: 204
-}));
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 // Handle preflight requests
-app.options('*', cors());
+app.options('*', cors(corsOptions));
 
 // use routes
 app.use("/users", UserRoutes);
@@ -83,7 +86,7 @@ app.get("/health", (req, res) => {
 });
 
 // Handle 404 - Not Found
-app.use((req, res, next) => {
+app.use((req, res) => {
     res.status(404).json({
         status: 'Error',
         statusCode: 404,
@@ -93,10 +96,31 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    res.status(err.statusCode || 500).json({
+    console.error('Error:', err);
+    
+    // Handle CORS errors
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Not allowed by CORS',
+            origin: req.headers.origin
+        });
+    }
+    
+    // Handle other errors
+    res.status(500).json({
+        status: 'error',
+        message: 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err.message : {}
+    });
+});
+
+// Catch-all route
+app.use((req, res) => {
+    res.status(404).json({
         status: 'Error',
-        statusCode: err.statusCode || 500,
-        message: err.message || 'Internal Server Error'
+        statusCode: 404,
+        message: `Cannot ${req.method} ${req.originalUrl}`
     });
 });
 
