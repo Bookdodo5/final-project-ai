@@ -203,11 +203,14 @@ export const regenerateCourse = async (req, res) => {
                 
                 try {
                     console.log('[DEBUG] Starting batch commit...');
-                    const commitResult = await batch.commit();
+                    const commitResult = await batch.commit({ timeout: 300000 }); // 5 minutes timeout
                     console.log('[DEBUG] Batch commit successful:', commitResult);
                     console.log('[DEBUG] Module documents created successfully');
                 } catch (error) {
                     console.error('[ERROR] Batch commit failed:', error);
+                    if (error.code === 4) { // DEADLINE_EXCEEDED
+                        throw new Error('The operation took too long to complete. Please try again with a smaller course or fewer modules.');
+                    }
                     throw new Error(`Failed to commit batch: ${error.message}`);
                 }
             }
