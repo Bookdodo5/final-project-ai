@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3221;
 
 // Serve static assets (CSS, JS, images)
-app.use(express.static(path.join(__dirname, "FRONTEND/public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // API route
 app.get('/api/hello', (req, res) => {
@@ -17,12 +17,12 @@ app.get('/api/hello', (req, res) => {
 
 // Only fallback to index.html for root
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "FRONTEND/public/index.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 // All other GET requests not handled before will return the React app
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "FRONTEND/public/index.html"));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // Only start the server if this file is run directly (not when imported as a module)
