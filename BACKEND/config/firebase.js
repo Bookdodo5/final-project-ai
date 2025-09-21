@@ -18,10 +18,13 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT) {
     serviceAccount = JSON.parse(fileContent);
 }
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
-
-const db = admin.firestore();
+// Only initialize Firebase if we have a service account
+let db = null;
+if (serviceAccount) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    db = admin.firestore();
+}
 
 export default db;
