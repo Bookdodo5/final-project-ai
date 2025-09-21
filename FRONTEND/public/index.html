@@ -326,6 +326,14 @@
         <p>&copy; 2025 MasteryPath - Group 4 Final Project</p>
     </footer>
 
+    <!-- PDF.js library for client-side PDF text extraction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set worker source for PDF.js
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
     <script src="scripts/loading.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/idGenerator.js"></script>

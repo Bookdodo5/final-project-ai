@@ -1,7 +1,7 @@
 // Use the EC2 instance IP for production
 const BACKEND_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3222' 
-    : 'https://sapiens-backend-tau.vercel.app';
+    : 'https://sapiens-backend-eqb5.onrender.com';
 
 const apiService = {
     async createUser(userId) {
@@ -201,26 +201,29 @@ const apiService = {
             
             reader.onload = async (event) => {
                 try {
-                    const base64Data = event.target.result;
+                    // Load PDF.js library dynamically
+                    const pdfjsLib = window.pdfjsLib || {};
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
                     
-                    const response = await fetch(`${BACKEND_URL}/pdf/extract-text`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            file: base64Data
-                        })
-                    });
+                    // Load the PDF document
+                    const loadingTask = pdfjsLib.getDocument({data: event.target.result});
+                    const pdf = await loadingTask.promise;
                     
-                    const result = await response.json();
+                    let fullText = '';
                     
-                    if (!result || typeof result.fullText !== 'string') {
-                        throw new Error('Invalid response from server');
+                    // Extract text from each page
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += pageText + '\n\n';
                     }
                     
-                    resolve(result);
+                    if (!fullText.trim()) {
+                        throw new Error('No text could be extracted from the PDF. The document may be image-based or encrypted.');
+                    }
+                    
+                    resolve({ fullText });
                 } catch (error) {
                     console.error('PDF Extraction Error:', error);
                     reject(new Error(error.message || 'Failed to process PDF. Please make sure the file is not encrypted or image-based.'));
@@ -232,8 +235,8 @@ const apiService = {
                 reject(new Error('Failed to read the PDF file.'));
             };
             
-            // Read the file as a data URL (base64)
-            reader.readAsDataURL(file);
+            // Read the file as an ArrayBuffer
+            reader.readAsArrayBuffer(file);
         });
     },
 };
