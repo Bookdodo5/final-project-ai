@@ -1,10 +1,15 @@
 import admin from 'firebase-admin';
+import { readFile } from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let db = null;
 let auth = null;
 
 const initializeFirebase = async () => {
-    // Return if already initialized
     if (admin.apps.length > 0) {
         db = admin.firestore();
         auth = admin.auth();
@@ -15,38 +20,30 @@ const initializeFirebase = async () => {
         let serviceAccount;
         
         if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-            // For production (Vercel environment variables)
             serviceAccount = typeof process.env.FIREBASE_SERVICE_ACCOUNT === 'string' 
                 ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
                 : process.env.FIREBASE_SERVICE_ACCOUNT;
         } else {
-            // For local development
-            const serviceAccountModule = await import('./serviceAccountKey.json', { 
-                assert: { type: 'json' } 
-            });
-            serviceAccount = serviceAccountModule.default || serviceAccountModule;
+            // For local development - read file directly
+            const serviceAccountPath = join(__dirname, 'serviceAccountKey.json');
+            const fileContent = await readFile(serviceAccountPath, 'utf8');
+            serviceAccount = JSON.parse(fileContent);
         }
 
         // Initialize Firebase Admin with Firestore
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
-            // Explicitly disable Realtime Database if not needed
-            databaseURL: ''
         });
         
-        // Initialize Firestore with settings
+        // Initialize Firestore
         db = admin.firestore();
-        
-        // Initialize Auth
         auth = admin.auth();
         
-        // Configure Firestore settings for better error handling
+        // Configure Firestore settings
         const firestoreSettings = {
             ignoreUndefinedProperties: true,
-            // Disable offline persistence in serverless environment
             experimentalForceLongPolling: process.env.VERCEL === '1',
-            // Increase timeout for Vercel
-            timeout: 10000
+            preferRest: false // Use gRPC if possible for better performance
         };
         
         if (process.env.NODE_ENV !== 'production') {
@@ -60,7 +57,6 @@ const initializeFirebase = async () => {
         
     } catch (error) {
         console.error('Error initializing Firebase:', error);
-        // Don't crash in production
         if (process.env.NODE_ENV !== 'production') {
             throw error;
         }
@@ -71,10 +67,7 @@ const initializeFirebase = async () => {
 // Initialize immediately if not in a serverless environment
 if (process.env.VERCEL !== '1') {
     initializeFirebase().catch(console.error);
-} else {
-    // In serverless environment, we'll initialize on first request
-    initializeFirebase().catch(console.error);
 }
 
-export { db, auth, admin };
+export { db, auth, admin, initializeFirebase };
 export default db;
