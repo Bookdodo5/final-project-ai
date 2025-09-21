@@ -117,7 +117,6 @@ async function handlePdfUpload(event) {
 
     try {
         const result = await apiService.extractTextFromPdf(file);
-        console.log('PDF extraction result:', result);
         
         if (!result || !result.fullText) {
             throw new Error('No text was extracted from the PDF');

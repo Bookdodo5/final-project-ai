@@ -21,6 +21,11 @@ window.loadCourses = async () => {
     try {
         if (window.loading) window.loading.show();
         window.coursesData = await window.apiService.getCourses(window.userId);
+        window.coursesData = window.coursesData.sort((a, b) => {
+            const dateA = a.lastAccessed._seconds || a.createdAt._seconds;
+            const dateB = b.lastAccessed._seconds || b.createdAt._seconds;
+            return dateB - dateA;
+        });
         renderCourseGrid();
     } catch (error) {
         console.error('Error loading courses:', error);
