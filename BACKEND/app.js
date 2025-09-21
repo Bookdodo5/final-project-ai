@@ -68,8 +68,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle preflight requests for all routes
-app.options('*', (req, res) => {
-    res.set('Access-Control-Allow-Origin', req.headers.origin || '*');
+app.options('/*', (req, res) => {
+    res.set('Access-Control-Allow-Origin', req.headers.origin || '/*');
     res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
     res.set('Access-Control-Allow-Credentials', 'true');
@@ -121,8 +121,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Catch-all route for 404 errors
-app.use('*', (req, res) => {
+// Catch-all route for 404 errors - compatible with Express 5+
+app.use((req, res) => {
     res.status(404).json({
         status: 'Error',
         statusCode: 404,
