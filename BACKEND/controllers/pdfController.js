@@ -1,6 +1,4 @@
 import { generateId } from "../services/idGenerator.js";
-import { createReadStream, unlinkSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import http from 'http';
@@ -64,22 +62,18 @@ export const extractTextFromPdf = async (req, res) => {
         // Handle base64 file data from the client
         const base64Data = req.body.file.replace(/^data:application\/pdf;base64,/, '');
         const buffer = Buffer.from(base64Data, 'base64');
-        const tempFilePath = join(__dirname, `temp-${Date.now()}.pdf`);
 
-        // Write the buffer to a temporary file
-        writeFileSync(tempFilePath, buffer);
-
-        // Create a simple form data for the PDF extraction API
+        // Create form data for the PDF extraction API
         const boundary = `----WebKitFormBoundary${Math.random().toString(16).substr(2)}`;
         const eol = '\r\n';
         let data = [];
 
         // Add file part
-        data.push(`--${boundary}${eol}`);
-        data.push(`Content-Disposition: form-data; name="file"; filename="upload.pdf"${eol}`);
-        data.push(`Content-Type: application/pdf${eol}${eol}`);
+        data.push(Buffer.from(`--${boundary}${eol}`));
+        data.push(Buffer.from(`Content-Disposition: form-data; name="file"; filename="upload.pdf"${eol}`));
+        data.push(Buffer.from(`Content-Type: application/pdf${eol}${eol}`));
         data.push(buffer);
-        data.push(eol);
+        data.push(Buffer.from(eol));
 
         // Add other form fields
         const fields = {
@@ -91,35 +85,25 @@ export const extractTextFromPdf = async (req, res) => {
         };
 
         for (const [key, value] of Object.entries(fields)) {
-            data.push(`--${boundary}${eol}`);
-            data.push(`Content-Disposition: form-data; name="${key}"${eol}${eol}`);
-            data.push(value);
-            data.push(eol);
+            data.push(Buffer.from(`--${boundary}${eol}`));
+            data.push(Buffer.from(`Content-Disposition: form-data; name="${key}"${eol}${eol}`));
+            data.push(Buffer.from(value));
+            data.push(Buffer.from(eol));
         }
 
-        data.push(`--${boundary}--${eol}`);
+        data.push(Buffer.from(`--${boundary}--${eol}`));
 
-        const requestData = Buffer.concat(data.map(part =>
-            Buffer.isBuffer(part) ? part : Buffer.from(part, 'utf-8')
-        ));
+        const formData = Buffer.concat(data);
 
-        // Make the request to the PDF extraction API
-        const response = await fetchWithNative('https://api.pdfrest.com/extracted-text', {
+        // Make request to PDF extraction API
+        const response = await fetchWithNative('https://api.pdflayer.com/api/extract', {
             method: 'POST',
             headers: {
-                'Api-Key': PDF_EXTRACT_KEY,
                 'Content-Type': `multipart/form-data; boundary=${boundary}`,
-                'Content-Length': requestData.length
+                'Authorization': `Bearer ${PDF_EXTRACT_KEY}`
             },
-            body: requestData
+            body: formData
         });
-
-        // Clean up the temporary file
-        try {
-            unlinkSync(tempFilePath);
-        } catch (cleanupError) {
-            console.error('Error cleaning up temp file:', cleanupError);
-        }
 
         if (!response.ok) {
             const errorText = await response.text();

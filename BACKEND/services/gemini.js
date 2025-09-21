@@ -160,10 +160,10 @@ export async function generate(prompt, systemInstruction, options = {}) {
         topP = 0.9,
         model = "gemini-2.5-flash-lite",
         config = undefined,
-        maxRetries = 5,
-        initialDelay = 2000,
-        maxDelay = 60000,
-        backoffFactor = 2.5
+        maxRetries = 3,
+        initialDelay = 1000,
+        maxDelay = 10000,
+        backoffFactor = 2.0
     } = options;
 
     let attempt = 0;
