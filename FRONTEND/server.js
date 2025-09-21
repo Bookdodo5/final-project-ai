@@ -20,11 +20,9 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Only start the server if this file is run directly (not when imported as a module)
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Frontend Server ready at http://localhost:${PORT}`);
-  });
-}
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Frontend Server ready at http://localhost:${PORT}`);
+});
 
 export default app;

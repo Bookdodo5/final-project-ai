@@ -44,10 +44,8 @@ export default async (req, res) => {
     }
 };
 
-// For local development
-if (process.env.NODE_ENV !== 'production') {
-    const PORT = process.env.PORT || 3001;
-    const server = app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Backend Server ready at http://localhost:${PORT}`);
-    });
-}
+// Start the server
+const PORT = process.env.PORT || 3001;
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Backend Server ready at http://localhost:${PORT}`);
+});
