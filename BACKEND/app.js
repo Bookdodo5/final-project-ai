@@ -37,8 +37,17 @@ app.get("/health", (req, res) => {
     });
 });
 
+// Catch-all route for undefined routes
+app.use(/(.*)/, (req, res) => {
+    res.status(404).json({
+        status: 'error',
+        message: 'Route not found',
+        path: req.originalUrl
+    });
+});
+
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use(/(.*)/, (err, req, res, next) => {
     console.error('Error:', err);
     
     // Handle CORS errors
