@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "build": "echo \"No build step required\" && exit 0",
+    "build": "mkdir -p public && cp -r *.* public/ 2>/dev/null || :",
     "start": "node server.js"
   },
   "dependencies": {
