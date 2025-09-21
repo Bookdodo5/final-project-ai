@@ -10,7 +10,11 @@
     },
     {
       "src": "BACKEND/server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "includeFiles": ["BACKEND/**"]
+      }
     }
   ],
   "routes": [

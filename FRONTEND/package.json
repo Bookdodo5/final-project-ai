@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "build": "mkdir -p public && echo '<!DOCTYPE html><html><head><title>Loading...</title></head><body><h1>Loading...</h1><p>Frontend is building...</p></body></html>' > public/index.html",
+    "build": "if not exist public mkdir public && echo <!DOCTYPE html^>^<html^>^<head^>^<title^>Loading...^</title^>^</head^>^<body^>^<h1^>Loading...^</h1^>^<p^>Frontend is building...^</p^>^</body^>^</html^> > public/index.html",
     "start": "node server.js"
   },
   "dependencies": {
