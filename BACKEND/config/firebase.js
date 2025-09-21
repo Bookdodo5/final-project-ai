@@ -27,21 +27,33 @@ const initializeFirebase = async () => {
             serviceAccount = serviceAccountModule.default || serviceAccountModule;
         }
 
-        // Initialize Firebase Admin
+        // Initialize Firebase Admin with Firestore
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
+            credential: admin.credential.cert(serviceAccount),
+            // Explicitly disable Realtime Database if not needed
+            databaseURL: ''
         });
         
-        // Initialize Firestore
+        // Initialize Firestore with settings
         db = admin.firestore();
         
         // Initialize Auth
         auth = admin.auth();
         
-        // Configure Firestore settings
-        db.settings({
-            ignoreUndefinedProperties: true
-        });
+        // Configure Firestore settings for better error handling
+        const firestoreSettings = {
+            ignoreUndefinedProperties: true,
+            // Disable offline persistence in serverless environment
+            experimentalForceLongPolling: process.env.VERCEL === '1',
+            // Increase timeout for Vercel
+            timeout: 10000
+        };
+        
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Initializing Firestore with settings:', firestoreSettings);
+        }
+        
+        db.settings(firestoreSettings);
         
         console.log('Firebase Admin initialized with Firestore');
         return { db, auth, admin };
