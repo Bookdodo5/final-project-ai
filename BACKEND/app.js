@@ -33,7 +33,7 @@ const allowedOrigins = [
     /^[a-zA-Z0-9-]+\.vercel\.app$/
 ];
 
-// CORS middleware with error handling
+// CORS configuration
 const corsOptions = {
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl requests)
@@ -64,11 +64,17 @@ const corsOptions = {
     optionsSuccessStatus: 204
 };
 
-// Apply CORS middleware
+// Apply CORS middleware to all routes
 app.use(cors(corsOptions));
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Handle preflight requests for all routes
+app.options('*', (req, res) => {
+    res.set('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.set('Access-Control-Allow-Credentials', 'true');
+    res.status(204).send();
+});
 
 // use routes
 app.use("/users", UserRoutes);
@@ -115,8 +121,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Catch-all route
-app.use((req, res) => {
+// Catch-all route for 404 errors
+app.use('*', (req, res) => {
     res.status(404).json({
         status: 'Error',
         statusCode: 404,
