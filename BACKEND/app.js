@@ -13,68 +13,12 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// CORS configuration
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3222',
-    'http://localhost:8080',
-    'http://34.207.210.0',
-    'http://34.207.210.0:3221',
-    'http://34.207.210.0:3222',
-    'http://mastery-path.cloud-ip.cc',
-    'http://www.mastery-path.cloud-ip.cc',
-    'http://mastery-path.cloud-ip.cc:3221',
-    'http://www.mastery-path.cloud-ip.cc:3221',
-    'https://mastery-path.cloud-ip.cc',
-    'https://www.mastery-path.cloud-ip.cc',
-    // Add Vercel preview URLs
-    /^\.vercel\.app$/,  // Matches *.vercel.app
-    /^vercel\.app$/,
-    /^[a-zA-Z0-9-]+\.vercel\.app$/
-];
-
-// CORS configuration
-const corsOptions = {
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        // Check against allowed origins
-        if (allowedOrigins.some(regex => {
-            if (typeof regex === 'string') {
-                return origin === regex;
-            } else if (regex instanceof RegExp) {
-                return regex.test(origin);
-            }
-            return false;
-        })) {
-            return callback(null, true);
-        }
-        
-        // If origin doesn't match any allowed pattern
-        console.warn(`CORS blocked for origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true,
+// Simple CORS configuration
+app.use(cors({
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Set-Cookie'],
-    maxAge: 86400,
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-};
-
-// Apply CORS middleware to all routes
-app.use(cors(corsOptions));
-
-// Handle preflight requests for all routes
-app.options((req, res) => {
-    res.set('Access-Control-Allow-Origin', req.headers.origin || '/*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.set('Access-Control-Allow-Credentials', 'true');
-    res.status(204).send();
-});
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // use routes
 app.use("/users", UserRoutes);
