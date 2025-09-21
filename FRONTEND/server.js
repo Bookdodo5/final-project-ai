@@ -15,13 +15,8 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from frontend server!' });
 });
 
-// Only fallback to index.html for root
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
 // All other GET requests not handled before will return the React app
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
