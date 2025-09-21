@@ -1,7 +1,7 @@
 // Use the EC2 instance IP for production
 const BACKEND_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3222' 
-    : 'https://sapiens-backend-tau.vercel.app/';
+    : 'https://sapiens-backend-tau.vercel.app';
 
 const apiService = {
     async createUser(userId) {
