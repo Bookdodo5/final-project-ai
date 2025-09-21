@@ -5,13 +5,20 @@
       "src": "server.js",
       "use": "@vercel/node",
       "config": {
-        "maxLambdaSize": "15mb",
-        "includeFiles": ["**"],
-        "outputDirectory": ".vercel/output"
+        "maxLambdaSize": "50mb",
+        "includeFiles": [
+          "**/*.js",
+          "**/*.json",
+          "!node_modules/**"
+        ]
       }
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/server.js"
+    },
     {
       "src": "/(.*)",
       "dest": "/server.js"

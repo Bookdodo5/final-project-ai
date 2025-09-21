@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from 'cookie-parser';
 
 import CourseRoutes from "./routes/courseRoutes.js";
 import QuestionRoutes from "./routes/questionRoutes.js";
