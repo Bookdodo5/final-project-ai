@@ -5,8 +5,7 @@
       "src": "FRONTEND/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "public",
-        "outputDirectory": "public"
+        "distDir": "public"
       }
     },
     {
