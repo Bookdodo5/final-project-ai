@@ -68,7 +68,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Handle preflight requests for all routes
-app.options('/*', (req, res) => {
+app.options((req, res) => {
     res.set('Access-Control-Allow-Origin', req.headers.origin || '/*');
     res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
@@ -88,15 +88,6 @@ app.get("/health", (req, res) => {
         status: "ok",
         uptime: process.uptime(),
         timestamp: Date.now(),
-    });
-});
-
-// Handle 404 - Not Found
-app.use((req, res) => {
-    res.status(404).json({
-        status: 'Error',
-        statusCode: 404,
-        message: `Cannot ${req.method} ${req.originalUrl}`
     });
 });
 
